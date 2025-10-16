@@ -5,12 +5,14 @@ import { CompanyModule } from './CompanyModule/company.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeModule } from './EmployeeModule/employee.module';
 import { InterviewModule } from './InterviewModule/interview.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     CompanyModule,
     EmployeeModule,
     InterviewModule,
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
