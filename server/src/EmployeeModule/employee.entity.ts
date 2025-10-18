@@ -6,9 +6,6 @@ export class Employee {
     employee_id: number;
 
     @Column()
-    employee_company_id: number;
-
-    @Column()
     employee_name: string;
 
     @Column()
@@ -17,12 +14,16 @@ export class Employee {
     @Column()
     employee_email: string;
 
-    @Column()
-    employee_role: string
-
-    @Column()
+    @Column({ default: '' })
     employee_status: string
 
-    @Column()
+    @Column({ default: '' })
     employee_photo: string
+
+    @Column()
+    employee_password: string
+
+    constructor(item: Partial<Employee>) {
+        Object.assign(this, item)
+    }
 }
