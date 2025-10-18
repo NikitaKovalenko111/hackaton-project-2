@@ -26,7 +26,7 @@ import path from 'path';
     ],
     controllers: [EmployeeController],
     providers: [EmployeeService, TokenService],
-    exports: [TokenService]
+    exports: [TokenService, EmployeeService]
 })
 
 export class EmployeeModule { }

@@ -26,7 +26,7 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [Company, Employee, Interview, Employee_token],
-      synchronize: false,
+      synchronize: true,
     }),
   ],
   controllers: [AppController],
@@ -36,6 +36,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes('employee/photo', 'employee/status')
+      .forRoutes('employee/photo', 'employee/status', 'company/:id/employees', 'company/create')
   }
 }

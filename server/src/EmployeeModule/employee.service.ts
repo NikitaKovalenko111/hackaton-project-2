@@ -5,6 +5,7 @@ import { Employee } from './employee.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
 import { TokenService } from './token.service';
+import { Company } from 'src/CompanyModule/company.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -14,6 +15,20 @@ export class EmployeeService {
 
         private tokenService: TokenService
     ) {}
+
+    async getEmployee(employeeId: number) {
+        const employee = await this.employeeRepository.findOne({
+            where: {
+                employee_id: employeeId
+            }
+        })
+
+        if (!employee) {
+            throw new Error("Пользователь не найден")
+        }
+
+        return employee
+    }
 
     async setStatus(status: string, employee_id: number): Promise<string> {
         const employee = await this.employeeRepository.findOne({
@@ -77,7 +92,7 @@ export class EmployeeService {
             employee_password: hashPassword
         })
 
-        const employeeCurrent = await this.employeeRepository.save(employee)   
+        const employeeCurrent = await this.employeeRepository.save(employee)     
 
         const employeeData = {
             employee_id: employeeCurrent.employee_id,

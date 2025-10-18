@@ -63,7 +63,6 @@ export class EmployeeController {
 
     @Post('/registration')
     async registerEmployee(@Body() registerEmployeeBody: registerEmployeeBodyDto, @Res({ passthrough: true }) response: Response): Promise<registerEmployeeReturnDto> {
-        try {
             const data = await this.employeeService.registration(registerEmployeeBody)
 
             response.cookie('refreshToken', data.refreshToken, {
@@ -72,9 +71,6 @@ export class EmployeeController {
             })
 
             return data
-        } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST)
-        }
     }
 
     @Post('/authorization')
