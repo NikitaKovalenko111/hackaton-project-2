@@ -110,7 +110,7 @@ export class EmployeeController {
         }
     }
 
-    @Post('/refresh')
+    @Get('/refresh')
     async refresh(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
         try {
             const { refreshToken } = request.cookies
