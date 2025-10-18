@@ -31,8 +31,8 @@ export class AuthMiddleware implements NestMiddleware {
             (req as any).employee = employeeData
 
             next()
-        } catch (error) {
-            return next(Error('Ошибка'))
+        } catch(error) {
+            return next(Error("Ошибка"))
         }
     }
 }
