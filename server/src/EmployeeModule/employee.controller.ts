@@ -2,7 +2,6 @@ import { Body, Controller, Get, HttpException, HttpStatus, Patch, Post, Req, Res
 import { EmployeeService } from './employee.service';
 import type { Request, Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 
 export interface registerEmployeeBodyDto {
     employee_name: string
@@ -38,12 +37,11 @@ export class EmployeeController {
     ) { }
 
     @Patch('/status')
-    async setEmployeeStatus(@Body() statusBody: { 
+    async setEmployeeStatus(@Req() req: Request, @Body() statusBody: { 
         status: string
-        employee_id: number
     }): Promise<string> {
         try {
-            const status = this.employeeService.setStatus(statusBody.status, statusBody.employee_id)
+            const status = this.employeeService.setStatus(statusBody.status, (req as any).employee.employee_id)
 
             return status
         } catch (error) {
@@ -53,9 +51,9 @@ export class EmployeeController {
 
     @Post('/photo')
     @UseInterceptors(FileInterceptor('file'))
-    async uploadEmployeePhoto(@UploadedFile() file: Express.Multer.File, @Body() employeePhotoBody: { employee_id: number }) {
+    async uploadEmployeePhoto(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
         try {
-            const status = await this.employeeService.uploadPhoto(file, employeePhotoBody.employee_id)
+            const status = await this.employeeService.uploadPhoto(file, (req as any).employee.employee_id)
 
             return status
         } catch (error) {
@@ -110,7 +108,7 @@ export class EmployeeController {
         }
     }
 
-    @Post('/refresh')
+    @Get('/refresh')
     async refresh(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
         try {
             const { refreshToken } = request.cookies

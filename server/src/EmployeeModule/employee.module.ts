@@ -17,7 +17,7 @@ import path from 'path';
                 destination(req: Request, file: Express.Multer.File, cb) {
                     cb(null, path.join(__dirname, '../../../profilePhotos'))
                 },
-                filename(req: Request, file: Express.Multer.File, cb) {            
+                filename(req: Request, file: Express.Multer.File, cb) {                           
                     cb(null, String((req as any).employee.employee_id + "." + file.mimetype.split("/")[1]))
                 }
             })
