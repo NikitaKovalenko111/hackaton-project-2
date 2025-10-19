@@ -1,6 +1,6 @@
-import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
 import { Employee } from 'src/EmployeeModule/employee.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, JoinColumn } from 'typeorm';
+import { SkillShape } from 'src/SkillModule/skillShape.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Company {
@@ -18,11 +18,23 @@ export class Company {
     })
     employees: Employee[];
 
+    @OneToMany(type => SkillShape, skillShape => skillShape.company_id, {
+        cascade: true
+    })
+    skills: SkillShape[];
+
     addEmployee(employee: Employee) {
         if (this.employees == null) {
             this.employees = Array<Employee>()
         }
         this.employees.push(employee)
+    }
+
+    addSkill(skill: SkillShape) {
+        if (this.skills == null) {
+            this.skills = Array<SkillShape>()
+        }
+        this.skills.push(skill)
     }
 
     constructor(item: Partial<Company>) {

@@ -9,6 +9,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { diskStorage } from 'multer';
 import path from 'path';
+import { Skill } from 'src/SkillModule/skill.entity';
 
 @Module({
     imports: [
@@ -22,7 +23,7 @@ import path from 'path';
                 }
             })
         }),
-        TypeOrmModule.forFeature([Employee, Employee_token]),
+        TypeOrmModule.forFeature([Employee, Employee_token, Skill]),
     ],
     controllers: [EmployeeController],
     providers: [EmployeeService, TokenService],

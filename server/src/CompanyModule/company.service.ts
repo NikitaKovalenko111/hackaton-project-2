@@ -4,16 +4,13 @@ import { Company } from './company.entity';
 import { Repository } from 'typeorm';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
-import { Employee } from 'src/EmployeeModule/employee.entity';
+import { SkillShape } from 'src/SkillModule/skillShape.entity';
 
 @Injectable()
 export class CompanyService {
     constructor(
         @InjectRepository(Company)
         private companyRepository: Repository<Company>,
-
-        @InjectRepository(Employee)
-        private employeeRepository: Repository<Employee>,
 
         private employeeService: EmployeeService
     ) {}
@@ -64,5 +61,26 @@ export class CompanyService {
         const companyData = await this.companyRepository.save(company)
 
         return companyData
+    }
+
+    async createSkill(skillName: string, skillDesc: string, companyId: number): Promise<SkillShape> {
+        const company = await this.companyRepository.findOne({
+            where: {
+                company_id: companyId
+            }
+        })
+        if (!company) {
+            throw new Error("Компания не найдена")
+        }
+        const skill = new SkillShape({
+            skill_name: skillName,
+            skill_desc: skillDesc
+        })
+
+        company.addSkill(skill)
+
+        await this.companyRepository.save(company)
+
+        return skill
     }
 }

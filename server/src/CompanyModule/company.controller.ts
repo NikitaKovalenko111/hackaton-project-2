@@ -1,10 +1,17 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { Company } from './company.entity';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
+import { SkillShape } from 'src/SkillModule/skillShape.entity';
 
 interface createCompanyBodyDto {
     company_name: string
+}
+
+interface createSkillBodyDto {
+    skill_name: string
+    skill_desc: string
+    company_id: number
 }
 
 @Controller('company')
@@ -28,5 +35,18 @@ export class CompanyController {
         const company = await this.companyService.createCompany(createCompanyBody.company_name, employeeId)
     
         return company
+    }
+
+    @Post('/skill/create')
+    async createSkill(@Body() createSkillBody: createSkillBodyDto, @Req() req: Request): Promise<SkillShape> {
+        const employeeId = (req as any).employee.employee_id
+
+        const { skill_name, skill_desc, company_id } = createSkillBody
+
+        const employee = await this.companyService.checkEmployee(company_id, employeeId)
+
+        const skill = await this.companyService.createSkill(skill_name, skill_desc, company_id)
+
+        return skill
     }
 }

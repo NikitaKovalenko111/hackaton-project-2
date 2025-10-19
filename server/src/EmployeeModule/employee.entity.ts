@@ -1,5 +1,6 @@
 import { Company } from 'src/CompanyModule/company.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Skill } from 'src/SkillModule/skill.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Employee {
@@ -23,6 +24,11 @@ export class Employee {
 
     @Column()
     employee_password: string;
+
+    @OneToMany(() => Skill, skill => skill.skill_connection_id, {
+        cascade: true
+    })
+    skills: Skill[]
 
     @ManyToOne(() => Company, company => company.employees, {
         nullable: true,
