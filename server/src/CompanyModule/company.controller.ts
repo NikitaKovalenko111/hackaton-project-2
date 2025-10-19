@@ -3,6 +3,8 @@ import { CompanyService } from './company.service';
 import { Company } from './company.entity';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
 import { SkillShape } from 'src/SkillModule/skillShape.entity';
+import { Skill } from 'src/SkillModule/skill.entity';
+import { SkillService } from 'src/SkillModule/skill.service';
 
 interface createCompanyBodyDto {
     company_name: string
@@ -14,9 +16,17 @@ interface createSkillBodyDto {
     company_id: number
 }
 
+interface giveSkillBodyDto {
+    skill_shape_id: number
+    company_id: number
+}
+
 @Controller('company')
 export class CompanyController {
-    constructor(private readonly companyService: CompanyService) { }
+    constructor(
+        private readonly companyService: CompanyService,
+        private readonly skillService : SkillService
+    ) { }
 
     @Get('/:id/employees')
     async getEmployees(@Param('id') companyId: number, @Req() req: Request): Promise<employeePayloadDto[]> {
@@ -27,6 +37,17 @@ export class CompanyController {
         const employees = await this.companyService.getEmployees(companyId)
 
         return employees
+    }
+
+    @Get('/:id/skills')
+    async getCompanySkills(@Param('id') companyId: number, @Req() req: Request): Promise<SkillShape[]> {
+        const employeeId = (req as any).employee.employee_id
+
+        const employee = await this.companyService.checkEmployee(companyId, employeeId)
+
+        const skills = await this.companyService.getSkills(companyId)
+
+        return skills
     }
 
     @Post('/create')
@@ -46,6 +67,17 @@ export class CompanyController {
         const employee = await this.companyService.checkEmployee(company_id, employeeId)
 
         const skill = await this.companyService.createSkill(skill_name, skill_desc, company_id)
+
+        return skill
+    }
+
+    @Post('/skill/give')
+    async giveSkillToEmployee(@Body() giveSkillBody: giveSkillBodyDto, @Req() req: Request): Promise<Skill> {
+        const employeeId = (req as any).employee.employee_id
+        const { skill_shape_id, company_id } = giveSkillBody
+        const employee = await this.companyService.checkEmployee(company_id, employeeId)
+
+        const skill = await this.skillService.giveSkill(employee, skill_shape_id)
 
         return skill
     }

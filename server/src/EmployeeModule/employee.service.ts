@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
 import { TokenService } from './token.service';
 import { Company } from 'src/CompanyModule/company.entity';
+import { Skill } from 'src/SkillModule/skill.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -195,5 +196,13 @@ export class EmployeeService {
             ...tokens,
             payload: employeePayload
         }
+    }
+
+    async saveSkill(skill: Skill, employee: Employee): Promise<Employee> {
+        employee.addSkill(skill)
+
+        const employeeData = await this.employeeRepository.save(employee)
+
+        return employeeData
     }
 }

@@ -38,6 +38,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes('employee/photo', 'employee/status', 'company/:id/employees', 'company/create', 'company/skill/create')
+      .forRoutes('employee/photo', 'employee/status', 'company/:id/employees', 'company/create', 'company/skill/create', 'company/:id/skills', 'company/skill/give')
   }
 }

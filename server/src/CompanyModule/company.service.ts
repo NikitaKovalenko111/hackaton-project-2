@@ -12,6 +12,9 @@ export class CompanyService {
         @InjectRepository(Company)
         private companyRepository: Repository<Company>,
 
+        @InjectRepository(SkillShape)
+        private skillShapeRepository: Repository<SkillShape>,
+
         private employeeService: EmployeeService
     ) {}
 
@@ -49,6 +52,23 @@ export class CompanyService {
         }    
 
         return company.employees
+    }
+
+    async getSkills(companyId: number): Promise<SkillShape[]> {
+        const company = await this.companyRepository.findOne({
+            where: {
+                company_id: companyId
+            },
+            relations: {
+                skills: true
+            }
+        })
+
+        if (!company) {
+            throw new Error('Такой компании не существует')
+        }    
+
+        return company.skills
     }
 
     async createCompany(company_name: string, employee_id: number): Promise<Company> {

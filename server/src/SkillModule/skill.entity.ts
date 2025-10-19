@@ -7,7 +7,7 @@ export class Skill {
     @PrimaryGeneratedColumn()
     skill_connection_id: number;
 
-    @ManyToOne(() => SkillShape, skillShape => skillShape.skill_shape_id)
+    @ManyToOne(() => SkillShape, skillShape => skillShape.skills)
     @JoinColumn({ name: "skill_shape_id" })
     skill_shape_id: SkillShape
 

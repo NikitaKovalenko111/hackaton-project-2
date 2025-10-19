@@ -8,13 +8,15 @@ import { Employee } from 'src/EmployeeModule/employee.entity';
 import { TokenService } from 'src/EmployeeModule/token.service';
 import { Employee_token } from 'src/EmployeeModule/token.entity';
 import { Skill } from 'src/SkillModule/skill.entity';
+import { SkillShape } from 'src/SkillModule/skillShape.entity';
+import { SkillService } from 'src/SkillModule/skill.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Company, Employee, Employee_token, Skill]),
+        TypeOrmModule.forFeature([Company, Employee, Employee_token, Skill, SkillShape]),
     ],
     controllers: [CompanyController],
-    providers: [CompanyService, EmployeeService, TokenService],
+    providers: [CompanyService, EmployeeService, TokenService, SkillService],
 })
 
 export class CompanyModule { }
