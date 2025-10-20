@@ -28,7 +28,7 @@ import { SkillShape } from './SkillModule/skillShape.entity';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape],
-      synchronize: true,
+      synchronize: true
     }),
   ],
   controllers: [AppController],
@@ -38,6 +38,15 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes('employee/photo', 'employee/status', 'company/:id/employees', 'company/create', 'company/skill/create', 'company/:id/skills', 'company/skill/give')
+      .forRoutes(
+        'employee/photo', 
+        'employee/status', 
+        'company/:id/employees', 
+        'company/create', 
+        'company/skill/create', 
+        'company/:id/skills', 
+        'company/skill/give',
+        'company/:id/info'
+      )
   }
 }

@@ -18,24 +18,10 @@ export class Company {
     })
     employees: Employee[];
 
-    @OneToMany(type => SkillShape, skillShape => skillShape.company_id, {
+    @OneToMany(type => SkillShape, skillShape => skillShape.company, {
         cascade: true
     })
     skills: SkillShape[];
-
-    addEmployee(employee: Employee) {
-        if (this.employees == null) {
-            this.employees = Array<Employee>()
-        }
-        this.employees.push(employee)
-    }
-
-    addSkill(skill: SkillShape) {
-        if (this.skills == null) {
-            this.skills = Array<SkillShape>()
-        }
-        this.skills.push(skill)
-    }
 
     constructor(item: Partial<Company>) {
         Object.assign(this, item)

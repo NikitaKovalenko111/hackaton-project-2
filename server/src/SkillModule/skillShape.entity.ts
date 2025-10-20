@@ -9,9 +9,9 @@ export class SkillShape {
 
     @ManyToOne(() => Company, company => company.skills)
     @JoinColumn({ name: "company_id" })
-    company_id: Company;
+    company: Company;
 
-    @OneToMany(() => Skill, skill => skill.skill_shape_id, {
+    @OneToMany(() => Skill, skill => skill.skill_shape, {
         cascade: true
     })
     skills: Skill[]
@@ -21,13 +21,6 @@ export class SkillShape {
 
     @Column()
     skill_desc: string
-
-    addSkill(skill: Skill) {
-        if (this.skills == null) {
-            this.skills = Array<Skill>()
-        }
-        this.skills.push(skill)
-    }
 
     constructor(item: Partial<SkillShape>) {
         Object.assign(this, item)

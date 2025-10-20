@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
 import { SkillShape } from 'src/SkillModule/skillShape.entity';
+import { Employee } from 'src/EmployeeModule/employee.entity';
 
 @Injectable()
 export class CompanyService {
@@ -14,6 +15,9 @@ export class CompanyService {
 
         @InjectRepository(SkillShape)
         private skillShapeRepository: Repository<SkillShape>,
+
+        @InjectRepository(Employee)
+        private employeeRepository: Repository<Employee>,
 
         private employeeService: EmployeeService
     ) {}
@@ -35,6 +39,24 @@ export class CompanyService {
         }
 
         return employee
+    }
+
+    async getCompanyInfo(companyId: number): Promise<Company> {
+        const company = await this.companyRepository.findOne({
+            where: {
+                company_id: companyId
+            },
+            relations: {
+                employees: true,
+                skills: true
+            }
+        })
+
+        if (!company) {
+            throw new Error("Такой компании не существует!")
+        }
+
+        return company
     }
 
     async getEmployees(company_id: number): Promise<employeePayloadDto[]> {
@@ -75,32 +97,14 @@ export class CompanyService {
         const company = new Company({
             company_name: company_name
         })
-        const employee = await this.employeeService.getEmployee(employee_id)
-        company.addEmployee(employee)
 
         const companyData = await this.companyRepository.save(company)
 
+        const employee = await this.employeeService.getEmployee(employee_id)
+        employee.company = companyData
+
+        const employeeData = await this.employeeRepository.save(employee)
+
         return companyData
-    }
-
-    async createSkill(skillName: string, skillDesc: string, companyId: number): Promise<SkillShape> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: companyId
-            }
-        })
-        if (!company) {
-            throw new Error("Компания не найдена")
-        }
-        const skill = new SkillShape({
-            skill_name: skillName,
-            skill_desc: skillDesc
-        })
-
-        company.addSkill(skill)
-
-        await this.companyRepository.save(company)
-
-        return skill
     }
 }

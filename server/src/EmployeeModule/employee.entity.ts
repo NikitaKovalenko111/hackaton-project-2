@@ -25,7 +25,7 @@ export class Employee {
     @Column()
     employee_password: string;
 
-    @OneToMany(() => Skill, skill => skill.employee_id, {
+    @OneToMany(() => Skill, skill => skill.employee, {
         cascade: true
     })
     skills: Skill[]
@@ -38,12 +38,5 @@ export class Employee {
 
     constructor(item: Partial<Employee>) {
         Object.assign(this, item)
-    }
-
-    addSkill(skill: Skill) {
-        if (this.skills == null) {
-            this.skills = Array<Skill>()
-        }
-        this.skills.push(skill)
     }
 }

@@ -21,6 +21,9 @@ export class EmployeeService {
         const employee = await this.employeeRepository.findOne({
             where: {
                 employee_id: employeeId
+            },
+            relations: {
+                skills: true
             }
         })
 
@@ -196,13 +199,5 @@ export class EmployeeService {
             ...tokens,
             payload: employeePayload
         }
-    }
-
-    async saveSkill(skill: Skill, employee: Employee): Promise<Employee> {
-        employee.addSkill(skill)
-
-        const employeeData = await this.employeeRepository.save(employee)
-
-        return employeeData
     }
 }

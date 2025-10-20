@@ -9,11 +9,11 @@ export class Skill {
 
     @ManyToOne(() => SkillShape, skillShape => skillShape.skills)
     @JoinColumn({ name: "skill_shape_id" })
-    skill_shape_id: SkillShape
+    skill_shape: SkillShape
 
     @ManyToOne(() => Employee, employee => employee.skills)
     @JoinColumn({ name: "employee_id" })
-    employee_id: Employee
+    employee: Employee
 
     constructor(item: Partial<Skill>) {
         Object.assign(this, item)
