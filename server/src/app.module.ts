@@ -11,6 +11,8 @@ import { Employee } from './EmployeeModule/employee.entity';
 import { Interview } from './InterviewModule/interview.entity';
 import { Employee_token } from './EmployeeModule/token.entity';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { Skill } from './SkillModule/skill.entity';
+import { SkillShape } from './SkillModule/skillShape.entity';
 
 @Module({
   imports: [
@@ -25,8 +27,8 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Company, Employee, Interview, Employee_token],
-      synchronize: false,
+      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape],
+      synchronize: true
     }),
   ],
   controllers: [AppController],
@@ -36,6 +38,15 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes('employee/photo', 'employee/status')
+      .forRoutes(
+        'employee/photo', 
+        'employee/status', 
+        'company/:id/employees', 
+        'company/create', 
+        'company/skill/create', 
+        'company/:id/skills', 
+        'company/skill/give',
+        'company/:id/info'
+      )
   }
 }
