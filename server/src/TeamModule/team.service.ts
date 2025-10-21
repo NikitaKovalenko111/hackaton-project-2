@@ -26,6 +26,7 @@ export class TeamService {
         const team = new Team({
             team_name: teamName,
             team_desc: teamDesc ? teamDesc : undefined,
+            teamlead: teamlead,
             company: company
         })
 
