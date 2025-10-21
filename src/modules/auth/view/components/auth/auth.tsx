@@ -21,8 +21,8 @@ const variantStyleSignup: { [key in AuthMode]: string } = {
 }
 
 const variantStyleCard: { [key in AuthMode]: string } = {
-    login: 'min-h-[350px]',
-    signup: 'min-h-[500px]'
+    login: 'min-h-[395px]',
+    signup: 'min-h-[580px]'
 }
 
 export const AuthForm = () => {
@@ -35,7 +35,7 @@ export const AuthForm = () => {
 
     return (
         <Card className={clsx(
-            "w-full max-w-sm relative overflow-hidden transition-all ease-in-out duration-300",
+            "w-full max-w-sm relative overflow-hidden transition-all ease-in-out duration-300 animate-appear",
             variantStyleCard[mode]
         )}>
             <div className={clsx(
