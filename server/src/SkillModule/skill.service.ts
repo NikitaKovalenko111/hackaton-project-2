@@ -18,8 +18,6 @@ export class SkillService {
 
         @InjectRepository(Company)
         private companyRepository: Repository<Company>,
-    
-        private employeeService: EmployeeService
     ) {}
 
     async createSkill(skillName: string, skillDesc: string, companyId: number): Promise<SkillShape> {

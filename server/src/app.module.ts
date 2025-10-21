@@ -13,12 +13,19 @@ import { Employee_token } from './EmployeeModule/token.entity';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { Skill } from './SkillModule/skill.entity';
 import { SkillShape } from './SkillModule/skillShape.entity';
+import { RequestGateway } from './gateway/request.gateway';
+import { Role } from './EmployeeModule/role.entity';
+import { Team } from './TeamModule/team.entity';
+import { TeamModule } from './TeamModule/team.module';
+import { SkillModule } from './SkillModule/skill.module';
 
 @Module({
   imports: [
     CompanyModule,
     EmployeeModule,
     InterviewModule,
+    TeamModule,
+    SkillModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -27,12 +34,12 @@ import { SkillShape } from './SkillModule/skillShape.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape],
+      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape, Team, Role],
       synchronize: true
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, RequestGateway],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
@@ -46,7 +53,10 @@ export class AppModule implements NestModule {
         'company/skill/create', 
         'company/:id/skills', 
         'company/skill/give',
-        'company/:id/info'
+        'company/:id/info',
+        'company/employee/add',
+        'team/add',
+        'team/add/employee'
       )
   }
 }

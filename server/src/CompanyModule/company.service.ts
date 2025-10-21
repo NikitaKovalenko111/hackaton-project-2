@@ -6,6 +6,8 @@ import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
 import { SkillShape } from 'src/SkillModule/skillShape.entity';
 import { Employee } from 'src/EmployeeModule/employee.entity';
+import { RoleType } from 'src/types';
+import { Role } from 'src/EmployeeModule/role.entity';
 
 @Injectable()
 export class CompanyService {
@@ -13,8 +15,8 @@ export class CompanyService {
         @InjectRepository(Company)
         private companyRepository: Repository<Company>,
 
-        @InjectRepository(SkillShape)
-        private skillShapeRepository: Repository<SkillShape>,
+        @InjectRepository(Role)
+        private roleRepository: Repository<Role>,
 
         @InjectRepository(Employee)
         private employeeRepository: Repository<Employee>,
@@ -22,23 +24,67 @@ export class CompanyService {
         private employeeService: EmployeeService
     ) {}
 
-    async checkEmployee(company_id: number, employeeId: number) {
+    async giveRole(companyId: number, roleName: RoleType, employeeToGiveId: number): Promise<Role> {
         const company = await this.companyRepository.findOne({
             where: {
-                company_id: company_id
-            },
+                company_id: companyId,
+            }, 
             relations: {
                 employees: true
             }
-        })  
+        })
 
-        const employee = company?.employees.find(employee => employee.employee_id == employeeId)
-
-        if (!employee) {
-            throw new Error('Сотрудник не в компании!')
+        if (!company) {
+            throw new Error('Компания не найдена')
         }
 
-        return employee
+        const employeeData = company.employees.find(employee => employee.employee_id == employeeToGiveId)
+
+        const role = new Role({
+            role_name: roleName,
+            company: company,
+            employee: employeeData
+        })
+
+        const roleData = await this.roleRepository.save(role)
+
+        return roleData
+    }
+
+    async addEmployee(companyId: number, employeeId: number, employeeRole: RoleType): Promise<Employee> {
+        const employee = await this.employeeRepository.findOne({
+            where: {
+                employee_id: employeeId
+            }
+        })
+
+        const company = await this.companyRepository.findOne({
+            where: {
+                company_id: companyId
+            }
+        })
+
+        if (!employee) {
+            throw new Error('Пользователь не найден!')
+        }
+
+        if (!company) {
+            throw new Error('Компания не найдена!')
+        }
+
+        employee.company = company
+
+        const employeeData = await this.employeeRepository.save(employee)
+
+        const role = new Role({
+            role_name: employeeRole,
+            company: company,
+            employee: employeeData
+        })
+
+        const roleData = await this.roleRepository.save(role)
+
+        return employeeData
     }
 
     async getCompanyInfo(companyId: number): Promise<Company> {
@@ -48,7 +94,9 @@ export class CompanyService {
             },
             relations: {
                 employees: true,
-                skills: true
+                skills: true,
+                teams: true,
+                roles: true
             }
         })
 
@@ -65,7 +113,10 @@ export class CompanyService {
                 company_id: company_id
             },
             relations: {
-                employees: true
+                employees: {
+                    roles: true,
+                    skills: true,
+                }
             }
         })
 
@@ -104,6 +155,14 @@ export class CompanyService {
         employee.company = companyData
 
         const employeeData = await this.employeeRepository.save(employee)
+
+        const role = new Role({
+            employee: employeeData,
+            role_name: "admin",
+            company: companyData
+        })
+
+        const roleData = await this.roleRepository.save(role)
 
         return companyData
     }

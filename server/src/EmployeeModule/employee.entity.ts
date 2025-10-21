@@ -1,6 +1,8 @@
 import { Company } from 'src/CompanyModule/company.entity';
 import { Skill } from 'src/SkillModule/skill.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Role } from './role.entity';
+import { Team } from 'src/TeamModule/team.entity';
 
 @Entity()
 export class Employee {
@@ -25,6 +27,11 @@ export class Employee {
     @Column()
     employee_password: string;
 
+    @OneToMany(() => Role, role => role.employee, {
+        cascade: true
+    })
+    roles: Role[]
+
     @OneToMany(() => Skill, skill => skill.employee, {
         cascade: true
     })
@@ -35,6 +42,12 @@ export class Employee {
     })
     @JoinColumn({ name: "company_id" })
     company: Company;
+
+    @ManyToOne(() => Team, team => team.employees, {
+        nullable: true
+    })
+    @JoinColumn({ name: 'team_id' })
+    team: Team
 
     constructor(item: Partial<Employee>) {
         Object.assign(this, item)

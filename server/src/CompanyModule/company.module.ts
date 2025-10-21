@@ -10,10 +10,11 @@ import { Employee_token } from 'src/EmployeeModule/token.entity';
 import { Skill } from 'src/SkillModule/skill.entity';
 import { SkillShape } from 'src/SkillModule/skillShape.entity';
 import { SkillService } from 'src/SkillModule/skill.service';
+import { Role } from 'src/EmployeeModule/role.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Company, Employee, Employee_token, Skill, SkillShape]),
+        TypeOrmModule.forFeature([Company, Employee, Employee_token, Skill, SkillShape, Role]),
     ],
     controllers: [CompanyController],
     providers: [CompanyService, EmployeeService, TokenService, SkillService],
