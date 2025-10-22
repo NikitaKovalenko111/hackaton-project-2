@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { authEmployeeBodyDto, registerEmployeeBodyDto, registerEmployeeReturnDto } from './employee.controller';
+import { authEmployeeBodyDto, authEmployeeTgBodyDto, registerEmployeeBodyDto, registerEmployeeReturnDto } from './employee.controller';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from './employee.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
 import { TokenService } from './token.service';
-import { Company } from 'src/CompanyModule/company.entity';
-import { Skill } from 'src/SkillModule/skill.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -104,7 +102,11 @@ export class EmployeeService {
             employee_surname: employeeCurrent.employee_surname,
             employee_photo: employeeCurrent.employee_photo,
             employee_status: employeeCurrent.employee_status,
-            employee_email: employeeCurrent.employee_email
+            employee_email: employeeCurrent.employee_email,
+            company: employeeCurrent.company,
+            team: employeeCurrent.team,
+            employeeRoles: employeeCurrent.roles,
+            employeeSkills: employeeCurrent.skills
         }
 
         const tokens = this.tokenService.generateTokens(employeeData)
@@ -142,7 +144,11 @@ export class EmployeeService {
             employee_surname: employee.employee_surname,
             employee_photo: employee.employee_photo,
             employee_status: employee.employee_status,
-            employee_email: employee.employee_email
+            employee_email: employee.employee_email,
+            company: employee.company,
+            team: employee.team,
+            employeeRoles: employee.roles,
+            employeeSkills: employee.skills
         }
 
         const tokens = this.tokenService.generateTokens(employeeData)
@@ -153,6 +159,43 @@ export class EmployeeService {
                 ...employeeData
             }
         }
+    }
+
+    async authorizationTg(data: authEmployeeTgBodyDto) {
+        const employee = await this.employeeRepository.findOne({
+            where: {
+                employee_email: data.employee_email
+            }
+        })
+
+        if (!employee) {
+            throw new Error('Пользователя с таким email не существует!')
+        }
+
+        const isPassCorrect = bcrypt.compare(data.employee_password, employee.employee_password)
+
+        if (!isPassCorrect) {
+            throw new Error('Неверный пароль')
+        }
+
+        employee.telegram_id = data.tg_id
+
+        const employeeData = await this.employeeRepository.save(employee)
+
+        const employeeDataI = {
+            employee_id: employeeData.employee_id,
+            employee_name: employeeData.employee_name,
+            employee_surname: employeeData.employee_surname,
+            employee_photo: employeeData.employee_photo,
+            employee_status: employeeData.employee_status,
+            employee_email: employeeData.employee_email,
+            company: employeeData.company,
+            team: employeeData.team,
+            employeeRoles: employeeData.roles,
+            employeeSkills: employeeData.skills
+        }
+
+        return employeeDataI
     }
 
     async logout(refreshToken: string): Promise<string> {
@@ -190,7 +233,11 @@ export class EmployeeService {
             employee_surname: employee.employee_surname,
             employee_photo: employee.employee_photo,
             employee_status: employee.employee_status,
-            employee_email: employee.employee_email
+            employee_email: employee.employee_email,
+            company: employee.company,
+            team: employee.team,
+            employeeRoles: employee.roles,
+            employeeSkills: employee.skills
         }
 
         const tokens = await this.tokenService.generateTokens(employeePayload)

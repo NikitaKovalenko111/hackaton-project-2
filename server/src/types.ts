@@ -1,0 +1,1 @@
+export type RoleType = 'hr' | 'developer' | 'teamlead' | 'techlead' | 'admin' | 'moderator'
