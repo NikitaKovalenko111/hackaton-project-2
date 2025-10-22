@@ -18,6 +18,7 @@ import { Role } from './EmployeeModule/role.entity';
 import { Team } from './TeamModule/team.entity';
 import { TeamModule } from './TeamModule/team.module';
 import { SkillModule } from './SkillModule/skill.module';
+import { RequestGatewayModule } from './gateway/requestGateway.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SkillModule } from './SkillModule/skill.module';
     InterviewModule,
     TeamModule,
     SkillModule,
+    RequestGatewayModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',

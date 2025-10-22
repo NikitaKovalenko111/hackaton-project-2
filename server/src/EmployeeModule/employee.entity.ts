@@ -27,6 +27,12 @@ export class Employee {
     @Column()
     employee_password: string;
 
+    @Column({
+        nullable: true,
+        default: null
+    })
+    telegram_id: number
+
     @OneToMany(() => Role, role => role.employee, {
         cascade: true
     })

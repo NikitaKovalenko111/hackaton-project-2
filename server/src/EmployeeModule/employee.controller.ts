@@ -2,6 +2,10 @@ import { Body, Controller, Get, HttpException, HttpStatus, Patch, Post, Req, Res
 import { EmployeeService } from './employee.service';
 import type { Request, Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Skill } from 'src/SkillModule/skill.entity';
+import { Role } from './role.entity';
+import { Company } from 'src/CompanyModule/company.entity';
+import { Team } from 'src/TeamModule/team.entity';
 
 export interface registerEmployeeBodyDto {
     employee_name: string
@@ -17,11 +21,21 @@ export interface employeePayloadDto {
     employee_email: string
     employee_status: string
     employee_photo: string
+    employeeSkills?: Skill[]
+    employeeRoles?: Role[]
+    company?: Company
+    team?: Team
 }
 
 export interface authEmployeeBodyDto {
     employee_email: string
     employee_password: string
+}
+
+export interface authEmployeeTgBodyDto {
+    employee_email: string
+    employee_password: string
+    tg_id: number
 }
 
 export interface registerEmployeeReturnDto {
@@ -82,6 +96,17 @@ export class EmployeeController {
                 maxAge: 30 * 24 * 60 * 60 * 1000,
                 httpOnly: true
             })
+
+            return data
+        } catch (error) {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @Post('/authorization/telegram')
+    async authorizeEmployeeTg(@Body() authEmployeeTgBody: authEmployeeTgBodyDto, @Res({ passthrough: true }) response: Response): Promise<employeePayloadDto> {
+        try {
+            const data = await this.employeeService.authorizationTg(authEmployeeTgBody)
 
             return data
         } catch (error) {
