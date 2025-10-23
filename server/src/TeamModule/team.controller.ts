@@ -21,6 +21,15 @@ export class TeamController {
         private readonly teamService: TeamService,
     ) { }
 
+    @Get('/info')
+    async getTeamInfo(@Req() req: Request): Promise<Team> {
+        const employee = (req as any).employee
+
+        const team = await this.teamService.getTeam(employee.team.team_id)
+
+        return team
+    }
+
     @Post('/add')
     async addTeam(@Body() addTeamBody: addTeamBodyDto, @Req() req: Request): Promise<Team> {
         const employeeId = (req as any).employee.employee_id

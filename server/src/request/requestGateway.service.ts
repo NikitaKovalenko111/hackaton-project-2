@@ -3,12 +3,18 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Socket } from "./socket.entity";
 import { Repository } from "typeorm";
 import { EmployeeService } from "src/EmployeeModule/employee.service";
+import { requestType } from "src/types";
+import { Request } from "./request.entity";
+import { Employee } from "src/EmployeeModule/employee.entity";
 
 @Injectable()
 export class RequestGatewayService {
     constructor(
         @InjectRepository(Socket)
         private socketRepository: Repository<Socket>,
+
+        @InjectRepository(Request)
+        private requestRepository: Repository<Request>,
 
         private employeeService: EmployeeService
     ) {}
@@ -30,9 +36,9 @@ export class RequestGatewayService {
         return socketData
     }
 
-    async removeSocket(socketId: number): Promise<string> {
+    async removeSocket(socketId: string): Promise<string> {
         const socket = await this.socketRepository.delete({
-            socket_id: socketId
+            client_id: socketId
         })
 
         if (socket.affected && socket.affected > 0) {
@@ -40,5 +46,35 @@ export class RequestGatewayService {
         } else {
             throw new Error('Сокет не найден или не удален!')
         }
+    }
+
+    async getSocketByEmployeeId(employee: Employee): Promise<Socket | null> {
+        const socket = await this.socketRepository.findOne({
+            where: {
+                employee: employee
+            }
+        })
+
+        if (!socket) {
+            return null
+        }
+
+        return socket
+    }
+
+    async sendRequest(requestType: requestType, employeeId: number): Promise<Request> {
+        const employee = await this.employeeService.getEmployee(employeeId)
+
+        const request = new Request({
+            request_type: requestType,
+            request_owner: employee,
+            request_status: 'pending',
+            request_receiver: employee.team.teamlead,
+            request_role_receiver: 'teamlead',
+        })
+
+        const requestData = await this.requestRepository.save(request)
+
+        return requestData
     }
 }

@@ -46,29 +46,29 @@ export class CompanyController {
         private readonly skillService : SkillService
     ) { }
 
-    @Get('/:id/info')
-    async getCompanyInfo(@Param('id') companyId: number, @Req() req: Request): Promise<Company> {
-        const employeeId = (req as any).employee.employee_id
+    @Get('/info')
+    async getCompanyInfo(@Req() req: Request): Promise<Company> {
+        const employee = (req as any).employee
 
-        const company = await this.companyService.getCompanyInfo(companyId)
+        const company = await this.companyService.getCompanyInfo(employee.company.company_id)
 
         return company
     }
 
-    @Get('/:id/employees')
-    async getEmployees(@Param('id') companyId: number, @Req() req: Request): Promise<employeePayloadDto[]> {
-        const employeeId = (req as any).employee.employee_id
+    @Get('/employees')
+    async getEmployees(@Req() req: Request): Promise<employeePayloadDto[]> {
+        const employee = (req as any).employee
 
-        const employees = await this.companyService.getEmployees(companyId)
+        const employees = await this.companyService.getEmployees(employee.company.company_id)
 
         return employees
     }
 
-    @Get('/:id/skills')
-    async getCompanySkills(@Param('id') companyId: number, @Req() req: Request): Promise<SkillShape[]> {
-        const employeeId = (req as any).employee.employee_id
+    @Get('/skills')
+    async getCompanySkills(@Req() req: Request): Promise<SkillShape[]> {
+        const employee = (req as any).employee
 
-        const skills = await this.companyService.getSkills(companyId)
+        const skills = await this.companyService.getSkills(employee.company.company_id)
 
         return skills
     }

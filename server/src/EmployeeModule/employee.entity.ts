@@ -3,6 +3,7 @@ import { Skill } from 'src/SkillModule/skill.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Role } from './role.entity';
 import { Team } from 'src/TeamModule/team.entity';
+import { Request } from 'src/request/request.entity';
 
 @Entity()
 export class Employee {
@@ -54,6 +55,16 @@ export class Employee {
     })
     @JoinColumn({ name: 'team_id' })
     team: Team
+
+    @OneToMany(() => Request, request => request.request_owner, {
+        cascade: true
+    })
+    sendedRequests: Request[]
+
+    @OneToMany(() => Request, request => request.request_receiver, {
+        cascade: true
+    })
+    receivedRequests: Request[]
 
     constructor(item: Partial<Employee>) {
         Object.assign(this, item)

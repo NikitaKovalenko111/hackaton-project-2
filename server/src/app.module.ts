@@ -51,16 +51,18 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         'employee/photo', 
-        'employee/status', 
-        'company/:id/employees', 
+        'employee/status',
+        'employee/profile',
+        'company/employees', 
         'company/create', 
         'company/skill/create', 
-        'company/:id/skills', 
+        'company/skills', 
         'company/skill/give',
-        'company/:id/info',
+        'company/info',
         'company/employee/add',
         'team/add',
-        'team/add/employee'
+        'team/add/employee',
+        'team/info'
       )
   }
 }

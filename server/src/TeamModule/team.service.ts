@@ -55,4 +55,23 @@ export class TeamService {
 
         return employeeData
     }
+
+    async getTeam(teamId: number): Promise<Team> {
+        const team = await this.teamRepository.findOne({
+            where: {
+                team_id: teamId
+            },
+            relations: {
+                teamlead: true,
+                employees: true,
+                company: true
+            }
+        })
+
+        if (!team) {
+            throw new Error('Команда не найдена!')
+        }
+
+        return team
+    }
 }

@@ -1,6 +1,6 @@
 import { Employee } from 'src/EmployeeModule/employee.entity';
 import type { requestStatus, requestType, RoleType } from 'src/types';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Request {
@@ -13,21 +13,19 @@ export class Request {
     @Column({ default: 'pending' })
     request_status: requestStatus
 
-    @Column()
+    @CreateDateColumn()
     request_date: Date
 
-    @OneToOne(() => Employee, {
-        nullable: true
-    })
-    @JoinColumn({ name: "request_receiver" })
-    request_receiver: Employee | null
+    @ManyToOne(() => Employee, employee => employee.receivedRequests)
+    @JoinColumn({ name: "request_receiver_id" })
+    request_receiver: Employee
 
     @Column({
         nullable: true
     })
     request_role_receiver: RoleType
 
-    @OneToOne(() => Employee)
+    @ManyToOne(() => Employee, employee => employee.sendedRequests)
     @JoinColumn({ name: "request_owner_id" })
     request_owner: Employee
 

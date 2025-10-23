@@ -6,6 +6,7 @@ import { Skill } from 'src/SkillModule/skill.entity';
 import { Role } from './role.entity';
 import { Company } from 'src/CompanyModule/company.entity';
 import { Team } from 'src/TeamModule/team.entity';
+import { Employee } from './employee.entity';
 
 export interface registerEmployeeBodyDto {
     employee_name: string
@@ -145,5 +146,14 @@ export class EmployeeController {
         } catch (error) {
             throw new HttpException(error, HttpStatus.BAD_REQUEST)
         }
+    }
+
+    @Get('/profile')
+    async getProfile(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<Employee> {
+        const employeeId = (request as any).employee.employee_id
+
+        const profile = await this.employeeService.getEmployee(employeeId)
+
+        return profile
     }
 }
