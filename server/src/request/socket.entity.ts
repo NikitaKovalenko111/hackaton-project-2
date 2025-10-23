@@ -6,7 +6,9 @@ export class Socket {
     @PrimaryGeneratedColumn()
     socket_id: number
 
-    @Column()
+    @Column({
+        unique: true
+    })
     client_id: string
 
     @OneToOne(() => Employee)

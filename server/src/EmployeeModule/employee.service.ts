@@ -21,7 +21,14 @@ export class EmployeeService {
                 employee_id: employeeId
             },
             relations: {
-                skills: true
+                skills: {
+                    skill_shape: true
+                },
+                team: {
+                    teamlead: true,
+                },
+                company: true,
+                roles: true,
             }
         })
 

@@ -115,7 +115,10 @@ export class CompanyService {
             relations: {
                 employees: {
                     roles: true,
-                    skills: true,
+                    skills: {
+                        skill_shape: true
+                    },
+                    team: true
                 }
             }
         })
