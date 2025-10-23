@@ -125,6 +125,12 @@ export class EmployeeService {
         const employee = await this.employeeRepository.findOne({
             where: {
                 employee_email: data.employee_email
+            },
+            relations: {
+                skills: true,
+                team: true,
+                company: true,
+                roles: true,
             }
         })
 
@@ -149,7 +155,7 @@ export class EmployeeService {
             team: employee.team,
             employeeRoles: employee.roles,
             employeeSkills: employee.skills
-        }
+        }  
 
         const tokens = this.tokenService.generateTokens(employeeData)
 
@@ -165,6 +171,12 @@ export class EmployeeService {
         const employee = await this.employeeRepository.findOne({
             where: {
                 employee_email: data.employee_email
+            },
+            relations: {
+                skills: true,
+                team: true,
+                company: true,
+                roles: true,
             }
         })
 
@@ -220,6 +232,12 @@ export class EmployeeService {
         const employee = await this.employeeRepository.findOne({
             where: {
                 employee_id: (employeeData as any).employee_id
+            },
+            relations: {
+                skills: true,
+                team: true,
+                company: true,
+                roles: true,
             }
         })
 
