@@ -13,12 +13,14 @@ import { Employee_token } from './EmployeeModule/token.entity';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { Skill } from './SkillModule/skill.entity';
 import { SkillShape } from './SkillModule/skillShape.entity';
-import { RequestGateway } from './gateway/request.gateway';
+import { RequestGateway } from './request/request.gateway';
 import { Role } from './EmployeeModule/role.entity';
 import { Team } from './TeamModule/team.entity';
 import { TeamModule } from './TeamModule/team.module';
 import { SkillModule } from './SkillModule/skill.module';
-import { RequestGatewayModule } from './gateway/requestGateway.module';
+import { RequestGatewayModule } from './request/requestGateway.module';
+import { Request } from './request/request.entity';
+import { Socket } from './request/socket.entity';
 
 @Module({
   imports: [
@@ -36,12 +38,12 @@ import { RequestGatewayModule } from './gateway/requestGateway.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape, Team, Role],
+      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape, Team, Role, Request, Socket],
       synchronize: true
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, RequestGateway],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
