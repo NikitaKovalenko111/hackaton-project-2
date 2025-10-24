@@ -13,14 +13,13 @@ import { Employee_token } from './EmployeeModule/token.entity';
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { Skill } from './SkillModule/skill.entity';
 import { SkillShape } from './SkillModule/skillShape.entity';
-import { RequestGateway } from './request/request.gateway';
 import { Role } from './EmployeeModule/role.entity';
 import { Team } from './TeamModule/team.entity';
 import { TeamModule } from './TeamModule/team.module';
 import { SkillModule } from './SkillModule/skill.module';
-import { RequestGatewayModule } from './request/requestGateway.module';
-import { Request } from './request/request.entity';
-import { Socket } from './request/socket.entity';
+import { SocketGatewayModule } from './socket/socket.module';
+import { Request } from './socket/request.entity';
+import { Socket } from './socket/socket.entity';
 
 @Module({
   imports: [
@@ -29,7 +28,7 @@ import { Socket } from './request/socket.entity';
     InterviewModule,
     TeamModule,
     SkillModule,
-    RequestGatewayModule,
+    SocketGatewayModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -62,7 +61,9 @@ export class AppModule implements NestModule {
         'company/employee/add',
         'team/add',
         'team/add/employee',
-        'team/info'
+        'team/info',
+        'interview/add',
+        'interview/finish'
       )
   }
 }

@@ -3,7 +3,8 @@ import { Skill } from 'src/SkillModule/skill.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Role } from './role.entity';
 import { Team } from 'src/TeamModule/team.entity';
-import { Request } from 'src/request/request.entity';
+import { Request } from 'src/socket/request.entity';
+import { Interview } from 'src/InterviewModule/interview.entity';
 
 @Entity()
 export class Employee {
@@ -30,7 +31,8 @@ export class Employee {
 
     @Column({
         nullable: true,
-        default: null
+        default: null,
+        type: 'bigint'
     })
     telegram_id: number
 
@@ -65,6 +67,16 @@ export class Employee {
         cascade: true
     })
     receivedRequests: Request[]
+
+    @OneToMany(() => Interview, interview => interview.interview_owner, {
+        cascade: true
+    })
+    createdInterviews: Interview[]
+
+    @OneToMany(() => Interview, interview => interview.interview_subject, {
+        cascade: true
+    })
+    plannedInterviews: Interview[]
 
     constructor(item: Partial<Employee>) {
         Object.assign(this, item)

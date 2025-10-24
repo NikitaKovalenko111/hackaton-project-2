@@ -8,7 +8,7 @@ import { Request } from "./request.entity";
 import { Employee } from "src/EmployeeModule/employee.entity";
 
 @Injectable()
-export class RequestGatewayService {
+export class RequestService {
     constructor(
         @InjectRepository(Socket)
         private socketRepository: Repository<Socket>,
@@ -76,5 +76,48 @@ export class RequestGatewayService {
         const requestData = await this.requestRepository.save(request)
 
         return requestData
+    }
+
+    async cancelRequest(requestId: number): Promise<Request> {
+        const request = await this.requestRepository.findOne({
+            where: {
+                request_id: requestId
+            },
+            relations: {
+                request_owner: true,
+                request_receiver: true
+            }
+        })
+
+        if (!request) {
+            throw new Error('Запрос не найден!')
+        }
+
+        request.request_status = 'canceled'
+
+        const requestData = await this.requestRepository.save(request)
+
+        return request
+    }
+
+    async completeRequest(requestId: number): Promise<Request> {
+        const request = await this.requestRepository.findOne({
+            where: {
+                request_id: requestId
+            },
+            relations: {
+                request_owner: true
+            }
+        })
+
+        if (!request) {
+            throw new Error('Запрос не найден!')
+        }
+
+        request.request_status = 'completed'
+
+        const requestData = await this.requestRepository.save(request)
+
+        return request
     }
 }

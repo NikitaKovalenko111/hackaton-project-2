@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { Skill } from './skill.entity';
 import { Company } from 'src/CompanyModule/company.entity';
+import { skillLevel } from 'src/types';
 
 @Injectable()
 export class SkillService {
@@ -40,7 +41,7 @@ export class SkillService {
         return skill
     }
 
-    async giveSkill(employee: Employee, skillShapeId: number) {
+    async giveSkill(employee: Employee, skillShapeId: number, skillLevel: skillLevel) {
         const skillShape = await this.skillShapeRepository.findOne({
             where: {
                 skill_shape_id: skillShapeId
@@ -53,11 +54,38 @@ export class SkillService {
 
         const skill = new Skill({
             employee: employee,
-            skill_shape: skillShape
+            skill_shape: skillShape,
+            skill_level: skillLevel
         })
 
         const skillData = await this.skillRepository.save(skill)
 
         return skillData
+    }
+
+    async updateSkillLevel(skillId: number, skillLevel: skillLevel): Promise<Skill> {
+        const skill = await this.skillRepository.findOne({
+            where: {
+                skill_connection_id: skillId
+            }
+        })
+
+        if (!skill) {
+            throw new Error('Компетенция не найдена!')
+        }
+
+        skill.skill_level = skillLevel
+
+        const skillData = await this.skillRepository.save(skill)
+
+        return skillData
+    }
+
+    async deleteSkill(skillId: number): Promise<Skill> {
+        const skill = await this.skillRepository.delete({
+            skill_connection_id: skillId
+        })
+
+        return skill.raw
     }
 }

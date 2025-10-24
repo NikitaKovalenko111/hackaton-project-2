@@ -98,6 +98,8 @@ export class EmployeeController {
                 httpOnly: true
             })
 
+            response.statusCode = 200
+
             return data
         } catch (error) {
             throw new HttpException(error, HttpStatus.BAD_REQUEST)

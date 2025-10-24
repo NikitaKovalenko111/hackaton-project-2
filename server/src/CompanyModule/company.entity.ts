@@ -3,6 +3,7 @@ import { Role } from 'src/EmployeeModule/role.entity';
 import { SkillShape } from 'src/SkillModule/skillShape.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Team } from './../TeamModule/team.entity';
+import { Interview } from 'src/InterviewModule/interview.entity';
 
 @Entity()
 export class Company {
@@ -34,6 +35,11 @@ export class Company {
         cascade: true
     })
     teams: Team[]
+
+    @OneToMany(type => Interview, interview => interview.company, {
+        cascade: true
+    })
+    interviews: Interview[]
 
     constructor(item: Partial<Company>) {
         Object.assign(this, item)

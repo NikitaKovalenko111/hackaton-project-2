@@ -1,3 +1,6 @@
 export type RoleType = 'hr' | 'developer' | 'teamlead' | 'techlead' | 'admin' | 'moderator'
 export type requestType = 'upgrade'
-export type requestStatus = 'pending' | 'completed'
+export type requestStatus = 'pending' | 'completed' | 'canceled'
+export type interviewType = 'tech' | 'soft' | 'hr' | 'case'
+export type interviewStatusType = 'planned' | 'completed' | 'canceled'
+export type skillLevel = 'junior' | 'junior+' | 'middle' | 'middle+' | 'senior'
