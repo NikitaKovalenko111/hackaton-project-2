@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { Company } from './company.entity';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
@@ -7,7 +7,7 @@ import { Skill } from 'src/SkillModule/skill.entity';
 import { SkillService } from 'src/SkillModule/skill.service';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { Employee } from 'src/EmployeeModule/employee.entity';
-import { RoleType } from 'src/types';
+import { RoleType, skillLevel } from 'src/types';
 import { Role } from 'src/EmployeeModule/role.entity';
 
 interface createCompanyBodyDto {
@@ -30,6 +30,7 @@ interface giveSkillBodyDto {
     skill_shape_id: number
     company_id: number
     employee_to_give_id: number
+    skill_level: skillLevel
 }
 
 interface giveRoleBodyDto {
@@ -124,10 +125,10 @@ export class CompanyController {
     @Post('/skill/give')
     async giveSkillToEmployee(@Body() giveSkillBody: giveSkillBodyDto, @Req() req: Request): Promise<Skill> {
         const employeeId = (req as any).employee.employee_id
-        const { skill_shape_id, company_id, employee_to_give_id } = giveSkillBody
+        const { skill_shape_id, company_id, employee_to_give_id, skill_level } = giveSkillBody
         const employeeToGive = await this.employeeService.getEmployee(employee_to_give_id)
 
-        const skill = await this.skillService.giveSkill(employeeToGive, skill_shape_id)
+        const skill = await this.skillService.giveSkill(employeeToGive, skill_shape_id, skill_level)
 
         return skill
     }

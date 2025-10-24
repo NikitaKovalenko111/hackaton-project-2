@@ -29,11 +29,29 @@ export class EmployeeService {
                 },
                 company: true,
                 roles: true,
+                plannedInterviews: true,
+                receivedRequests: true,
+                sendedRequests: true,
+                createdInterviews: true
             }
         })
 
         if (!employee) {
             throw new Error("Пользователь не найден")
+        }
+
+        return employee
+    }
+
+    async getCleanEmployee(employeeId: number): Promise<Employee> {
+        const employee = await this.employeeRepository.findOne({
+            where: {
+                employee_id: employeeId
+            }
+        })
+
+        if (!employee) {
+            throw new Error('Сотрудник не найден!')
         }
 
         return employee
@@ -178,12 +196,6 @@ export class EmployeeService {
         const employee = await this.employeeRepository.findOne({
             where: {
                 employee_email: data.employee_email
-            },
-            relations: {
-                skills: true,
-                team: true,
-                company: true,
-                roles: true,
             }
         })
 
@@ -195,26 +207,16 @@ export class EmployeeService {
 
         if (!isPassCorrect) {
             throw new Error('Неверный пароль')
-        }
+        }     
 
         employee.telegram_id = data.tg_id
 
         const employeeData = await this.employeeRepository.save(employee)
 
-        const employeeDataI = {
-            employee_id: employeeData.employee_id,
-            employee_name: employeeData.employee_name,
-            employee_surname: employeeData.employee_surname,
-            employee_photo: employeeData.employee_photo,
-            employee_status: employeeData.employee_status,
-            employee_email: employeeData.employee_email,
-            company: employeeData.company,
-            team: employeeData.team,
-            employeeRoles: employeeData.roles,
-            employeeSkills: employeeData.skills
-        }
+        console.log(employeeData);
+        
 
-        return employeeDataI
+        return employeeData
     }
 
     async logout(refreshToken: string): Promise<string> {
