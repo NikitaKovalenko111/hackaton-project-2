@@ -136,4 +136,25 @@ export class SkillService {
             throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
     }
+
+    async getSkillShapeById(skillShapeId: number): Promise<SkillShape> {
+        try {
+            const skillShape = await this.skillShapeRepository.findOne({
+                where: {
+                    skill_shape_id: skillShapeId
+                },
+                relations: {
+                    skills: true
+                }
+            })
+    
+            if (!skillShape) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Компетенция не найдена!')
+            }
+    
+            return skillShape
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
+    }
 }

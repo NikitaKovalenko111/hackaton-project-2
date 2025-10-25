@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, HttpException, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, Patch } from '@nestjs/common';
 import { SkillService } from './skill.service';
 import { Skill } from './skill.entity';
 import { skillLevel } from 'src/types';
+import { SkillShape } from './skillShape.entity';
 
 interface updateSkillLevelBodyDto {
     skill_connection_id: number
@@ -31,6 +32,17 @@ export class SkillController {
             const skill = await this.skillService.deleteSkill(skillId)
     
             return skill
+        } catch (error) {
+            throw new HttpException(error.message, error.status)
+        }
+    }
+
+    @Get('/skillShape/:id')
+    async getSkillShapeById(@Param('id') skillShapeId: number): Promise<SkillShape> {
+        try {
+            const skillShape = await this.skillService.getSkillShapeById(skillShapeId)
+
+            return skillShape
         } catch (error) {
             throw new HttpException(error.message, error.status)
         }

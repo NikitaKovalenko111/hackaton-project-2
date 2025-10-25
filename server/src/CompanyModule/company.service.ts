@@ -192,7 +192,11 @@ export class CompanyService {
                     company_id: companyId
                 },
                 relations: {
-                    skills: true
+                    skills: {
+                        skills: {
+                            skill_shape: true
+                        }
+                    }
                 }
             })
     

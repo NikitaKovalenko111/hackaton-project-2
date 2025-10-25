@@ -24,6 +24,7 @@ import { Question } from './ReviewModule/question.entity';
 import { Answer } from './ReviewModule/answer.entity';
 import { Review } from './ReviewModule/review.entity';
 import { ReviewModule } from './ReviewModule/review.module';
+import { Statistics } from './StatisticsModule/statistics.entity';
 
 @Module({
   imports: [
@@ -42,7 +43,7 @@ import { ReviewModule } from './ReviewModule/review.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape, Team, Role, Request, Socket, Question, Answer, Review],
+      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape, Team, Role, Request, Socket, Question, Answer, Review, Statistics],
       synchronize: true
     }),
   ],
@@ -81,7 +82,8 @@ export class AppModule implements NestModule {
         'review/send/answers',
         'review/start',
         'company/skill/giveToMany',
-        'company/employee/addByEmail'
+        'company/employee/addByEmail',
+        'statistics/generate'
       )
   }
 }
