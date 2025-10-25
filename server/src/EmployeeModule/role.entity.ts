@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 import { Employee } from './employee.entity';
 import { Company } from 'src/CompanyModule/company.entity';
 import type { RoleType } from 'src/types';
@@ -11,7 +11,7 @@ export class Role {
     @Column()
     role_name: RoleType;
 
-    @ManyToOne(() => Employee, employee => employee.roles)
+    @OneToOne(() => Employee)
     @JoinColumn({ name: "employee_id" })
     employee: Employee
 

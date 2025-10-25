@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from 'src/EmployeeModule/employee.entity';
 import { SkillShape } from './skillShape.entity';
 import { Repository } from 'typeorm';
-import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { Skill } from './skill.entity';
 import { Company } from 'src/CompanyModule/company.entity';
 import { skillLevel } from 'src/types';

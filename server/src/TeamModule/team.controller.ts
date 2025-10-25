@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { TeamService } from './team.service';
 import { Team } from './team.entity';
-import { Employee } from 'src/EmployeeModule/employee.entity';
+import { employeeDto } from 'src/types';
 
 interface addTeamBodyDto {
     company_id: number
@@ -42,13 +42,15 @@ export class TeamController {
     }
 
     @Post('/add/employee')
-    async addEmployeeToTeam(@Body() addEmployeeBody: addEmployeeBodyDto, @Req() req: Request): Promise<Employee> {
+    async addEmployeeToTeam(@Body() addEmployeeBody: addEmployeeBodyDto, @Req() req: Request): Promise<employeeDto> {
         const employeeId = (req as any).employee.employee_id
 
         const { team_id, employee_to_add_id } = addEmployeeBody
 
-        const employeeData = this.teamService.addEmployeeToTeam(team_id, employee_to_add_id)
+        const employeeData = await this.teamService.addEmployeeToTeam(team_id, employee_to_add_id)
 
-        return employeeData
+        const employeeDtoData = new employeeDto(employeeData)
+
+        return employeeDtoData
     }
 }

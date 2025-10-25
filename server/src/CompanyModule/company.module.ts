@@ -3,21 +3,23 @@ import { CompanyController } from './company.controller';
 import { CompanyService } from './company.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Company } from './company.entity';
-import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { Employee } from 'src/EmployeeModule/employee.entity';
-import { TokenService } from 'src/EmployeeModule/token.service';
 import { Employee_token } from 'src/EmployeeModule/token.entity';
 import { Skill } from 'src/SkillModule/skill.entity';
 import { SkillShape } from 'src/SkillModule/skillShape.entity';
-import { SkillService } from 'src/SkillModule/skill.service';
 import { Role } from 'src/EmployeeModule/role.entity';
+import { EmployeeModule } from 'src/EmployeeModule/employee.module';
+import { SkillModule } from 'src/SkillModule/skill.module';
 
 @Module({
     imports: [
+        EmployeeModule,
+        SkillModule,
         TypeOrmModule.forFeature([Company, Employee, Employee_token, Skill, SkillShape, Role]),
     ],
     controllers: [CompanyController],
-    providers: [CompanyService, EmployeeService, TokenService, SkillService],
+    providers: [CompanyService],
+    exports: [CompanyService]
 })
 
 export class CompanyModule { }

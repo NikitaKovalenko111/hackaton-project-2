@@ -5,6 +5,7 @@ import { Employee } from './employee.entity';
 import { Repository } from 'typeorm';
 import bcrypt from 'bcrypt'
 import { TokenService } from './token.service';
+import { employeeDto } from 'src/types';
 
 @Injectable()
 export class EmployeeService {
@@ -32,7 +33,9 @@ export class EmployeeService {
                 plannedInterviews: true,
                 receivedRequests: true,
                 sendedRequests: true,
-                createdInterviews: true
+                createdInterviews: true,
+                workedWith: true,
+                beenWorkedWith: true
             }
         })
 
@@ -151,11 +154,12 @@ export class EmployeeService {
             where: {
                 employee_email: data.employee_email
             },
-            relations: {
-                skills: true,
-                team: true,
-                company: true,
-                roles: true,
+            select: {
+                employee_id: true,
+                employee_password: true,
+                employee_name: true,
+                employee_email: true,
+                employee_surname: true
             }
         })
 
@@ -169,20 +173,9 @@ export class EmployeeService {
             throw new Error('Неверный пароль')
         }
 
-        const employeeData = {
-            employee_id: employee.employee_id,
-            employee_name: employee.employee_name,
-            employee_surname: employee.employee_surname,
-            employee_photo: employee.employee_photo,
-            employee_status: employee.employee_status,
-            employee_email: employee.employee_email,
-            company: employee.company,
-            team: employee.team,
-            employeeRoles: employee.roles,
-            employeeSkills: employee.skills
-        }  
+        const tokens = this.tokenService.generateTokens(JSON.parse(JSON.stringify(employee)))
 
-        const tokens = this.tokenService.generateTokens(employeeData)
+        const employeeData = new employeeDto(employee)
 
         return {
             ...tokens,
@@ -212,9 +205,6 @@ export class EmployeeService {
         employee.telegram_id = data.tg_id
 
         const employeeData = await this.employeeRepository.save(employee)
-
-        console.log(employeeData);
-        
 
         return employeeData
     }

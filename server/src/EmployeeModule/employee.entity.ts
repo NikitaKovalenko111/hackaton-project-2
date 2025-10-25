@@ -1,10 +1,11 @@
 import { Company } from 'src/CompanyModule/company.entity';
 import { Skill } from 'src/SkillModule/skill.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Role } from './role.entity';
 import { Team } from 'src/TeamModule/team.entity';
 import { Request } from 'src/socket/request.entity';
 import { Interview } from 'src/InterviewModule/interview.entity';
+import { Answer } from 'src/ReviewModule/answer.entity';
 
 @Entity()
 export class Employee {
@@ -26,7 +27,7 @@ export class Employee {
     @Column({ default: '' })
     employee_photo: string;
 
-    @Column()
+    @Column({ select: false })
     employee_password: string;
 
     @Column({
@@ -77,6 +78,27 @@ export class Employee {
         cascade: true
     })
     plannedInterviews: Interview[]
+
+    @ManyToMany(() => Employee, employee => employee.workedWith)
+    beenWorkedWith: Employee[]
+
+    @ManyToMany(() => Employee, employee => employee.beenWorkedWith, {
+        cascade: true
+    })
+    @JoinTable({
+        joinColumn: {
+            name: "employee_id_1"
+        },
+        inverseJoinColumn: {
+            name: "employee_id_2"
+        }
+    })
+    workedWith: Employee[]
+
+    @OneToMany(() => Answer, answer => answer.employee, {
+        cascade: true
+    })
+    answers: Answer[]
 
     constructor(item: Partial<Employee>) {
         Object.assign(this, item)

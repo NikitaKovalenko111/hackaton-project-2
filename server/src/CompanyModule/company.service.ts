@@ -24,7 +24,7 @@ export class CompanyService {
         private employeeService: EmployeeService
     ) {}
 
-    async giveRole(companyId: number, roleName: RoleType, employeeToGiveId: number): Promise<Role> {
+    /*async giveRole(companyId: number, roleName: RoleType, employeeToGiveId: number): Promise<Role> {
         const company = await this.companyRepository.findOne({
             where: {
                 company_id: companyId,
@@ -49,7 +49,7 @@ export class CompanyService {
         const roleData = await this.roleRepository.save(role)
 
         return roleData
-    }
+    }*/
 
     async addEmployee(companyId: number, employeeId: number, employeeRole: RoleType): Promise<Employee> {
         const employee = await this.employeeRepository.findOne({
