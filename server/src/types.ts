@@ -17,7 +17,7 @@ export class employeeDto {
     employee_email
     company
     team
-    roles
+    role
     skills
     telegram_id
     sendedRequests
@@ -34,7 +34,7 @@ export class employeeDto {
         this.employee_photo = entity.employee_photo,
         this.company = entity.company,
         this.team = entity.team,
-        this.roles = entity.roles,
+        this.role = entity.role,
         this.skills = entity.skills,
         this.plannedInterviews = entity.plannedInterviews,
         this.createdInterviews = entity.createdInterviews,

@@ -23,7 +23,7 @@ export interface employeePayloadDto {
     employee_status: string
     employee_photo: string
     employeeSkills?: Skill[]
-    employeeRoles?: Role[]
+    employeeRole?: Role
     company?: Company
     team?: Team
 }
