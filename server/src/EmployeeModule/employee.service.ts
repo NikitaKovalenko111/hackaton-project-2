@@ -174,6 +174,7 @@ export class EmployeeService {
         }
 
         const tokens = this.tokenService.generateTokens(JSON.parse(JSON.stringify(employee)))
+        const refreshTokenDb = this.tokenService.saveToken(employee.employee_id, tokens.refreshToken)
 
         const employeeData = new employeeDto(employee)
 
@@ -222,7 +223,7 @@ export class EmployeeService {
 
         const employeeData = this.tokenService.validateRefreshToken(refreshToken)
 
-        const dbToken = await this.tokenService.findToken(refreshToken)
+        const dbToken = await this.tokenService.findToken(refreshToken)  
 
         if (!dbToken || !employeeData) {
             throw new Error('Вы не авторизованы')

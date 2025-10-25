@@ -136,7 +136,6 @@ export class EmployeeController {
 
     @Post('/refresh')
     async refresh(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
-        try {
             const { refreshToken } = request.cookies
 
             const data = await this.employeeService.refresh(refreshToken)
@@ -147,9 +146,6 @@ export class EmployeeController {
             })
 
             return data
-        } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST)
-        }
     }
 
     @Get('/profile')
