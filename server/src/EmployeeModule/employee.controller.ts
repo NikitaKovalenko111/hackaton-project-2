@@ -7,6 +7,7 @@ import { Role } from './role.entity';
 import { Company } from 'src/CompanyModule/company.entity';
 import { Team } from 'src/TeamModule/team.entity';
 import { employeeDto } from 'src/types';
+import { Employee } from './employee.entity';
 
 export interface registerEmployeeBodyDto {
     employee_name: string
@@ -26,6 +27,7 @@ export interface employeePayloadDto {
     employeeRole?: Role
     company?: Company
     team?: Team
+    workedWith?: Employee[]
 }
 
 export interface authEmployeeBodyDto {
@@ -132,7 +134,7 @@ export class EmployeeController {
         }
     }
 
-    @Get('/refresh')
+    @Post('/refresh')
     async refresh(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
         try {
             const { refreshToken } = request.cookies

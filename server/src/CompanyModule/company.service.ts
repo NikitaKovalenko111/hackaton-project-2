@@ -8,6 +8,7 @@ import { SkillShape } from 'src/SkillModule/skillShape.entity';
 import { Employee } from 'src/EmployeeModule/employee.entity';
 import { RoleType } from 'src/types';
 import { Role } from 'src/EmployeeModule/role.entity';
+import { Review } from 'src/ReviewModule/review.entity';
 
 @Injectable()
 export class CompanyService {
@@ -20,6 +21,9 @@ export class CompanyService {
 
         @InjectRepository(Employee)
         private employeeRepository: Repository<Employee>,
+
+        @InjectRepository(Review)
+        private reviewRepository: Repository<Review>,
 
         private employeeService: EmployeeService
     ) {}
@@ -118,7 +122,8 @@ export class CompanyService {
                     skills: {
                         skill_shape: true
                     },
-                    team: true
+                    team: true,
+                    workedWith: true
                 }
             }
         })
@@ -166,6 +171,12 @@ export class CompanyService {
         })
 
         const roleData = await this.roleRepository.save(role)
+
+        const review = new Review({
+            company: companyData
+        })
+
+        const reviewData = await this.reviewRepository.save(review)
 
         return companyData
     }

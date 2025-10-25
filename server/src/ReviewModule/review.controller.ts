@@ -1,9 +1,11 @@
+import { SocketGateway } from 'src/socket/socket.gateway';
 import { Body, Controller, Delete, Param, Post, Req} from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { Question } from './question.entity';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { Review } from './review.entity';
 import { Answer } from './answer.entity';
+import { CompanyService } from 'src/CompanyModule/company.service';
 
 interface addQuestionBodyDto {
     question_text: string
@@ -22,13 +24,18 @@ export interface sendedAnswer {
 interface sendAnswersBodyDto {
     answers: sendedAnswer[]
     employee_id: number
+    employee_answers_to_id: number
+    company_id: number
+    review_id: number
 }
 
 @Controller('review')
 export class ReviewController {
     constructor(
         private readonly reviewService: ReviewService,
-        private readonly employeeService: EmployeeService
+        private readonly employeeService: EmployeeService,
+        private readonly companyService: CompanyService,
+        private readonly socketGateway: SocketGateway
     ) { }
 
     @Post('add/question')
@@ -60,11 +67,28 @@ export class ReviewController {
 
     @Post('/send/answers')
     async sendAnswers(@Body() sendAnswersBody: sendAnswersBodyDto): Promise<Answer[]> {
-        const { answers, employee_id } = sendAnswersBody
-        const employee = await this.employeeService.getCleanEmployee(employee_id)
+        const { answers, employee_id, employee_answers_to_id, company_id, review_id } = sendAnswersBody
 
-        const answersData = this.reviewService.sendAnswers(answers, employee)
+        const employee = await this.employeeService.getCleanEmployee(employee_id)
+        const employeeSubject = await this.employeeService.getCleanEmployee(employee_answers_to_id)
+
+        const answersData = await this.reviewService.sendAnswers(answers, employee, employeeSubject)
+
+        const ids = (new Set(await this.reviewService.getAnswersEmployeesId(company_id))).values.length
+        const employeesCount = (await this.companyService.getEmployees(company_id)).length
+
+        if (ids == employeesCount) {
+            this.socketGateway.server.emit('endedPerfomanceReview')
+            const reviewData = await this.reviewService.endReview(review_id)
+        }
 
         return answersData
+    }
+
+    @Post('start')
+    async startReview(@Body() startReviewBody: { review_id: number }): Promise<Review> {
+        const review = await this.reviewService.startReview(startReviewBody.review_id)
+
+        return review
     }
 }

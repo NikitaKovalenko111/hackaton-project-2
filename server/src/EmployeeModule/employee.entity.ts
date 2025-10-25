@@ -100,6 +100,11 @@ export class Employee {
     })
     answers: Answer[]
 
+    @OneToMany(() => Answer, answer => answer.employee_answer_to, {
+        cascade: true
+    })
+    answersOn: Answer[]
+
     constructor(item: Partial<Employee>) {
         Object.assign(this, item)
     }
