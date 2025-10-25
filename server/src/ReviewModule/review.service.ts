@@ -6,6 +6,11 @@ import { Question } from './question.entity';
 import { Answer } from './answer.entity';
 import { Employee } from 'src/EmployeeModule/employee.entity';
 import { sendedAnswer } from './review.controller';
+import { SocketGateway } from 'src/socket/socket.gateway';
+import { CompanyService } from 'src/CompanyModule/company.service';
+import { SocketService } from 'src/socket/socket.service';
+import { EmployeeService } from 'src/EmployeeModule/employee.service';
+import { find } from 'rxjs';
 
 @Injectable()
 export class ReviewService {
@@ -16,7 +21,13 @@ export class ReviewService {
         @InjectRepository(Question)
         private questionRepository: Repository<Question>,
 
-        private readonly re
+        @InjectRepository(Answer)
+        private answerRepository: Repository<Answer>,
+
+        private readonly socketGateway: SocketGateway,
+        private readonly companyService: CompanyService,
+        private readonly socketService: SocketService,
+        private readonly employeeService: EmployeeService
     ) {}
 
     async addQuestion(questionText: string, reviewId: number): Promise<Question> {
@@ -84,6 +95,37 @@ export class ReviewService {
 
         const reviewData = await this.reviewRepository.save(review)
 
+        const companyEmployees = await this.companyService.getEmployees(review.company.company_id)
+
+        companyEmployees.forEach(async (employee) => {
+            const workedWith = employee.workedWith
+            const employeeClean = await this.employeeService.getCleanEmployee(employee.employee_id)
+
+            const socket = await this.socketService.getSocketByEmployeeId(employeeClean)
+
+            if (socket) {
+                this.socketGateway.server.to(socket.client_id).emit('startedPerfomanceReview', workedWith)
+            }
+        })
+
+        return reviewData
+    }
+
+    async endReview(review_id: number): Promise<Review> {
+        const review = await this.reviewRepository.findOne({
+            where: {
+                review_id: review_id
+            }
+        })
+
+        if (!review) {
+            throw new Error('Ревью не найдено!')
+        }
+
+        review.review_status = 'pending'
+
+        const reviewData = await this.reviewRepository.save(review)
+
         return reviewData
     }
 
@@ -101,7 +143,7 @@ export class ReviewService {
         return question
     }
 
-    async sendAnswers(answers: sendedAnswer[], employee: Employee): Promise<Answer[]> {
+    async sendAnswers(answers: sendedAnswer[], employee: Employee, employeeSubject: Employee): Promise<Answer[]> {
         const answersData: Answer[] = []
 
         answers.forEach(async (el) => {
@@ -110,12 +152,34 @@ export class ReviewService {
             const answer = new Answer({
                 answer_text: el.answer_text,
                 employee: employee,
-                question: question
+                question: question,
+                employee_answer_to: employeeSubject
             })
 
             answersData.push(answer)
         })
 
-        return answersData
+        const answersResult = await this.answerRepository.save(answersData)
+
+        return answersResult
+    }
+
+    async getAnswersEmployeesId(companyId: number): Promise<number[]> {
+        const answers = await this.answerRepository.find({
+            where: {
+                employee: {
+                    company: {
+                        company_id: companyId
+                    }
+                }
+            },
+            select: {
+                employee: true
+            }
+        })
+
+        const ids = answers.map(el => el.employee.employee_id)
+
+        return ids
     }
 }

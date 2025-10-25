@@ -9,14 +9,19 @@ export class Review {
     review_id: number;
 
     @Column({
-        type: 'bigint'
+        type: 'bigint',
+        nullable: true
     })
     review_interval: number
 
-    @Column()
+    @Column({
+        default: 'pending'
+    })
     review_status: reviewStatus
 
-    @Column()
+    @Column({
+        default: 1
+    })
     review_cycle: number
 
     @OneToOne(() => Company)

@@ -22,6 +22,12 @@ export class Answer {
     })
     employee: Employee
 
+    @ManyToOne(() => Employee, employee => employee.answersOn)
+    @JoinColumn({
+        name: 'employee_answer_to_id'
+    })
+    employee_answer_to: Employee
+
     constructor(item: Partial<Answer>) {
         Object.assign(this, item)
     }

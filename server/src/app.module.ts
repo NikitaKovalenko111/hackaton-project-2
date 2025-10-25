@@ -23,6 +23,7 @@ import { Socket } from './socket/socket.entity';
 import { Question } from './ReviewModule/question.entity';
 import { Answer } from './ReviewModule/answer.entity';
 import { Review } from './ReviewModule/review.entity';
+import { ReviewModule } from './ReviewModule/review.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { Review } from './ReviewModule/review.entity';
     TeamModule,
     SkillModule,
     SocketGatewayModule,
+    ReviewModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',

@@ -10,12 +10,13 @@ import { SkillShape } from 'src/SkillModule/skillShape.entity';
 import { Role } from 'src/EmployeeModule/role.entity';
 import { EmployeeModule } from 'src/EmployeeModule/employee.module';
 import { SkillModule } from 'src/SkillModule/skill.module';
+import { Review } from 'src/ReviewModule/review.entity';
 
 @Module({
     imports: [
         EmployeeModule,
         SkillModule,
-        TypeOrmModule.forFeature([Company, Employee, Employee_token, Skill, SkillShape, Role]),
+        TypeOrmModule.forFeature([Company, Employee, Employee_token, Skill, SkillShape, Role, Review]),
     ],
     controllers: [CompanyController],
     providers: [CompanyService],
