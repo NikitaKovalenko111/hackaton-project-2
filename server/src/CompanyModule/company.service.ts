@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './company.entity';
 import { Like, Repository } from 'typeorm';
@@ -9,6 +9,7 @@ import { Employee } from 'src/EmployeeModule/employee.entity';
 import { RoleType } from 'src/types';
 import { Role } from 'src/EmployeeModule/role.entity';
 import { Review } from 'src/ReviewModule/review.entity';
+import ApiError from 'src/apiError';
 
 @Injectable()
 export class CompanyService {
@@ -56,125 +57,145 @@ export class CompanyService {
     }*/
 
     async addEmployee(companyId: number, employeeId: number, employeeRole: RoleType): Promise<Employee> {
-        const employee = await this.employeeRepository.findOne({
-            where: {
-                employee_id: employeeId
+        try {
+            const employee = await this.employeeRepository.findOne({
+                where: {
+                    employee_id: employeeId
+                }
+            })
+    
+            const company = await this.companyRepository.findOne({
+                where: {
+                    company_id: companyId
+                }
+            })
+    
+            if (!employee) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
             }
-        })
-
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: companyId
+    
+            if (!company) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
             }
-        })
-
-        if (!employee) {
-            throw new Error('Пользователь не найден!')
+    
+            employee.company = company
+    
+            const employeeData = await this.employeeRepository.save(employee)
+    
+            const role = new Role({
+                role_name: employeeRole,
+                company: company,
+                employee: employeeData
+            })
+    
+            const roleData = await this.roleRepository.save(role)
+    
+            return employeeData
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
-
-        if (!company) {
-            throw new Error('Компания не найдена!')
-        }
-
-        employee.company = company
-
-        const employeeData = await this.employeeRepository.save(employee)
-
-        const role = new Role({
-            role_name: employeeRole,
-            company: company,
-            employee: employeeData
-        })
-
-        const roleData = await this.roleRepository.save(role)
-
-        return employeeData
     }
 
     async getCompanyInfo(companyId: number): Promise<Company> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: companyId
-            },
-            relations: {
-                employees: true,
-                skills: true,
-                teams: true,
-                roles: true
+        try {
+            const company = await this.companyRepository.findOne({
+                where: {
+                    company_id: companyId
+                },
+                relations: {
+                    employees: true,
+                    skills: true,
+                    teams: true,
+                    roles: true
+                }
+            })
+    
+            if (!company) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
             }
-        })
-
-        if (!company) {
-            throw new Error("Такой компании не существует!")
+    
+            return company
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
-
-        return company
     }
 
     async getEmployees(company_id: number, name?: string): Promise<employeePayloadDto[]> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: company_id
+        try {
+            const company = await this.companyRepository.findOne({
+                where: {
+                    company_id: company_id
+                }
+            })
+    
+            if (!company) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
             }
-        })
-
-        if (!company) {
-            throw new Error('Компания не найдена!')
+    
+            const employees = await this.employeeRepository.find({
+                where: {
+                    company: company,
+                    employee_name: Like(`%${name ? name : ''}%`)
+                },
+            })
+    
+            return employees
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
-
-        const employees = await this.employeeRepository.find({
-            where: {
-                company: company,
-                employee_name: Like(`%${name ? name : ''}%`)
-            },
-        })
-
-        return employees
     }
 
     async getSkills(companyId: number): Promise<SkillShape[]> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: companyId
-            },
-            relations: {
-                skills: true
-            }
-        })
-
-        if (!company) {
-            throw new Error('Такой компании не существует')
-        }    
-
-        return company.skills
+        try {
+            const company = await this.companyRepository.findOne({
+                where: {
+                    company_id: companyId
+                },
+                relations: {
+                    skills: true
+                }
+            })
+    
+            if (!company) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
+            }    
+    
+            return company.skills
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
     }
 
     async createCompany(company_name: string, employee_id: number): Promise<Company> {
-        const company = new Company({
-            company_name: company_name
-        })
-
-        const companyData = await this.companyRepository.save(company)
-
-        const employee = await this.employeeService.getEmployee(employee_id)
-        employee.company = companyData
-
-        const employeeData = await this.employeeRepository.save(employee)
-
-        const role = new Role({
-            employee: employeeData,
-            role_name: "admin",
-            company: companyData
-        })
-
-        const roleData = await this.roleRepository.save(role)
-
-        const review = new Review({
-            company: companyData
-        })
-
-        const reviewData = await this.reviewRepository.save(review)
-
-        return companyData
+        try {
+            const company = new Company({
+                company_name: company_name
+            })
+    
+            const companyData = await this.companyRepository.save(company)
+    
+            const employee = await this.employeeService.getEmployee(employee_id)
+            employee.company = companyData
+    
+            const employeeData = await this.employeeRepository.save(employee)
+    
+            const role = new Role({
+                employee: employeeData,
+                role_name: "admin",
+                company: companyData
+            })
+    
+            const roleData = await this.roleRepository.save(role)
+    
+            const review = new Review({
+                company: companyData
+            })
+    
+            const reviewData = await this.reviewRepository.save(review)
+    
+            return companyData
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
     }
 }

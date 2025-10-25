@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import jwt from 'jsonwebtoken'
 import { Repository } from 'typeorm';
 import { Employee_token } from './token.entity';
+import ApiError from 'src/apiError';
 
 interface payloadDto {
     employee_id: number
@@ -21,16 +22,20 @@ export class TokenService {
     ) {}
 
     generateTokens(payload: payloadDto) {
-        const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET as string, {
-            expiresIn: '30m'
-        })
-        const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET as string, {
-            expiresIn: '30d'
-        })
-
-        return {
-            accessToken,
-            refreshToken
+        try {
+            const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET as string, {
+                expiresIn: '30m'
+            })
+            const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET as string, {
+                expiresIn: '30d'
+            })
+    
+            return {
+                accessToken,
+                refreshToken
+            }
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
     }
 
@@ -40,7 +45,7 @@ export class TokenService {
             
             return employeeData
         } catch (error) {
-            return null
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
     }
 
@@ -50,54 +55,66 @@ export class TokenService {
 
             return employeeData
         } catch (error) {
-            return null
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
     }
 
     async saveToken(employeeId: number, refreshToken: string) {
-        const tokenData = await this.tokenRepository.findOne({
-            where: {
-                employee_id: employeeId
+        try {
+            const tokenData = await this.tokenRepository.findOne({
+                where: {
+                    employee_id: employeeId
+                }
+            })
+    
+            if (tokenData) {
+                tokenData.token_data = refreshToken
+    
+                return await this.tokenRepository.save(tokenData)
             }
-        })
-
-        if (tokenData) {
-            tokenData.token_data = refreshToken
-
-            return await this.tokenRepository.save(tokenData)
+    
+            const tokenFetch = new Employee_token({
+                token_data: refreshToken,
+                employee_id: employeeId
+            })
+    
+            const token = await this.tokenRepository.save(tokenFetch)
+    
+            return token
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
-
-        const tokenFetch = new Employee_token({
-            token_data: refreshToken,
-            employee_id: employeeId
-        })
-
-        const token = await this.tokenRepository.save(tokenFetch)
-
-        return token
     }
 
     async removeToken(refreshToken: string): Promise<string> {
-        const tokenData = await this.tokenRepository.findOne({
-            where: {
-                token_data: refreshToken
+        try {
+            const tokenData = await this.tokenRepository.findOne({
+                where: {
+                    token_data: refreshToken
+                }
+            })
+    
+            if (tokenData) {
+                await this.tokenRepository.remove(tokenData)
             }
-        })
-
-        if (tokenData) {
-            await this.tokenRepository.remove(tokenData)
+    
+            return tokenData?.token_data as string
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
-
-        return tokenData?.token_data as string
     }
 
     async findToken(token: string) {
-        const dbToken = await this.tokenRepository.findOne({
-            where: {
-                token_data: token
-            }
-        })
-
-        return dbToken
+        try {
+            const dbToken = await this.tokenRepository.findOne({
+                where: {
+                    token_data: token
+                }
+            })
+    
+            return dbToken
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
     }
 }

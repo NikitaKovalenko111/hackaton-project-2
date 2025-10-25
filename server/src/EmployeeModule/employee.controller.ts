@@ -62,7 +62,7 @@ export class EmployeeController {
 
             return status
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST)
+            throw new HttpException(error.message, error.status)
         }
     }
 
@@ -74,20 +74,24 @@ export class EmployeeController {
 
             return status
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST)
+            throw new HttpException(error.status, error.message)
         }
     }
 
     @Post('/registration')
     async registerEmployee(@Body() registerEmployeeBody: registerEmployeeBodyDto, @Res({ passthrough: true }) response: Response): Promise<registerEmployeeReturnDto> {
-        const data = await this.employeeService.registration(registerEmployeeBody)
-
-        response.cookie('refreshToken', data.refreshToken, {
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-            httpOnly: true
-        })
-
-        return data
+        try {
+            const data = await this.employeeService.registration(registerEmployeeBody)
+    
+            response.cookie('refreshToken', data.refreshToken, {
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                httpOnly: true
+            })
+    
+            return data
+        } catch (error) {
+            throw new HttpException(error.message, error.status)
+        }
     }
 
     @Post('/authorization')
@@ -104,7 +108,7 @@ export class EmployeeController {
 
             return data
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST)
+            throw new HttpException(error.message, error.status)
         }
     }
 
@@ -115,7 +119,7 @@ export class EmployeeController {
 
             return data
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST)
+            throw new HttpException(error.message, error.status)
         }
     }
 
@@ -130,12 +134,13 @@ export class EmployeeController {
 
             return token
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST)
+            throw new HttpException(error.message, error.status)
         }
     }
 
     @Post('/refresh')
     async refresh(@Req() request: Request, @Res({ passthrough: true }) response: Response) {
+        try {
             const { refreshToken } = request.cookies
 
             const data = await this.employeeService.refresh(refreshToken)
@@ -146,6 +151,9 @@ export class EmployeeController {
             })
 
             return data
+        } catch (error) {
+            throw new HttpException(error.message, error.status)
+        }
     }
 
     @Get('/profile')
@@ -163,9 +171,7 @@ export class EmployeeController {
 
             return profileData
         } catch (error) {
-            console.log(error);
-            
-            throw error
+            throw new HttpException(error.message, error.status)
         }
     }
 }

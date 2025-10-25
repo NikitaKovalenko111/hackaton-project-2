@@ -1,9 +1,10 @@
-import { Injectable } from "@nestjs/common"
+import { HttpStatus, Injectable } from "@nestjs/common"
 import { EmployeeService } from "src/EmployeeModule/employee.service"
 import { Socket } from "./socket.entity"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { Employee } from "src/EmployeeModule/employee.entity"
+import ApiError from "src/apiError"
 
 @Injectable()
 export class SocketService {
@@ -14,55 +15,67 @@ export class SocketService {
         private readonly employeeService: EmployeeService
     ) {}
     async saveSocket(socketId: string, employeeId: number): Promise<Socket> {
-        const employee = await this.employeeService.getEmployee(employeeId)
-
-        if (!employee) {
-            throw new Error('Пользователь не найден!')
-        }
-
-        const socketCurrent = await this.socketRepository.findOne({
-            where: {
-                employee: employee
+        try {
+            const employee = await this.employeeService.getEmployee(employeeId)
+    
+            if (!employee) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
             }
-        })
-
-        if (socketCurrent) {
-            return socketCurrent
+    
+            const socketCurrent = await this.socketRepository.findOne({
+                where: {
+                    employee: employee
+                }
+            })
+    
+            if (socketCurrent) {
+                return socketCurrent
+            }
+    
+            const socket = new Socket({
+                client_id: socketId,
+                employee: employee
+            })
+    
+            const socketData = await this.socketRepository.save(socket)
+    
+            return socketData
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
-
-        const socket = new Socket({
-            client_id: socketId,
-            employee: employee
-        })
-
-        const socketData = await this.socketRepository.save(socket)
-
-        return socketData
     }
 
     async removeSocket(socketId: string): Promise<string> {
-        const socket = await this.socketRepository.delete({
-            client_id: socketId
-        })
-
-        if (socket.affected && socket.affected > 0) {
-            return 'deleted'
-        } else {
-            throw new Error('Сокет не найден или не удален!')
+        try {
+            const socket = await this.socketRepository.delete({
+                client_id: socketId
+            })
+    
+            if (socket.affected && socket.affected > 0) {
+                return 'deleted'
+            } else {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Сокет не найден или удален!')
+            }
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
     }
 
     async getSocketByEmployeeId(employee: Employee): Promise<Socket | null> {
-        const socket = await this.socketRepository.findOne({
-            where: {
-                employee: employee
+        try {
+            const socket = await this.socketRepository.findOne({
+                where: {
+                    employee: employee
+                }
+            })  
+    
+            if (!socket) {
+                return null
             }
-        })  
-
-        if (!socket) {
-            return null
+    
+            return socket
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
-
-        return socket
     }
 }
