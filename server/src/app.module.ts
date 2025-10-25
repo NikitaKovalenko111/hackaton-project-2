@@ -74,7 +74,12 @@ export class AppModule implements NestModule {
         'interview/get/planned',
         'interview/get/created',
         'interview/cancel',
-        'interview/finish'
+        'interview/finish',
+        'review/add/question',
+        'review/set',
+        "review/remove/question/:id",
+        'review/send/answers',
+        'review/start'
       )
   }
 }

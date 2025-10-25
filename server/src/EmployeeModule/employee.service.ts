@@ -34,8 +34,6 @@ export class EmployeeService {
                 receivedRequests: true,
                 sendedRequests: true,
                 createdInterviews: true,
-                workedWith: true,
-                beenWorkedWith: true
             }
         })
 

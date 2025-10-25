@@ -98,7 +98,7 @@ export class ReviewService {
         const companyEmployees = await this.companyService.getEmployees(review.company.company_id)
 
         companyEmployees.forEach(async (employee) => {
-            const workedWith = employee.workedWith
+            const workedWith = employee.team?.employees.filter(el => el.employee_id != employee.employee_id)
             const employeeClean = await this.employeeService.getCleanEmployee(employee.employee_id)
 
             const socket = await this.socketService.getSocketByEmployeeId(employeeClean)
@@ -146,7 +146,7 @@ export class ReviewService {
     async sendAnswers(answers: sendedAnswer[], employee: Employee, employeeSubject: Employee): Promise<Answer[]> {
         const answersData: Answer[] = []
 
-        answers.forEach(async (el) => {
+        for (const el of answers) {
             const question = await this.getQuestion(el.question_id)
 
             const answer = new Answer({
@@ -154,12 +154,13 @@ export class ReviewService {
                 employee: employee,
                 question: question,
                 employee_answer_to: employeeSubject
-            })
+            })   
 
             answersData.push(answer)
-        })
 
-        const answersResult = await this.answerRepository.save(answersData)
+        }
+
+        const answersResult = await this.answerRepository.save(answersData)    
 
         return answersResult
     }
@@ -174,6 +175,8 @@ export class ReviewService {
                 }
             },
             select: {
+                employee: true
+            }, relations: {
                 employee: true
             }
         })
