@@ -5,9 +5,6 @@ import { Interview } from './interview.entity';
 import { SocketGateway } from 'src/socket/socket.gateway';
 import { SocketService } from 'src/socket/socket.service';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Employee } from 'src/EmployeeModule/employee.entity';
-import { Repository } from 'typeorm';
 
 export interface addInterviewBodyDto {
     interview_subject: number

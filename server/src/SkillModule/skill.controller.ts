@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch } from '@nestjs/common';
 import { SkillService } from './skill.service';
 import { Skill } from './skill.entity';
 import { skillLevel } from 'src/types';
@@ -21,7 +21,7 @@ export class SkillController {
         return skill
     }
 
-    @Delete('/skill/:id/delete')
+    @Delete('/:id/delete')
     async deleteSkill(@Param('id') skillId: number): Promise<Skill> {
         const skill = await this.skillService.deleteSkill(skillId)
 

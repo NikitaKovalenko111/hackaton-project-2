@@ -20,6 +20,9 @@ import { SkillModule } from './SkillModule/skill.module';
 import { SocketGatewayModule } from './socket/socket.module';
 import { Request } from './socket/request.entity';
 import { Socket } from './socket/socket.entity';
+import { Question } from './ReviewModule/question.entity';
+import { Answer } from './ReviewModule/answer.entity';
+import { Review } from './ReviewModule/review.entity';
 
 @Module({
   imports: [
@@ -37,7 +40,7 @@ import { Socket } from './socket/socket.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape, Team, Role, Request, Socket],
+      entities: [Company, Employee, Interview, Employee_token, Skill, SkillShape, Team, Role, Request, Socket, Question, Answer, Review],
       synchronize: true
     }),
   ],
@@ -63,6 +66,12 @@ export class AppModule implements NestModule {
         'team/add/employee',
         'team/info',
         'interview/add',
+        'interview/finish',
+        'skill/level/update',
+        'skill/:id/delete',
+        'interview/get/planned',
+        'interview/get/created',
+        'interview/cancel',
         'interview/finish'
       )
   }

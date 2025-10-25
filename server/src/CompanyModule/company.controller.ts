@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { Company } from './company.entity';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
@@ -6,8 +6,7 @@ import { SkillShape } from 'src/SkillModule/skillShape.entity';
 import { Skill } from 'src/SkillModule/skill.entity';
 import { SkillService } from 'src/SkillModule/skill.service';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
-import { Employee } from 'src/EmployeeModule/employee.entity';
-import { RoleType, skillLevel } from 'src/types';
+import { employeeDto, RoleType, skillLevel } from 'src/types';
 import { Role } from 'src/EmployeeModule/role.entity';
 
 interface createCompanyBodyDto {
@@ -82,7 +81,7 @@ export class CompanyController {
         return company
     }
 
-    @Post('/role/give')
+    /*@Post('/role/give')
     async giveRole(@Body() giveRoleBody: giveRoleBodyDto, @Req() req: Request): Promise<Role> {
         const employeeId = (req as any).employee.employee_id
         const employee = await this.employeeService.getEmployee(employeeId)
@@ -98,17 +97,19 @@ export class CompanyController {
         const roleData = await this.companyService.giveRole(company_id, role_name, employee_to_give_id)
 
         return roleData
-    }
+    }*/
 
     @Post('/employee/add')
-    async addEmployee(@Body() addEmployeeBody: addEmployeeBodyDto, @Req() req: Request): Promise<Employee> {
+    async addEmployee(@Body() addEmployeeBody: addEmployeeBodyDto, @Req() req: Request): Promise<employeeDto> {
         const employeeId = (req as any).employee.employee_id
 
         const { company_id, employee_to_add_id, employee_role } = addEmployeeBody
 
         const addedEmployee = await this.companyService.addEmployee(company_id, employee_to_add_id, employee_role)
 
-        return addedEmployee
+        const employeeData = new employeeDto(addedEmployee)
+
+        return employeeData
     }
 
     @Post('/skill/create')

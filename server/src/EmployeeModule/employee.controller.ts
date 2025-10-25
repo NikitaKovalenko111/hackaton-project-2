@@ -6,7 +6,7 @@ import { Skill } from 'src/SkillModule/skill.entity';
 import { Role } from './role.entity';
 import { Company } from 'src/CompanyModule/company.entity';
 import { Team } from 'src/TeamModule/team.entity';
-import { Employee } from './employee.entity';
+import { employeeDto } from 'src/types';
 
 export interface registerEmployeeBodyDto {
     employee_name: string
@@ -78,14 +78,14 @@ export class EmployeeController {
 
     @Post('/registration')
     async registerEmployee(@Body() registerEmployeeBody: registerEmployeeBodyDto, @Res({ passthrough: true }) response: Response): Promise<registerEmployeeReturnDto> {
-            const data = await this.employeeService.registration(registerEmployeeBody)
+        const data = await this.employeeService.registration(registerEmployeeBody)
 
-            response.cookie('refreshToken', data.refreshToken, {
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-                httpOnly: true
-            })
+        response.cookie('refreshToken', data.refreshToken, {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: true
+        })
 
-            return data
+        return data
     }
 
     @Post('/authorization')
@@ -151,11 +151,23 @@ export class EmployeeController {
     }
 
     @Get('/profile')
-    async getProfile(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<Employee> {
-        const employeeId = (request as any).employee.employee_id
+    async getProfile(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<employeeDto> {
+        try {
+            const employeeId = (request as any).employee.employee_id
 
-        const profile = await this.employeeService.getEmployee(employeeId)
+            if (!employeeId) {
+                throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
+            }
 
-        return profile
+            const profile = await this.employeeService.getEmployee(employeeId)
+
+            const profileData = new employeeDto(profile)
+
+            return profileData
+        } catch (error) {
+            console.log(error);
+            
+            throw error
+        }
     }
 }
