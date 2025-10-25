@@ -44,6 +44,12 @@ interface giveRoleBodyDto {
     role_name: RoleType
 }
 
+interface addEmployeeByEmailBodyDto {
+    company_id: number
+    employee_to_add_email: string
+    employee_role: RoleType
+}
+
 @Controller('company')
 export class CompanyController {
     constructor(
@@ -134,6 +140,23 @@ export class CompanyController {
             const { company_id, employee_to_add_id, employee_role } = addEmployeeBody
     
             const addedEmployee = await this.companyService.addEmployee(company_id, employee_to_add_id, employee_role)
+    
+            const employeeData = new employeeDto(addedEmployee)
+    
+            return employeeData
+        } catch (error) {
+            throw new HttpException(error.message, error.status)
+        }
+    }
+
+    @Post('/employee/addByEmail')
+    async addEmployeeByEmail(@Body() addEmployeeByEmailBody: addEmployeeByEmailBodyDto, @Req() req: Request): Promise<employeeDto> {
+        try {
+            const employeeId = (req as any).employee.employee_id
+    
+            const { company_id, employee_to_add_email, employee_role } = addEmployeeByEmailBody
+    
+            const addedEmployee = await this.companyService.addEmployeeByEmail(company_id, employee_to_add_email, employee_role)
     
             const employeeData = new employeeDto(addedEmployee)
     

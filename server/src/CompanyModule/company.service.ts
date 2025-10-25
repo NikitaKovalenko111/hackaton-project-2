@@ -96,6 +96,46 @@ export class CompanyService {
         }
     }
 
+    async addEmployeeByEmail(companyId: number, employeeToAddEmail: string, employeeRole: RoleType) {
+        try {
+            const employee = await this.employeeRepository.findOne({
+                where: {
+                    employee_email: employeeToAddEmail
+                }
+            })
+    
+            const company = await this.companyRepository.findOne({
+                where: {
+                    company_id: companyId
+                }
+            })
+    
+            if (!employee) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
+            }
+    
+            if (!company) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
+            }
+    
+            employee.company = company
+    
+            const employeeData = await this.employeeRepository.save(employee)
+    
+            const role = new Role({
+                role_name: employeeRole,
+                company: company,
+                employee: employeeData
+            })
+    
+            const roleData = await this.roleRepository.save(role)
+    
+            return employeeData
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
+    }
+
     async getCompanyInfo(companyId: number): Promise<Company> {
         try {
             const company = await this.companyRepository.findOne({
