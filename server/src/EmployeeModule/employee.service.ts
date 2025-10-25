@@ -29,7 +29,7 @@ export class EmployeeService {
                     teamlead: true,
                 },
                 company: true,
-                roles: true,
+                role: true,
                 plannedInterviews: true,
                 receivedRequests: true,
                 sendedRequests: true,
@@ -133,7 +133,7 @@ export class EmployeeService {
             employee_email: employeeCurrent.employee_email,
             company: employeeCurrent.company,
             team: employeeCurrent.team,
-            employeeRoles: employeeCurrent.roles,
+            employeeRoles: employeeCurrent.role,
             employeeSkills: employeeCurrent.skills
         }
 
@@ -236,7 +236,7 @@ export class EmployeeService {
                 skills: true,
                 team: true,
                 company: true,
-                roles: true,
+                role: true,
             }
         })
 
@@ -253,7 +253,7 @@ export class EmployeeService {
             employee_email: employee.employee_email,
             company: employee.company,
             team: employee.team,
-            employeeRoles: employee.roles,
+            employeeRoles: employee.role,
             employeeSkills: employee.skills
         }
 

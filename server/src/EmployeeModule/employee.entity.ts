@@ -1,6 +1,6 @@
 import { Company } from 'src/CompanyModule/company.entity';
 import { Skill } from 'src/SkillModule/skill.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable, OneToOne } from 'typeorm';
 import { Role } from './role.entity';
 import { Team } from 'src/TeamModule/team.entity';
 import { Request } from 'src/socket/request.entity';
@@ -37,10 +37,10 @@ export class Employee {
     })
     telegram_id: number
 
-    @OneToMany(() => Role, role => role.employee, {
+    @OneToOne(() => Role, role => role.employee, {
         cascade: true
     })
-    roles: Role[]
+    role: Role
 
     @OneToMany(() => Skill, skill => skill.employee, {
         cascade: true
