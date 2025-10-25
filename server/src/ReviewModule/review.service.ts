@@ -10,7 +10,6 @@ import { SocketGateway } from 'src/socket/socket.gateway';
 import { CompanyService } from 'src/CompanyModule/company.service';
 import { SocketService } from 'src/socket/socket.service';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
-import { find } from 'rxjs';
 
 @Injectable()
 export class ReviewService {
@@ -157,7 +156,6 @@ export class ReviewService {
             })   
 
             answersData.push(answer)
-
         }
 
         const answersResult = await this.answerRepository.save(answersData)    

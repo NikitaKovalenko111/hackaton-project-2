@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Company } from './company.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
 import { SkillShape } from 'src/SkillModule/skillShape.entity';
@@ -111,29 +111,25 @@ export class CompanyService {
         return company
     }
 
-    async getEmployees(company_id: number): Promise<employeePayloadDto[]> {
+    async getEmployees(company_id: number, name?: string): Promise<employeePayloadDto[]> {
         const company = await this.companyRepository.findOne({
             where: {
                 company_id: company_id
-            },
-            relations: {
-                employees: {
-                    role: true,
-                    skills: {
-                        skill_shape: true
-                    },
-                    team: {
-                        employees: true
-                    }
-                }
             }
         })
 
         if (!company) {
-            throw new Error('Такой компании не существует')
-        }    
+            throw new Error('Компания не найдена!')
+        }
 
-        return company.employees
+        const employees = await this.employeeRepository.find({
+            where: {
+                company: company,
+                employee_name: Like(`%${name ? name : ''}%`)
+            },
+        })
+
+        return employees
     }
 
     async getSkills(companyId: number): Promise<SkillShape[]> {

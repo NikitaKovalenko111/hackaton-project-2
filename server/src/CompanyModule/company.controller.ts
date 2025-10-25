@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { Company } from './company.entity';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
@@ -32,6 +32,13 @@ interface giveSkillBodyDto {
     skill_level: skillLevel
 }
 
+interface giveSkillToManyBodyDto {
+    skill_shape_id: number
+    company_id: number
+    employees_to_give_id: number[]
+    skill_level: skillLevel
+}
+
 interface giveRoleBodyDto {
     company_id: number
     employee_to_give_id: number
@@ -56,10 +63,13 @@ export class CompanyController {
     }
 
     @Get('/employees')
-    async getEmployees(@Req() req: Request): Promise<employeePayloadDto[]> {
+    async getEmployees(@Req() req: Request, @Query() query: Record<string, any>): Promise<employeePayloadDto[]> {
         const employee = (req as any).employee
+        const { name } = query
 
-        const employees = await this.companyService.getEmployees(employee.company.company_id)
+        const employeeData = await this.employeeService.getEmployee(employee.employee_id)     
+
+        const employees = await this.companyService.getEmployees(employeeData.company.company_id, name)
 
         return employees
     }
@@ -130,6 +140,18 @@ export class CompanyController {
         const employeeToGive = await this.employeeService.getEmployee(employee_to_give_id)
 
         const skill = await this.skillService.giveSkill(employeeToGive, skill_shape_id, skill_level)
+
+        return skill
+    }
+
+    @Post('/skill/giveToMany')
+    async giveSkillToEmployees(@Body() giveSkillBody: giveSkillToManyBodyDto, @Req() req: Request): Promise<Skill[]> {
+        const employeeId = (req as any).employee.employee_id
+        const { skill_shape_id, company_id, employees_to_give_id, skill_level } = giveSkillBody
+        const employeesInCompany = await this.companyService.getEmployees(company_id, )
+        const needEmployees = employeesInCompany.filter(el => employees_to_give_id.includes(el.employee_id))
+
+        const skill = await this.skillService.giveSkillToMany(needEmployees, skill_shape_id, skill_level)
 
         return skill
     }

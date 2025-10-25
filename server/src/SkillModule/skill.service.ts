@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Skill } from './skill.entity';
 import { Company } from 'src/CompanyModule/company.entity';
 import { skillLevel } from 'src/types';
+import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
 
 @Injectable()
 export class SkillService {
@@ -58,6 +59,33 @@ export class SkillService {
         })
 
         const skillData = await this.skillRepository.save(skill)
+
+        return skillData
+    }
+
+    async giveSkillToMany(needEmployees: employeePayloadDto[], skill_shape_id: number, skill_level: skillLevel) {
+        const skills: Skill[] = []
+        const skillShape = await this.skillShapeRepository.findOne({
+            where: {
+                skill_shape_id: skill_shape_id
+            }
+        })
+        
+        if (!skillShape) {
+            throw new Error('Компетенция не найдена!')
+        }
+
+        for (const employee of needEmployees) {
+            const skill = new Skill({
+                employee: employee as Employee,
+                skill_shape: skillShape,
+                skill_level: skill_level
+            })
+
+            skills.push(skill)
+        }
+
+        const skillData = await this.skillRepository.save(skills)
 
         return skillData
     }

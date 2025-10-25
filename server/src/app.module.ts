@@ -79,7 +79,8 @@ export class AppModule implements NestModule {
         'review/set',
         "review/remove/question/:id",
         'review/send/answers',
-        'review/start'
+        'review/start',
+        'company/skill/giveToMany'
       )
   }
 }
