@@ -1,5 +1,6 @@
 import { Employee } from 'src/EmployeeModule/employee.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import type { clientType } from 'src/types';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Socket {
@@ -11,7 +12,10 @@ export class Socket {
     })
     client_id: string
 
-    @OneToOne(() => Employee)
+    @Column()
+    client_type: clientType
+
+    @ManyToOne(() => Employee, employee => employee.sockets)
     @JoinColumn({ name: "employee_id" })
     employee: Employee
 

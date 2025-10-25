@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { Employee } from "src/EmployeeModule/employee.entity"
 import ApiError from "src/apiError"
+import { clientType } from "src/types"
 
 @Injectable()
 export class SocketService {
@@ -14,7 +15,7 @@ export class SocketService {
 
         private readonly employeeService: EmployeeService
     ) {}
-    async saveSocket(socketId: string, employeeId: number): Promise<Socket> {
+    async saveSocket(socketId: string, employeeId: number, clientType: clientType): Promise<Socket> {
         try {
             const employee = await this.employeeService.getEmployee(employeeId)
     
@@ -24,17 +25,23 @@ export class SocketService {
     
             const socketCurrent = await this.socketRepository.findOne({
                 where: {
-                    employee: employee
+                    employee: employee,
+                    client_type: clientType
                 }
             })
-    
+
             if (socketCurrent) {
-                return socketCurrent
+                socketCurrent.client_id = socketId
+
+                const socketData = await this.socketRepository.save(socketCurrent)
+
+                return socketData
             }
     
             const socket = new Socket({
                 client_id: socketId,
-                employee: employee
+                employee: employee,
+                client_type: clientType
             })
     
             const socketData = await this.socketRepository.save(socket)
@@ -61,11 +68,12 @@ export class SocketService {
         }
     }
 
-    async getSocketByEmployeeId(employee: Employee): Promise<Socket | null> {
+    async getSocketByEmployeeId(employee: Employee, clientType: clientType = 'web'): Promise<Socket | null> {
         try {
             const socket = await this.socketRepository.findOne({
                 where: {
-                    employee: employee
+                    employee: employee,
+                    client_type: clientType
                 }
             })  
     

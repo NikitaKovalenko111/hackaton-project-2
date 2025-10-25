@@ -1,11 +1,12 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, ConnectedSocket, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { requestType } from 'src/types';
+import { clientType, requestType } from 'src/types';
 import { RequestService } from './request.service';
 import { TokenService } from 'src/EmployeeModule/token.service';
 import { SocketService } from './socket.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import ApiError from 'src/apiError';
+import { EmployeeService } from 'src/EmployeeModule/employee.service';
 
 interface requestDto {
   requestType: requestType,
@@ -27,19 +28,32 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly requestGatewayService: RequestService,
     private readonly socketService: SocketService,
     private readonly tokenService: TokenService,
+    private readonly employeeService: EmployeeService
   ) { }
 
   async handleConnection(client: Socket) {
     try {
       const accessToken = client.request.headers.authorization?.split(" ")[1]
-  
-      if (!accessToken) {
-        throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
+      const clientType = client.request.headers.client_type as clientType
+      const telegramId = client.request.headers.telegram_id as string
+
+      if (!clientType) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Не указан тип клиента!')
       }
   
-      const employee = await this.tokenService.validateAccessToken(accessToken) as any
+      if (!accessToken && clientType == 'web') {
+        throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
+      }
+
+      let employee
+
+      if (accessToken) {
+        employee = await this.tokenService.validateAccessToken(accessToken) as any
+      } else if (!accessToken && telegramId && clientType == 'telegram') {
+        employee = await this.employeeService.getEmployeeByTgId(parseInt(telegramId))
+      }
       
-      const data = await this.socketService.saveSocket(client.id, employee.employee_id)
+      const data = await this.socketService.saveSocket(client.id, employee.employee_id, clientType)
   
       return data
     } catch (error) {
@@ -75,13 +89,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const requestData = await this.requestGatewayService.sendRequest(requestType, employeeId)
   
       if (requestData.request_receiver != null) {
-        const socket = await this.socketService.getSocketByEmployeeId(requestData.request_receiver)
+        const socketWeb = await this.socketService.getSocketByEmployeeId(requestData.request_receiver)
+        const socketTg = await this.socketService.getSocketByEmployeeId(requestData.request_receiver, 'telegram')
   
-        if (!socket) {
+        if (!socketWeb && !socketTg) {
           return requestData
         }   
   
-        this.server.to(socket.client_id as string).emit('newRequest', requestData)
+        if (socketWeb) {
+          this.server.to(socketWeb.client_id as string).emit('newRequest', requestData)
+        }
+        if (socketTg) {
+          this.server.to(socketTg.client_id as string).emit('newRequest', requestData)
+        }
       }
     }
     catch (error) {
@@ -99,15 +119,15 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const requestData = await this.requestGatewayService.cancelRequest(request_id)
   
       if (requestData.request_receiver != null && employee_id == requestData.request_owner.employee_id) {
-        const socket = await this.socketService.getSocketByEmployeeId(requestData.request_receiver)
+        const socketTg = await this.socketService.getSocketByEmployeeId(requestData.request_receiver, 'telegram')
   
-        if (!socket) {
+        if (!socketTg) {
           return requestData
-        }   
+        } 
   
-        this.server.to(socket.client_id as string).emit('canceledRequest', requestData)
+        this.server.to(socketTg.client_id as string).emit('canceledRequest', requestData)
       } else if (requestData.request_receiver != null && employee_id == requestData.request_receiver.employee_id) {
-        const socket = await this.socketService.getSocketByEmployeeId(requestData.request_owner)
+        const socket = await this.socketService.getSocketByEmployeeId(requestData.request_owner, 'telegram')
   
         if (!socket) {
           return requestData

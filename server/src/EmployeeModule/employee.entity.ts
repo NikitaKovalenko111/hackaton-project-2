@@ -6,6 +6,7 @@ import { Team } from 'src/TeamModule/team.entity';
 import { Request } from 'src/socket/request.entity';
 import { Interview } from 'src/InterviewModule/interview.entity';
 import { Answer } from 'src/ReviewModule/answer.entity';
+import { Socket } from 'src/socket/socket.entity';
 
 @Entity()
 export class Employee {
@@ -79,22 +80,6 @@ export class Employee {
     })
     plannedInterviews: Interview[]
 
-    /*@ManyToMany(() => Employee, employee => employee.workedWith)
-    beenWorkedWith: Employee[]
-
-    @ManyToMany(() => Employee, employee => employee.beenWorkedWith, {
-        cascade: true
-    })
-    @JoinTable({
-        joinColumn: {
-            name: "employee_id_1"
-        },
-        inverseJoinColumn: {
-            name: "employee_id_2"
-        }
-    })
-    workedWith: Employee[]*/
-
     @OneToMany(() => Answer, answer => answer.employee, {
         cascade: true
     })
@@ -104,6 +89,11 @@ export class Employee {
         cascade: true
     })
     answersOn: Answer[]
+
+    @OneToMany(() => Socket, socket => socket.employee, {
+        cascade: true
+    })
+    sockets: Socket[]
 
     constructor(item: Partial<Employee>) {
         Object.assign(this, item)

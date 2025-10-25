@@ -42,7 +42,9 @@ export class Company {
     })
     interviews: Interview[]
 
-    @OneToMany(type => Statistics, statistics => statistics.company)
+    @OneToMany(type => Statistics, statistics => statistics.company, {
+        cascade: true
+    })
     statistics: Statistics[]
 
     constructor(item: Partial<Company>) {

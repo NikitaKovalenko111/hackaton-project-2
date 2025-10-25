@@ -42,13 +42,19 @@ export class InterviewController {
     
             const interviewData = await this.interviewService.addInterview(interviewSubjectData, interview_date, interview_type, interview_desc, employeeId)
     
-            const socket = await this.socketService.getSocketByEmployeeId(interviewSubjectData)
+            const socketWeb = await this.socketService.getSocketByEmployeeId(interviewSubjectData)
+            const socketTg = await this.socketService.getSocketByEmployeeId(interviewSubjectData, 'telegram')
     
-            if (!socket) {
+            if (!socketWeb && !socketTg) {
                 return interviewData
             }
-    
-            this.socketGateway.server.to(socket.client_id).emit('newInterview', interviewData)
+
+            if (socketWeb) {
+                this.socketGateway.server.to(socketWeb.client_id).emit('newInterview', interviewData)
+            }
+            if (socketTg) {
+                this.socketGateway.server.to(socketTg.client_id).emit('newInterview', interviewData)
+            }
     
             return interviewData
         } catch (error) {

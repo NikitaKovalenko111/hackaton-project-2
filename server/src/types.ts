@@ -7,6 +7,7 @@ export type interviewType = 'tech' | 'soft' | 'hr' | 'case'
 export type interviewStatusType = 'planned' | 'completed' | 'canceled'
 export type skillLevel = 'junior' | 'junior+' | 'middle' | 'middle+' | 'senior'
 export type reviewStatus = 'active' | 'pending'
+export type clientType = 'web' | 'telegram'
 
 export class employeeDto {
     employee_id

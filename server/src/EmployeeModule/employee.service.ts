@@ -247,6 +247,24 @@ export class EmployeeService {
         }
     }
 
+    async getEmployeeByTgId(id: number): Promise<Employee> {
+        try {
+            const employee = await this.employeeRepository.findOne({
+                where: {
+                    telegram_id: id
+                }
+            })
+
+            if (!employee) {
+                throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
+            }
+
+            return employee
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
+    }
+
     async refresh(refreshToken: string | null): Promise<registerEmployeeReturnDto> {
         try {
             if (!refreshToken) {
