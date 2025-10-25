@@ -5,6 +5,7 @@ import ApiError from 'src/apiError';
 import { Statistics } from './statistics.entity';
 import { spawn } from 'child_process';
 import { CompanyService } from 'src/CompanyModule/company.service';
+import { SkillService } from 'src/SkillModule/skill.service';
 
 @Injectable()
 export class StatisticsService {
@@ -12,16 +13,26 @@ export class StatisticsService {
         @InjectRepository(Statistics)
         private statisticsRepository: Repository<Statistics>,
 
-        private readonly companyService: CompanyService
+        private readonly skillService: SkillService
     ) {}
 
     async generate(companyId: number) {
-        const skills = await this.companyService.getSkills(companyId)
-
-        console.log(skills);
+        const skills = await this.skillService.getSkillsByCompany(companyId)
 
         const promise = new Promise((resolve, reject) => {
-            const statisticsOne = spawn('python', ['statistics.py', 'skils_statistics', ]);
+            const statisticsOne = spawn('./src/StatisticsModule/.venv/Scripts/python.exe', ['./src/StatisticsModule/statistics.py', 'skils_statistics', JSON.stringify(skills)]);
+
+                statisticsOne.stdout.on('data', (data) => {
+                    console.log(`Python output: ${data}`);
+                });
+
+                statisticsOne.stderr.on('data', (data) => {
+                    console.error(`Python error: ${data}`);
+                });
+
+                statisticsOne.on('close', (code) => {
+                    console.log(`Python process exited with code ${code}`);
+                });
         })
     }
 }

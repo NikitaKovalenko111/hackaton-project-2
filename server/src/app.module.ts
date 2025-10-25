@@ -25,6 +25,7 @@ import { Answer } from './ReviewModule/answer.entity';
 import { Review } from './ReviewModule/review.entity';
 import { ReviewModule } from './ReviewModule/review.module';
 import { Statistics } from './StatisticsModule/statistics.entity';
+import { StatisticsModule } from './StatisticsModule/statistics.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { Statistics } from './StatisticsModule/statistics.entity';
     SkillModule,
     SocketGatewayModule,
     ReviewModule,
+    StatisticsModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',

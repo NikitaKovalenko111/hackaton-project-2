@@ -1,5 +1,7 @@
 import pandas as pd
 import plotly.express as px
+import sys
+import json
 
 def chart_bar(df, columns: list, name_chart: str):
     flg = px.bar(
@@ -105,3 +107,18 @@ def interview_role_statistics(interview_roles:list):
     df.columns = columns
 
     return chart_bar(df, columns, "Статистика ролей")
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        function_to_call = sys.argv[1]
+        args_for_function = json.loads(sys.argv[2])
+
+        if function_to_call == 'skils_statistics':
+            param = args_for_function
+            result = skils_statistics(param).replace('<body>', '').replace('</body>', '').replace('<html>', '').replace('</html>', '').encode('utf-8')
+            print(result)
+        else:
+            print(f"Error: Function '{function_to_call}' not found.")
+    else:
+        print("Error: No function name provided.")
+    sys.stdout.flush() # Ensure output is sent immediately

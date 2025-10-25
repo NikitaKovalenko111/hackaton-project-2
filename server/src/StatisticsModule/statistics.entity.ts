@@ -1,5 +1,6 @@
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Company } from 'src/CompanyModule/company.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity()
 export class Statistics {
@@ -11,6 +12,10 @@ export class Statistics {
 
     @Column()
     statistics_data: string
+
+    @ManyToOne(() => Company, company => company.statistics)
+    @JoinColumn({ name: "company_id" })
+    company: Company
 
     constructor(item: Partial<Statistics>) {
         Object.assign(this, item)

@@ -157,4 +157,21 @@ export class SkillService {
             throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
     }
+
+    async getSkillsByCompany(companyId: number): Promise<Skill[]> {
+        const skills = await this.skillRepository.find({
+            where: {
+                skill_shape: {
+                    company: {
+                        company_id: companyId
+                    }
+                }
+            }, relations: {
+                skill_shape: true,
+                employee: true
+            }
+        })
+
+        return skills
+    }
 }
