@@ -9,6 +9,7 @@ import { CompanyService } from 'src/CompanyModule/company.service';
 
 interface addQuestionBodyDto {
     question_text: string
+    review_id: number
 }
 
 interface setReviewBodyDto {
@@ -40,11 +41,9 @@ export class ReviewController {
 
     @Post('add/question')
     async addQuestion(@Body() addQuestionBody: addQuestionBodyDto, @Req() req: Request): Promise<Question> {
-        const employeeId = (req as any).employee.employee_id
-        const { question_text } = addQuestionBody
-        const employee = await this.employeeService.getEmployee(employeeId)
+        const { question_text, review_id } = addQuestionBody
 
-        const question = await this.reviewService.addQuestion(question_text, employee.company.company_id)
+        const question = await this.reviewService.addQuestion(question_text, review_id)
 
         return question
     }

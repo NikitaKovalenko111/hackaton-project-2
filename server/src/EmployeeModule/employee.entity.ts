@@ -79,7 +79,7 @@ export class Employee {
     })
     plannedInterviews: Interview[]
 
-    @ManyToMany(() => Employee, employee => employee.workedWith)
+    /*@ManyToMany(() => Employee, employee => employee.workedWith)
     beenWorkedWith: Employee[]
 
     @ManyToMany(() => Employee, employee => employee.beenWorkedWith, {
@@ -93,7 +93,7 @@ export class Employee {
             name: "employee_id_2"
         }
     })
-    workedWith: Employee[]
+    workedWith: Employee[]*/
 
     @OneToMany(() => Answer, answer => answer.employee, {
         cascade: true
