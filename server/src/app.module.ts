@@ -80,7 +80,8 @@ export class AppModule implements NestModule {
         "review/remove/question/:id",
         'review/send/answers',
         'review/start',
-        'company/skill/giveToMany'
+        'company/skill/giveToMany',
+        'company/employee/addByEmail'
       )
   }
 }
