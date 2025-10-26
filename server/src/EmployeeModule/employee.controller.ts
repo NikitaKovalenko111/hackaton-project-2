@@ -174,4 +174,23 @@ export class EmployeeController {
             throw new HttpException(error.message, error.status)
         }
     }
+
+    @Get('/profile/:id')
+    async getProfileById(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<employeeDto> {
+        try {
+            const employeeId = (request as any).employee.employee_id
+
+            if (!employeeId) {
+                throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
+            }
+
+            const profile = await this.employeeService.getEmployeeById(employeeId)
+
+            const profileData = new employeeDto(profile)
+
+            return profileData
+        } catch (error) {
+            throw new HttpException(error.message, error.status)
+        }
+    }
 }

@@ -265,6 +265,38 @@ export class EmployeeService {
         }
     }
 
+    async getEmployeeById(id: number): Promise<Employee> {
+        try {
+            const employee = await this.employeeRepository.findOne({
+                where: {
+                    employee_id: id
+                },
+                relations: {
+                    skills: {
+                        skill_shape: true
+                    },
+                    team: {
+                        teamlead: true,
+                    },
+                    company: true,
+                    role: true,
+                    plannedInterviews: true,
+                    receivedRequests: true,
+                    sendedRequests: true,
+                    createdInterviews: true,
+                }
+            })
+
+            if (!employee) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
+            }
+
+            return employee
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
+    }
+
     async refresh(refreshToken: string | null): Promise<registerEmployeeReturnDto> {
         try {
             if (!refreshToken) {

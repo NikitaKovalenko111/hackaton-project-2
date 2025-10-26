@@ -123,7 +123,11 @@ export class StatisticsService {
 
             if (statisticsName.includes('employeeByRoles')) {
                 const employees = await this.companyService.getEmployees(companyId)
-                const statisticsTwo = spawn('./src/StatisticsModule/.venv/Scripts/python.exe', ['./src/StatisticsModule/statistics.py', 'interview_role_statistics', JSON.stringify(employees.map(el => { role_name: el.employeeRole?.role_name }))]);
+                const employeeRoles = employees.map(el => { role_name: el.role.role_name })  
+                console.log(employeeRoles);
+                
+                
+                const statisticsTwo = spawn('./src/StatisticsModule/.venv/Scripts/python.exe', ['./src/StatisticsModule/statistics.py', 'interview_role_statistics', JSON.stringify(employeeRoles)]);
     
                 statisticsTwo.stdout.on('data', async (data) => {
                     const statistics = new Statistics({

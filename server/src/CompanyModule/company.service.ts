@@ -160,7 +160,7 @@ export class CompanyService {
         }
     }
 
-    async getEmployees(company_id: number, name?: string): Promise<employeePayloadDto[]> {
+    async getEmployees(company_id: number, name?: string): Promise<Employee[]> {
         try {
             const company = await this.companyRepository.findOne({
                 where: {
