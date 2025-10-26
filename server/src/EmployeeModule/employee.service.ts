@@ -215,6 +215,13 @@ export class EmployeeService {
             const employee = await this.employeeRepository.findOne({
                 where: {
                     employee_email: data.employee_email
+                },
+                select: {
+                    employee_id: true,
+                    employee_password: true,
+                    employee_name: true,
+                    employee_email: true,
+                    employee_surname: true
                 }
             })
     
