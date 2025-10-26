@@ -1,0 +1,34 @@
+'use client'
+
+import { useGetCompanySkills } from "@/modules/skills/infrastructure/query/queries"
+import { SkillsTable } from "../skills-table/skills-table"
+import { useEffect, useState } from "react"
+import { SkillShape, SkillTable } from "@/modules/skills/domain/skills.types"
+import ProtectedRoute from "@/libs/protected-route"
+
+export const Skills = () => {
+
+    const [skills, setSkills] = useState<SkillTable[]>([])
+
+    const {data} = useGetCompanySkills()
+
+    useEffect(() => {
+        if (data) {
+            const items: SkillTable[] = data.map((item: SkillShape) => ({
+                skill_name: item.skill_name,
+                skill_desc: item.skill_desc,
+                skill_count: item.skills ? item.skills.length : 0,
+                skill_shape_id: item.skill_shape_id
+            }))
+            setSkills(items)
+        }
+    }, [data])
+
+    return (
+        <div className="mx-auto max-w-6xl space-y-6 px-4 py-10 animate-appear">
+            <ProtectedRoute allowedRoles={['admin']}>
+                <SkillsTable data={skills} />
+            </ProtectedRoute>
+        </div>
+    )
+}

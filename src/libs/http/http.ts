@@ -1,9 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios'
+import { createTokenRefreshMiddleware } from 'axios-jwt-refresh-token';
 import authConfig from "@/libs/configs/auth";
+import { refreshToken } from '@/modules/auth/infrastructure/auth-api';
+import { saveRefreshStorage, saveRoleStorage, saveTokenStorage } from '@/modules/auth/infrastructure/auth-token';
+import { saveCompanyStorage } from '@/modules/company/infrastructure/company-storage';
+
+const Cookies = require("js-cookie")
 
 const http = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
+    
 
     // baseURL: 'http://0.0.0.0:8000/'
 })
@@ -14,12 +21,54 @@ const https = axios.create({
     // baseURL: 'http://0.0.0.0:8000/'
 })
 
+let isRefetching = false
+let failedQueue: any[] = []
+
+const processQueue = (error: any, token: any = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+        prom.reject(error);
+        } else {
+        prom.resolve(token);
+        }
+    });
+    failedQueue = [];
+};
+
+const refreshTokens = async () => {
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/employee/refresh`, {}, {
+        withCredentials: true,
+        
+    })
+    debugger
+    Cookies.set("accessToken", res.data.accessToken)
+
+    return {
+        accessToken: res.data.accessToken,
+        refreshToken: res.data.refreshToken
+    }
+}
+
+const requestAccessMiddleware = createTokenRefreshMiddleware({
+    requestTokens: refreshTokens,
+    onRefreshAndAccessExpire: () => {
+        window.location.href = '/auth'
+    },
+    accessTokenKey: 'accessToken',
+    refreshTokenKey: 'refreshToken',
+    cookiesOptions: { secure: true, sameSite: 'strict' }
+})
+
 http.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem(authConfig.storageTokenKeyName) || ''
-        if (token) {
-            config.headers['Authorization'] = 'Bearer ' + token
+        if (typeof window != 'undefined') {
+            // const token = localStorage.getItem(authConfig.storageTokenKeyName) || ''
+            const token = Cookies.get(authConfig.storageTokenKeyName) || ''
+            if (token) {
+                config.headers['Authorization'] = 'Bearer ' + token
+            }
         }
+        
 
         return config
     },
@@ -33,25 +82,28 @@ http.interceptors.response.use(
     (res) => {
         return res
     },
-    (err) => {
+    async (err) => {
         
-        const originalConfig = err.config
+        const accessToken = Cookies.get("accessToken")
+        const refreshToken = Cookies.get("refreshToken")
 
-        if (originalConfig.url !== '/login') {
-            if (err.response.status === 401) {
-                localStorage.removeItem('access_token')
-                localStorage.removeItem(authConfig.storageTokenKeyName)
-                localStorage.removeItem('crmType')
-                localStorage.removeItem('isCrmConnected')
-                localStorage.removeItem('userData')
-                localStorage.removeItem('accessToken')
-                if (window.location.pathname !== '/login') {
-                    window.location.assign('/login')
-                }
+        const config = err.config
+        
+        if (err.response.status === 401 && !config._retry) {
+            config._retry = true
+            isRefetching = true
+            const res = await refreshTokens()
+            debugger
+
+            if (res.accessToken) {
+                config.headers.Authorization = `Bearer ${res.accessToken}`
             }
+
+            return http(config)
         }
 
         return Promise.reject(err)
+        
     },
 )
 

@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { GreetMode } from "@/modules/company/domain/company.type"
 import clsx from "clsx"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { CreateCompany } from "../create-form/create-company"
+import { useAuth } from "@/libs/providers/ability-provider"
+import { useRouter } from "next/navigation"
 
 const variantStyleInfo: { [key in GreetMode]: string } = {
     info: 'left-0',
@@ -29,6 +31,14 @@ export const GreetCard = () => {
     const handleModeChange = (value: GreetMode) => {
         setMode(value)
     }
+
+    const {push} = useRouter()
+
+    const {companyId} = useAuth()
+
+    useEffect(() => {
+        if (companyId) push('/profile')
+    }, [companyId])
 
     return (
         <Card className={clsx(

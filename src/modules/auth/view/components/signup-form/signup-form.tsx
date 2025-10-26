@@ -13,10 +13,10 @@ import toast from "react-hot-toast";
 import z from "zod";
 
 const zodSchema = z.object({
-    employee_name: z.string().min(1, {message: 'Имя обязательно'}),
-    employee_surname: z.string().min(1, {message: 'Фамилия обязательна'}), 
+    employee_name: z.string().trim().min(1, {message: 'Имя обязательно'}),
+    employee_surname: z.string().trim().min(1, {message: 'Фамилия обязательна'}), 
     employee_email: z.email({message: "Некорректный Email"}).min(2, {message: 'Email обязателен'}),
-    employee_password: z.string().min(6, {message: "Минимальная длина - 6 символов"})
+    employee_password: z.string().trim().min(6, {message: "Минимальная длина - 6 символов"})
 })
 
 const formStyleConditionErrors = [['mt-[30px]', 'gap-8'], ['mt-0', 'gap-8'], ['mt-0', 'gap-6'], ['mt-0', 'gap-4'], ['mt-0', 'gap-2']]
@@ -47,14 +47,6 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
         mutate(data)
         reset()
     }
-
-    useEffect(() => {
-        if (isError) toast.error('Возникла ошибка!')
-    }, [isError])
-
-    useEffect(() => {
-        if (isSuccess) toast.success('Вы зарегистрировались!')
-    }, [isSuccess])
 
     return (
         <div className={clsx(
@@ -135,12 +127,6 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
                                     </Field>
                                 )}
                             />
-                            {/* <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Пароль</Label>
-                                </div>
-                                <Input id="password" type="password" required />
-                            </div> */}
                             <Controller
                                 name="employee_password"
                                 control={control}
@@ -167,7 +153,7 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
                     
                 </form>
             </CardContent>
-            <CardFooter className="flex-col gap-2">
+            <CardFooter className="flex-col overflow-hidden">
                 <Button type="submit" form="signup-form" className="w-full cursor-pointer">
                     Зарегестрироваться
                 </Button>

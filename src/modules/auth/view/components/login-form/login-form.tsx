@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 
 const zodSchema = z.object({
     employee_email: z.email({message: "Некорректный Email"}).min(2, {message: 'Email обязателен'}),
-    employee_password: z.string().min(6, {message: "Минимальная длина - 6 символов"})
+    employee_password: z.string().trim().min(6, {message: "Минимальная длина - 6 символов"})
 })
 
 const formStyleConditionErrors = ['mt-[20px]', 'mt-[6px]', 'mt-0']
@@ -40,20 +40,12 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
         }
     })
 
-    const {mutate, isError, isSuccess} = useLogin()
+    const {mutate} = useLogin()
 
     const onSubmit: SubmitHandler<AuthLoginDTO> = (data) => {
         mutate(data)
         reset()
     }
-
-    useEffect(() => {
-        if (isError) toast.error('Возникла ошибка!')
-    }, [isError])
-
-    useEffect(() => {
-        if (isSuccess) toast.success('Вы вошли!')
-    }, [isSuccess])
 
     return (
         <div className={clsx(
