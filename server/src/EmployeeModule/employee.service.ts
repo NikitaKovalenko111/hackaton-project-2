@@ -28,6 +28,7 @@ export class EmployeeService {
                         skill_shape: true
                     },
                     team: {
+                        employees: true,
                         teamlead: true,
                     },
                     company: true,
@@ -252,7 +253,7 @@ export class EmployeeService {
             const employee = await this.employeeRepository.findOne({
                 where: {
                     telegram_id: id
-                }
+                },
             })
 
             if (!employee) {
