@@ -66,14 +66,14 @@ export const InfoDialog = ({
         resolver: zodResolver(zodSchema),
         mode: 'onChange',
         defaultValues: {
-            team_id: data ? String(data?.team.team_id) : '',
+            team_id: data ? data.team ? String(data?.team.team_id) : '' : '',
             employee_to_add_id: id
         }
     })
 
     useEffect(() => {
         if (id == data?.employee_id) {
-            setValue('team_id', String(data.team.team_id))
+            if (data.team) setValue('team_id', String(data.team.team_id))
         }
     }, [data])
 

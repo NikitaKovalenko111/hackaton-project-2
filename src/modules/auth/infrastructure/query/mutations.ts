@@ -3,11 +3,15 @@ import { AuthLoginDTO, AuthSignupDTO } from "../../domain/auth.type"
 import { login, register } from "../auth-api"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import { useAuth } from "@/libs/providers/ability-provider"
+import { saveCompanyStorage } from "@/modules/company/infrastructure/company-storage"
 
 export const useLogin = () => {
     const queryClient = useQueryClient()
 
     const {push} = useRouter()
+
+    const {companyId} = useAuth()
 
     return useMutation({
         mutationKey: ["auth"],
@@ -15,11 +19,13 @@ export const useLogin = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["auth"] })
             toast.success('Вы вошли!')
-            push('/company')
+            if (companyId) {
+                saveCompanyStorage(companyId)
+                push('/profile')
+            }
+            else push('/company')
         },
         onError: (e: any) => {
-            console.log(e.message)
-            debugger
             toast.error('Возникла ошибка!')
         }
     })

@@ -61,7 +61,7 @@ export const SkillUsersTable = ({
                 )
             },
             cell: ({ row }) => (
-            <div className="text-center capitalize">{`${row.original.employee_name} ${row.getValue("employee_name")}`}</div>
+            <div className="text-center capitalize">{`${row.original.employee_name} ${row.original.employee_surname}`}</div>
             ),
         },
         {
@@ -119,7 +119,7 @@ export const SkillUsersTable = ({
                 )
             },
             cell: ({ row }) => (
-            <div className="text-center capitalize">{`${row.original.employee_name} ${row.getValue("employee_name")}`}</div>
+            <div className="text-center capitalize">{`${row.original.employee_name} ${row.original.employee_surname}`}</div>
             ),
         },
         {
