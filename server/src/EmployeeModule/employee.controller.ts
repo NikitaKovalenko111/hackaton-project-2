@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Patch, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import type { Request, Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -176,15 +176,9 @@ export class EmployeeController {
     }
 
     @Get('/profile/:id')
-    async getProfileById(@Req() request: Request, @Res({ passthrough: true }) response: Response): Promise<employeeDto> {
+    async getProfileById(@Req() request: Request, @Param('id') id: number): Promise<employeeDto> {
         try {
-            const employeeId = (request as any).employee.employee_id
-
-            if (!employeeId) {
-                throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
-            }
-
-            const profile = await this.employeeService.getEmployeeById(employeeId)
+            const profile = await this.employeeService.getEmployeeById(id)
 
             const profileData = new employeeDto(profile)
 

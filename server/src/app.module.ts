@@ -60,6 +60,7 @@ export class AppModule implements NestModule {
         'employee/photo', 
         'employee/status',
         'employee/profile',
+        'employee/profile/:id',
         'company/employees', 
         'company/create', 
         'company/skill/create', 
