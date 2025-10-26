@@ -10,6 +10,7 @@ import { RoleType } from 'src/types';
 import { Role } from 'src/EmployeeModule/role.entity';
 import { Review } from 'src/ReviewModule/review.entity';
 import ApiError from 'src/apiError';
+import { Team } from 'src/TeamModule/team.entity';
 
 @Injectable()
 export class CompanyService {
@@ -186,6 +187,28 @@ export class CompanyService {
         } catch (error) {
             throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
+    }
+
+    async getAllTeams(companyId: number): Promise<Team[]> {
+        const company = await this.companyRepository.findOne({
+            where: {
+                company_id: companyId
+            },
+            relations: {
+                teams: {
+                    teamlead: true,
+                    employees: true
+                }
+            }
+        })
+
+        if (!company) {
+            throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена')
+        }
+
+        const teams = company.teams
+
+        return teams
     }
 
     async getSkills(companyId: number): Promise<SkillShape[]> {

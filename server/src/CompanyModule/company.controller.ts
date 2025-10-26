@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Param, Post, Query, Req } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { Company } from './company.entity';
 import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
@@ -7,6 +7,8 @@ import { Skill } from 'src/SkillModule/skill.entity';
 import { SkillService } from 'src/SkillModule/skill.service';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { employeeDto, RoleType, skillLevel } from 'src/types';
+import { Team } from 'src/TeamModule/team.entity';
+import { TeamService } from 'src/TeamModule/team.service';
 
 interface createCompanyBodyDto {
     company_name: string
@@ -55,7 +57,7 @@ export class CompanyController {
     constructor(
         private readonly companyService: CompanyService,
         private readonly employeeService: EmployeeService,
-        private readonly skillService : SkillService
+        private readonly skillService : SkillService,
     ) { }
 
     @Get('/info')
@@ -207,6 +209,17 @@ export class CompanyController {
             const skill = await this.skillService.giveSkillToMany(needEmployees, skill_shape_id, skill_level)
     
             return skill
+        } catch (error) {
+            throw new HttpException(error.message, error.status)
+        }
+    }
+
+    @Get('/:companyId/teams')
+    async getAllCompanyTeams(@Param('companyId') companyId: number, @Req() req: Request): Promise<Team[]> {
+        try {
+            const teams = await this.companyService.getAllTeams(companyId)
+
+            return teams
         } catch (error) {
             throw new HttpException(error.message, error.status)
         }
