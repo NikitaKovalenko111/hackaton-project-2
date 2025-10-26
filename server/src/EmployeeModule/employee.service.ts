@@ -227,10 +227,7 @@ export class EmployeeService {
     
             if (!employee) {
                 throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователя с таким email не существует!')
-            }
-
-            console.log(employee);
-            
+            }      
     
             const isPassCorrect = bcrypt.compare(data.employee_password, employee.employee_password)
     

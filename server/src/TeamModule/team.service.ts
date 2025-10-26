@@ -86,7 +86,9 @@ export class TeamService {
                 },
                 relations: {
                     teamlead: true,
-                    employees: true,
+                    employees: {
+                        role: true
+                    },
                     company: true
                 }
             })
