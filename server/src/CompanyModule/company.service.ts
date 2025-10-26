@@ -183,6 +183,9 @@ export class CompanyService {
                     team: {
                         teamlead: true,
                         employees: true
+                    },
+                    skills: {
+                        skill_shape: true
                     }
                 }
             })
