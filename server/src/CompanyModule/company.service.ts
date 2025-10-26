@@ -177,6 +177,9 @@ export class CompanyService {
                     company: company,
                     employee_name: Like(`%${name ? name : ''}%`)
                 },
+                relations: {
+                    role: true
+                }
             })
     
             return employees

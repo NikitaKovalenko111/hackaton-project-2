@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 import plotly.express as px
 import sys
 import json
@@ -57,7 +58,7 @@ def interview_months_statistics(interviews: list):
     '''
     Статистика собеседований по месяцам
     '''
-    interview_date = [item['interview_date'].strftime("%B, %Y") for item in interviews]
+    interview_date = [datetime.stritem['interview_date'].strftime("%B, %Y") for item in interviews]
     df = pd.Series(interview_date).value_counts().reset_index()
 
     columns = ["Дата", "Количество"]
@@ -71,7 +72,7 @@ def interview_statistics(interview_types: list):
     '''
     Статистика собеседований по типу собеседований
     '''
-    interview_stat = [item['InterviewType'] for item in interview_types]
+    interview_stat = [item['interview_type'] for item in interview_types]
     df = pd.Series(interview_stat).value_counts().reset_index()
 
     columns = ["Тип собеседования", "Количество"]
@@ -116,6 +117,26 @@ if __name__ == "__main__":
         if function_to_call == 'skils_statistics':
             param = args_for_function
             result = skils_statistics(param).replace('<body>', '').replace('</body>', '').replace('<html>', '').replace('</html>', '').encode('utf-8')
+            print(result)
+        elif function_to_call == 'competence_statistics':
+            param = args_for_function
+            result = competence_statistics(param).replace('<body>', '').replace('</body>', '').replace('<html>', '').replace('</html>', '').encode('utf-8')
+            print(result)
+        elif function_to_call == 'interview_months_statistics':
+            param = args_for_function
+            result = interview_months_statistics(param).replace('<body>', '').replace('</body>', '').replace('<html>', '').replace('</html>', '').encode('utf-8')
+            print(result)
+        elif function_to_call == 'interview_statistics':
+            param = args_for_function
+            result = interview_statistics(param).replace('<body>', '').replace('</body>', '').replace('<html>', '').replace('</html>', '').encode('utf-8')
+            print(result)
+        elif function_to_call == 'interview_completion_statistics':
+            param = args_for_function
+            result = interview_completion_statistics(param).replace('<body>', '').replace('</body>', '').replace('<html>', '').replace('</html>', '').encode('utf-8')
+            print(result)
+        elif function_to_call == 'interview_role_statistics':
+            param = args_for_function
+            result = interview_role_statistics(param).replace('<body>', '').replace('</body>', '').replace('<html>', '').replace('</html>', '').encode('utf-8')
             print(result)
         else:
             print(f"Error: Function '{function_to_call}' not found.")

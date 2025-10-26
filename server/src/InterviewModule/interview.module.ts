@@ -9,10 +9,12 @@ import { Socket } from 'src/socket/socket.entity';
 import { Request } from 'src/socket/request.entity';
 import { SocketGatewayModule } from 'src/socket/socket.module';
 import { EmployeeModule } from 'src/EmployeeModule/employee.module';
+import { CompanyModule } from 'src/CompanyModule/company.module';
 
 @Module({
     imports: [
         EmployeeModule,
+        CompanyModule,
         TypeOrmModule.forFeature([Interview, Employee, Employee_token, Socket, Request]),
         SocketGatewayModule,
     ],
