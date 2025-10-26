@@ -28,7 +28,9 @@ export class EmployeeService {
                         skill_shape: true
                     },
                     team: {
-                        employees: true,
+                        employees: {
+                            role: true
+                        },
                         teamlead: true,
                     },
                     company: true,
