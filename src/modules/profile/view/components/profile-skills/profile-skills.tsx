@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TabsContent } from "@/components/ui/tabs"
 import { Skill } from "@/modules/skills/domain/skills.types"
+import { SkillLevelBadge } from "../../ui/skill-level-badge"
 
 export const ProfileSkillsTab = ({skills}: {skills: Skill[]}) => {
 
@@ -17,9 +18,9 @@ export const ProfileSkillsTab = ({skills}: {skills: Skill[]}) => {
                 <div className="flex items-center justify-between">
                     {skills.map((skill, id) => {
                         return (
-                            <div className="space-y-1">
+                            <div key={id} className="flex gap-2">
                                 <p>{skill.skill_shape.skill_name}: </p>
-                                <p>{skill.skill_level}</p>
+                                {SkillLevelBadge(skill.skill_level)}
                             </div>
                         )
                     })}

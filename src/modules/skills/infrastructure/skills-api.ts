@@ -1,5 +1,5 @@
 import http from "@/libs/http/http";
-import { CreateSkillDTO, SkillShape } from "../domain/skills.types";
+import { CreateSkillDTO, GiveSkillDTO, SkillShape } from "../domain/skills.types";
 
 export const getAllSkills = async (): Promise<SkillShape[]> => {
     const res = await http.get('company/skills', {})
@@ -17,4 +17,15 @@ export const getSkillById = async (id: number): Promise<SkillShape> => {
     const res = await http.get(`skill/skillShape/${id}`, {})
 
     return res.data
+}
+
+
+export const giveSkill = async (data: GiveSkillDTO) => {
+    const res = await http.post("company/skill/give", data)
+
+    return res.data
+}
+
+export const removeSkill = async (id: number) => {
+    await http.remove(`skill/${id}/delete`, {})
 }
