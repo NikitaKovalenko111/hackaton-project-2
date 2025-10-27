@@ -22,7 +22,7 @@ interface completeRequestDto {
   request_id: number
 }
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly requestGatewayService: RequestService,
