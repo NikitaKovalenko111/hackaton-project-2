@@ -22,7 +22,10 @@ interface completeRequestDto {
   request_id: number
 }
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway({ cors: {
+  origin: "http://localhost:3000",
+  credentials: true
+} })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly requestGatewayService: RequestService,
