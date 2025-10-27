@@ -30,6 +30,8 @@ export class SocketService {
                 }
             })
 
+            console.log(socketCurrent);
+
             if (socketCurrent) {
                 socketCurrent.client_id = socketId
 
@@ -57,12 +59,8 @@ export class SocketService {
             const socket = await this.socketRepository.delete({
                 client_id: socketId
             })
-    
-            if (socket.affected && socket.affected > 0) {
-                return 'deleted'
-            } else {
-                throw new ApiError(HttpStatus.NOT_FOUND, 'Сокет не найден или удален!')
-            }
+
+            return 'deleted'
         } catch (error) {
             throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }
