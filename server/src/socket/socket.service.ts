@@ -17,7 +17,9 @@ export class SocketService {
     ) {}
     async saveSocket(socketId: string, employeeId: number, clientType: clientType): Promise<Socket> {
         try {
-            const employee = await this.employeeService.getEmployee(employeeId)
+            console.log(employeeId);
+            
+            const employee = await this.employeeService.getCleanEmployee(employeeId)
     
             if (!employee) {
                 throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
