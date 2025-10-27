@@ -39,8 +39,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       console.log(client.request.headers);
       console.log(client);
-      
-      
 
       if (!clientType) {
         throw new ApiError(HttpStatus.BAD_REQUEST, 'Не указан тип клиента!')
