@@ -226,6 +226,18 @@ export class EmployeeService {
                     employee_surname: true
                 }
             })
+
+            const previousEmployee = await this.employeeRepository.findOne({
+                where: {
+                    telegram_id: data.tg_id
+                }
+            })
+
+            if (previousEmployee) {
+                previousEmployee.telegram_id = null
+
+                await this.employeeRepository.save(previousEmployee)
+            }
     
             if (!employee) {
                 throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователя с таким email не существует!')

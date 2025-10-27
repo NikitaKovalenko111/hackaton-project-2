@@ -36,7 +36,7 @@ export class Employee {
         default: null,
         type: 'bigint'
     })
-    telegram_id: number
+    telegram_id: number | null
 
     @OneToOne(() => Role, role => role.employee, {
         cascade: true
