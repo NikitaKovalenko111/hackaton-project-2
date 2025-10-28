@@ -1,6 +1,10 @@
 
 // TYPES
 
+import { Employee } from "@/modules/profile/domain/profile.types"
+import { socketSlice } from "./slices/socket.slice"
+import { Skill } from "@/modules/skills/domain/skills.types"
+
 export type ROLE = 'hr' | 'developer' | 'teamlead' | 'techlead' | 'admin' | 'moderator'
 
 export interface NavItem {
@@ -10,8 +14,21 @@ export interface NavItem {
     icon: string
 }
 
+export interface Request {
+    request_id: number
+    request_type: 'upgrade'
+    request_status: 'pending' | 'completed' | 'canceled'
+    request_date: Date
+    request_receiver: Employee
+    request_role_receiver: 'hr' | 'developer' | 'teamlead' | 'techlead' | 'admin' | 'moderator'
+    request_owner: Employee
+    request_skill?: Skill
+}
+
 
 // CONSTANTS
+
+export const SkillLevels = ['junior', 'junior+', 'middle', 'middle+', 'senior']
 
 export const NO_INDEX_PAGE = {
     robots: {
@@ -57,3 +74,7 @@ export const NavItems: NavItem[] = [
         icon: 'CircleUser'
     }
 ]
+
+export const rootActions = {
+    ...socketSlice.actions
+}

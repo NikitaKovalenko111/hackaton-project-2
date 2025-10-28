@@ -11,7 +11,6 @@ export default function MainLayout({children}: {children: React.ReactNode}) {
         <>
             <main>
                 <Header>
-                    h
                     <Nav navigationMenuItems={NavItems} />
                 </Header>
                 <div className="mt-30">

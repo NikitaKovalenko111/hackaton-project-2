@@ -10,7 +10,7 @@ export const Employees = () => {
 
     const [employees, setEmployees] = useState<EmployeeTable[]>([])
 
-    const {data} = useGetCompanyEmployees()
+    const {data, isFetching} = useGetCompanyEmployees()
 
     useEffect(() => {
         
@@ -30,7 +30,7 @@ export const Employees = () => {
     return (
         <div className="mx-auto animate-appear max-w-6xl space-y-6 px-4 py-10">
             <ProtectedRoute allowedRoles={['admin']}>
-                <EmployeesTable data={employees} />
+                <EmployeesTable isFetching={isFetching} data={employees} />
             </ProtectedRoute>
         </div>
     )

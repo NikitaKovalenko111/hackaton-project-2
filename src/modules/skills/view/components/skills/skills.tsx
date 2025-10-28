@@ -10,7 +10,7 @@ export const Skills = () => {
 
     const [skills, setSkills] = useState<SkillTable[]>([])
 
-    const {data} = useGetCompanySkills()
+    const {data, isFetching} = useGetCompanySkills()
 
     useEffect(() => {
         if (data) {
@@ -27,7 +27,7 @@ export const Skills = () => {
     return (
         <div className="mx-auto max-w-6xl space-y-6 px-4 py-10 animate-appear">
             <ProtectedRoute allowedRoles={['admin']}>
-                <SkillsTable data={skills} />
+                <SkillsTable isFetching={isFetching} data={skills} />
             </ProtectedRoute>
         </div>
     )

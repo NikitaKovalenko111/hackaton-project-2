@@ -32,16 +32,18 @@ import { CreateSkill } from "../create-skill/create-skill";
 import { useAuth } from "@/libs/providers/ability-provider";
 import { InfoDialog } from "../info-dialog/info-dialog";
 import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
 const Cookies = require("js-cookie")
 
 
 interface SkillsTableProps {
     data: SkillTable[]
+    isFetching: boolean
 }
 
 
 
-export function SkillsTable({data}: SkillsTableProps) {
+export function SkillsTable({data, isFetching}: SkillsTableProps) {
 
     const [openCreateDialog, setOpenCreateDialog] = React.useState<boolean>(false)
     const [openInfoDialog, setOpenInfoDialog] = React.useState<boolean>(false)
@@ -178,34 +180,51 @@ export function SkillsTable({data}: SkillsTableProps) {
                             </TableRow>
                             ))}
                         </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
-                                    {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext()
-                                    )}
+                    {isFetching ? (
+                        <TableBody>
+                            <TableRow className="animate-appear">
+                                <TableCell>
+                                    <Skeleton className="w-full h-4" />
                                 </TableCell>
-                            ))}
+                                <TableCell>
+                                    <Skeleton className="w-full h-4" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="w-full h-4" />
+                                </TableCell>
                             </TableRow>
-                        ))
-                        ) : (
-                        <TableRow>
-                            <TableCell
-                                colSpan={columns.length}
-                                className="h-24 text-center"
-                            >
-                                Пусто
-                            </TableCell>
-                        </TableRow>
-                        )}
-                    </TableBody>
+                        </TableBody>
+                    ) : (
+                        <TableBody className="animate-appear">
+                            {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                    className="animate-appear"
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </TableCell>
+                                ))}
+                                </TableRow>
+                            ))
+                            ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    Пусто
+                                </TableCell>
+                            </TableRow>
+                            )}
+                        </TableBody>
+                    )}
                     </Table>
                 </div>
                 <div className="flex items-center justify-end space-x-2 py-4">

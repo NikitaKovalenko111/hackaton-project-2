@@ -1,4 +1,4 @@
-import { Shield, Key, Trash2 } from "lucide-react";
+'use client'
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,13 +18,31 @@ import { Badge } from "@/components/ui/badge";
 import { PersonalTab } from "../personal-tab/personal-tab";
 import { Skill } from "@/modules/skills/domain/skills.types";
 import { ProfileSkillsTab } from "../profile-skills/profile-skills";
+import { TeamTab } from "../team-tab/team-tab";
+import { Team } from "@/modules/teams/domain/teams.type";
+import ProtectedRoute from "@/libs/protected-route";
+import { useAuth } from "@/libs/providers/ability-provider";
+import clsx from "clsx";
+import { ROLE } from "@/libs/constants";
+import { RequestsTab } from "../requests-tab/requests-tab";
 
 interface ProfileContentProps {
+    id: number
     employee_name: string;
     employee_surname: string;
     employee_email: string;
     employee_status: string;
     skills: Skill[]
+    team: Team
+}
+
+const tabList: Record<ROLE, string> = {
+    admin: 'grid-cols-4',
+    techlead: 'grid-cols-4',
+    teamlead: 'grid-cols-4',
+    developer: 'grid-cols-3',
+    hr: 'grid-cols-3',
+    moderator: 'grid-cols-3'
 }
 
 export const ProfileContent = ({
@@ -32,15 +50,25 @@ export const ProfileContent = ({
     employee_name,
     employee_status,
     employee_surname,
-    skills
+    skills,
+    team,
+    id
 }: ProfileContentProps) => {
+
+    const {role} = useAuth()
+
     return (
         <Tabs defaultValue="personal" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className={clsx(
+            `grid w-full grid-cols-4`,
+            tabList[role]
+        )}>
             <TabsTrigger value="personal">Личное</TabsTrigger>
-            <TabsTrigger value="account">Компетенции</TabsTrigger>
-            <TabsTrigger value="security">Security</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
+            <TabsTrigger value="skills">Компетенции</TabsTrigger>
+            <TabsTrigger value="team">Команда</TabsTrigger>
+            <ProtectedRoute allowedRoles={['teamlead', 'techlead']}>
+                <TabsTrigger value="requests">Запросы</TabsTrigger>
+            </ProtectedRoute>
         </TabsList>
 
         <PersonalTab 
@@ -51,8 +79,18 @@ export const ProfileContent = ({
         />
 
         <ProfileSkillsTab 
+            employeeId={id}
             skills={skills}
         />
+
+        <TeamTab
+            id={id}
+            team={team}
+        />
+
+        <ProtectedRoute allowedRoles={['teamlead', 'techlead']}>
+            <RequestsTab />
+        </ProtectedRoute>
 
         {/* Account Settings */}
         {/* <TabsContent value="account" className="space-y-6">
@@ -136,7 +174,7 @@ export const ProfileContent = ({
         </TabsContent> */}
 
         {/* Security Settings */}
-        <TabsContent value="security" className="space-y-6">
+        {/* <TabsContent value="security" className="space-y-6">
             <Card>
             <CardHeader>
                 <CardTitle>Security Settings</CardTitle>
@@ -204,7 +242,7 @@ export const ProfileContent = ({
                 </div>
             </CardContent>
             </Card>
-        </TabsContent>
+        </TabsContent> */}
 
         {/* Notification Settings */}
         <TabsContent value="notifications" className="space-y-6">

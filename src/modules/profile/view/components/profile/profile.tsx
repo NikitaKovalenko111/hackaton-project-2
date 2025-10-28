@@ -9,13 +9,15 @@ import { SkeletonContent } from "../../ui/skeleton-content"
 
 export const Profile = () => {
 
-    const {data, isSuccess, isError, isPending} = useGetProfile()
+    const {data, isSuccess, isError, isPending, isRefetching, refetch} = useGetProfile()
 
-    console.log(data)
-
+    useEffect(() => {
+        refetch()
+    }, [])
+    
     return (
         <div className="mx-auto max-w-4xl space-y-6 px-4 py-10">
-            {isPending || isError ? 
+            {isPending || isError || isRefetching ? 
                 <SkeletonHeader /> : 
                 <ProfileHeader  
                     employee_email={data.employee_email}
@@ -32,14 +34,16 @@ export const Profile = () => {
                     skills={data.skills}
                 />
             }
-            {isPending || isError ? 
+            {isPending || isError || isRefetching ? 
                 <SkeletonContent /> : 
                 <ProfileContent 
+                    id={data.employee_id}
                     employee_email={data.employee_email}
                     employee_name={data.employee_name}
                     employee_status={data.employee_status}
                     employee_surname={data.employee_surname}
                     skills={data.skills}
+                    team={data.team}
                 />
             }
         </div>

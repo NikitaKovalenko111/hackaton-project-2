@@ -1,30 +1,55 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TabsContent } from "@/components/ui/tabs"
 import { Skill } from "@/modules/skills/domain/skills.types"
 import { SkillLevelBadge } from "../../ui/skill-level-badge"
+import { Button } from "@/components/ui/button"
+import { useSocket } from "@/libs/hooks/useSocket"
+import { useState } from "react"
 
-export const ProfileSkillsTab = ({skills}: {skills: Skill[]}) => {
+export const ProfileSkillsTab = ({employeeId, skills}: {employeeId: number, skills: Skill[]}) => {
+
+    const {handleSendRequest} = useSocket()
+
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
+    const sendRequest = async (id: number, skill_id: number) => {
+        setIsLoading(true)
+        await handleSendRequest('upgrade', id, skill_id)
+        setIsLoading(false)
+    } 
 
     return (
-        <TabsContent value="account" className="space-y-6">
+        <TabsContent value="skills" className="space-y-6">
             <Card>
             <CardHeader>
                 <CardTitle>Ваши компетенции</CardTitle>
                 <CardDescription>
-                    Здесь вы можете узнать ваши компетенции и их уровень
+                    Здесь вы можете узнать ваши компетенции и их уровень, а также отправить запрос на повышение уровня.
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                <div className="flex items-center justify-between">
+                
                     {skills.map((skill, id) => {
                         return (
-                            <div key={id} className="flex gap-2">
-                                <p>{skill.skill_shape.skill_name}: </p>
-                                {SkillLevelBadge(skill.skill_level)}
+                            <div key={id} className="flex justify-between">
+                                <div className="flex gap-2 items-center">
+                                    <p>{skill.skill_shape.skill_name}: </p>
+                                    {SkillLevelBadge(skill.skill_level)}
+                                </div>
+                                <div>
+                                    <Button 
+                                        onClick={() => sendRequest(employeeId, skill.skill_connection_id)}
+                                        disabled={isLoading}
+                                    >
+                                        Отправить запрос
+                                    </Button>
+                                </div>
                             </div>
                         )
                     })}
-                </div>
+                
             </CardContent>
             </Card>
         </TabsContent>

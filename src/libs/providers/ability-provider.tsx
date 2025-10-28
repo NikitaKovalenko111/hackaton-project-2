@@ -32,8 +32,6 @@ export const RoleProvider = ({children}: {children: React.ReactNode}) => {
         }
     }, [data])
 
-    console.log(data)
-
     return (
         <RoleContext.Provider value={{companyId, role}}>
             {children}

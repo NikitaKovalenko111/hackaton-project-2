@@ -14,9 +14,10 @@ import { roleBadge } from "../../ui/role-badge";
 import { InfoDialog } from "../info-dialog/info-dialog";
 import { ConfirmDeleteDialog } from "../../ui/confirm-delete-dialog";
 import { Team } from "@/modules/teams/domain/teams.type";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
-export const EmployeesTable = ({data}: {data: EmployeeTable[]}) => {
+export const EmployeesTable = ({data, isFetching}: {isFetching: boolean, data: EmployeeTable[]}) => {
     const [openAddDialog, setOpenAddDialog] = React.useState<boolean>(false)
     const [openInfoDialog, setOpenInfoDialog] = React.useState<boolean>(false)
     const [openConfirmDelete, setOpenConfirmDelete] = React.useState<boolean>(false)
@@ -189,34 +190,54 @@ export const EmployeesTable = ({data}: {data: EmployeeTable[]}) => {
                             </TableRow>
                             ))}
                         </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
-                                    {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext()
-                                    )}
+                    {isFetching ? (
+                        <TableBody>
+                            <TableRow className="animate-appear">
+                                <TableCell>
+                                    <Skeleton className="w-full h-4" />
                                 </TableCell>
-                            ))}
+                                <TableCell>
+                                    <Skeleton className="w-full h-4" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="w-full h-4" />
+                                </TableCell>
+                                <TableCell>
+                                    <Skeleton className="w-full h-4" />
+                                </TableCell>
                             </TableRow>
-                        ))
-                        ) : (
-                        <TableRow>
-                            <TableCell
-                                colSpan={columns.length}
-                                className="h-24 text-center"
-                            >
-                                Пусто
-                            </TableCell>
-                        </TableRow>
-                        )}
-                    </TableBody>
+                        </TableBody>
+                    ) : (
+                        <TableBody>
+                            {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                    className="animate-appear"
+                                >
+                                    {row.getVisibleCells().map((cell) => (
+                                        <TableCell key={cell.id}>
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </TableCell>
+                                ))}
+                                </TableRow>
+                            ))
+                            ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
+                                    Пусто
+                                </TableCell>
+                            </TableRow>
+                            )}
+                        </TableBody>
+                    )}
                     </Table>
                 </div>
                 <div className="flex items-center justify-end space-x-2 py-4">
