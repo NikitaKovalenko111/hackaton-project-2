@@ -7,6 +7,7 @@ import { requestType } from "src/types";
 import { Request } from "./request.entity";
 import { Employee } from "src/EmployeeModule/employee.entity";
 import ApiError from "src/apiError";
+import { SkillService } from "src/SkillModule/skill.service";
 
 @Injectable()
 export class RequestService {
@@ -17,7 +18,8 @@ export class RequestService {
         @InjectRepository(Request)
         private requestRepository: Repository<Request>,
 
-        private employeeService: EmployeeService
+        private employeeService: EmployeeService,
+        private skillService: SkillService
     ) {}
 
     async saveSocket(socketId: string, employeeId: number): Promise<Socket> {
@@ -46,7 +48,8 @@ export class RequestService {
                     request_receiver: employee
                 },
                 relations: {
-                    request_owner: true
+                    request_owner: true,
+                    request_skill: true
                 }
             })
     
@@ -65,7 +68,8 @@ export class RequestService {
                     request_owner: employee
                 },
                 relations: {
-                    request_receiver: true
+                    request_receiver: true,
+                    request_skill: true
                 }
             })
     
@@ -101,13 +105,15 @@ export class RequestService {
         return socket
     }
 
-    async sendRequest(requestType: requestType, employeeId: number): Promise<Request> {
+    async sendRequest(requestType: requestType, employeeId: number, skill_id): Promise<Request> {
         const employee = await this.employeeService.getEmployee(employeeId)
+        const skill = await this.skillService.getSkillById(skill_id)
 
         const request = new Request({
             request_type: requestType,
             request_owner: employee,
             request_status: 'pending',
+            request_skill: skill,
             request_receiver: employee.team.teamlead,
             request_role_receiver: 'teamlead',
         })

@@ -10,6 +10,7 @@ import { EmployeeService } from 'src/EmployeeModule/employee.service';
 
 interface requestDto {
   requestType: requestType,
+  skill_id: number
   employeeId: number
 }
 
@@ -87,9 +88,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket
   ) {
     try {
-      const { requestType, employeeId } = request
+      const { requestType, employeeId, skill_id } = request
   
-      const requestData = await this.requestGatewayService.sendRequest(requestType, employeeId)
+      const requestData = await this.requestGatewayService.sendRequest(requestType, employeeId, skill_id)
   
       if (requestData.request_receiver != null) {
         const socketWeb = await this.socketService.getSocketByEmployeeId(requestData.request_receiver)

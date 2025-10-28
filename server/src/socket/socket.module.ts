@@ -10,10 +10,12 @@ import { SocketService } from './socket.service';
 import { Interview } from 'src/InterviewModule/interview.entity';
 import { EmployeeModule } from 'src/EmployeeModule/employee.module';
 import { RequestController } from './request.controller';
+import { SkillModule } from 'src/SkillModule/skill.module';
 
 @Module({
     imports: [
         EmployeeModule,
+        SkillModule,
         TypeOrmModule.forFeature([Request, Socket, Employee, Employee_token, Interview])
     ],
     controllers: [RequestController],

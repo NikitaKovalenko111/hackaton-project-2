@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Employee } from 'src/EmployeeModule/employee.entity';
 import { SkillShape } from './skillShape.entity';
@@ -67,6 +67,27 @@ export class SkillService {
             const skillData = await this.skillRepository.save(skill)
     
             return skillData
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
+    }
+
+    async getSkillById(skill_id: number): Promise<Skill> {
+        try {
+            const skill = await this.skillRepository.findOne({
+                where: {
+                    skill_connection_id: skill_id
+                },
+                relations: {
+                    skill_shape: true
+                }
+            })
+    
+            if (!skill) {
+                throw new ApiError(HttpStatus.NOT_FOUND, 'Компетенция не найдена!')
+            }
+    
+            return skill
         } catch (error) {
             throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
         }

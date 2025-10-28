@@ -1,6 +1,7 @@
 import { Employee } from 'src/EmployeeModule/employee.entity';
+import { Skill } from 'src/SkillModule/skill.entity';
 import type { requestStatus, requestType, RoleType } from 'src/types';
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Request {
@@ -12,6 +13,10 @@ export class Request {
 
     @Column({ default: 'pending' })
     request_status: requestStatus
+
+    @OneToOne(() => Skill)
+    @JoinColumn({ name: "request_skill_id" })
+    request_skill: Skill
 
     @CreateDateColumn()
     request_date: Date
