@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Socket } from "./socket.entity";
 import { Repository } from "typeorm";
@@ -6,6 +6,7 @@ import { EmployeeService } from "src/EmployeeModule/employee.service";
 import { requestType } from "src/types";
 import { Request } from "./request.entity";
 import { Employee } from "src/EmployeeModule/employee.entity";
+import ApiError from "src/apiError";
 
 @Injectable()
 export class RequestService {
@@ -34,6 +35,22 @@ export class RequestService {
         const socketData = await this.socketRepository.save(socket)
 
         return socketData
+    }
+
+    async getReceivedRequests(employeeId: number): Promise<Request[]> {
+        try {
+            const employee = await this.employeeService.getCleanEmployee(employeeId)
+    
+            const requests = await this.requestRepository.find({
+                where: {
+                    request_receiver: employee
+                }
+            })
+    
+            return requests
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
     }
 
     async removeSocket(socketId: string): Promise<string> {

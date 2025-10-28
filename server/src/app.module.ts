@@ -87,7 +87,8 @@ export class AppModule implements NestModule {
         'review/start',
         'company/skill/giveToMany',
         'company/employee/addByEmail',
-        'statistics/generate'
+        'statistics/generate',
+        'request/received/getAll'
       )
   }
 }

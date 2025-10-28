@@ -100,13 +100,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }   
   
         if (socketWeb) {
-          this.server.timeout(10000).to(socketWeb.client_id as string).emit('newRequest', requestData, (response) => {
+          this.server.to(socketWeb.client_id as string).emit('newRequest', requestData, (response) => {
             console.log(response);
-            if (response == 'success') {
-              console.log('Сообщение успешно отправлено и обработано сервером.');
-            } else {
-              console.log('Ошибка при обработке сообщения на сервере.');
-            }
           })
         }
         if (socketTg) {
