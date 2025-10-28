@@ -7,8 +7,6 @@ import { SocketService } from './socket.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import ApiError from 'src/apiError';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
-import { log } from 'node:console';
-import { response } from 'express';
 
 interface requestDto {
   requestType: requestType,
@@ -135,7 +133,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (!socketTg) {
           return requestData
         } 
-  
+
         this.server.to(socketTg.client_id as string).emit('canceledRequest', requestData)
       } else if (requestData.request_receiver != null && employee_id == requestData.request_receiver.employee_id) {
         const owner = await this.employeeService.getCleanEmployee(requestData.request_owner.employee_id)
@@ -172,7 +170,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
         if (!socket) {
           return requestData
-        }   
+        }
+
+        console.log(socket.client_id);
+        console.log(this.server.sockets);
   
         this.server.to(socket.client_id as string).emit('completedRequest', requestData, (err, responses) => {
           console.log(responses);

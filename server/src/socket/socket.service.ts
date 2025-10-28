@@ -32,8 +32,6 @@ export class SocketService {
                 }
             })
 
-            console.log(socketCurrent);
-
             if (socketCurrent) {
                 socketCurrent.client_id = socketId
 
