@@ -49,7 +49,9 @@ export class RequestService {
                 },
                 relations: {
                     request_owner: true,
-                    request_skill: true
+                    request_skill: {
+                        skill_shape: true
+                    }
                 }
             })
     
@@ -69,7 +71,9 @@ export class RequestService {
                 },
                 relations: {
                     request_receiver: true,
-                    request_skill: true
+                    request_skill: {
+                        skill_shape: true
+                    }
                 }
             })
     
