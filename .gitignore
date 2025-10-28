@@ -1,2 +1,6 @@
 node_modules
 profilePhotos/*
+.env
+next-env.d.ts
+.next
+.vscode

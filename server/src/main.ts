@@ -8,7 +8,7 @@ async function bootstrap() {
   app.enableCors({
     origin:'http://localhost:3000',           //access-control-allow-credentials:true
     optionSuccessStatus:200,
-    credenntials: true
+    credentials: true
   })
   app.use(cookieParser())
 
