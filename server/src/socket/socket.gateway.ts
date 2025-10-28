@@ -103,7 +103,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }   
   
         if (socketWeb) {
-          this.server.to(socketWeb.client_id as string).emit('newRequest', requestData, (response) => {
+          this.server.to(socketWeb.client_id as string).emit('newRequest', requestData, (err, response) => {
+            console.log(err);
+            
             console.log(response);
           })
         }
@@ -172,8 +174,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           return requestData
         }   
   
-        this.server.to(socket.client_id as string).emit('completedRequest', requestData, (response) => {
-          console.log(response);
+        this.server.to(socket.client_id as string).emit('completedRequest', requestData, (err, responses) => {
+          console.log(responses);
+          console.log(err);
         })
       }
     } catch (error) {
