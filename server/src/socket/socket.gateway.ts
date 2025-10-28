@@ -8,6 +8,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import ApiError from 'src/apiError';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
 import { log } from 'node:console';
+import { response } from 'express';
 
 interface requestDto {
   requestType: requestType,
@@ -171,7 +172,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           return requestData
         }   
   
-        this.server.to(socket.client_id as string).emit('completedRequest', requestData)
+        this.server.to(socket.client_id as string).emit('completedRequest', requestData, (response) => {
+          console.log(response);
+        })
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
