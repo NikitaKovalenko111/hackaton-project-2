@@ -125,7 +125,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const requestData = await this.requestGatewayService.cancelRequest(request_id)
   
       if (requestData.request_receiver != null && employee_id == requestData.request_owner.employee_id) {
-        const socketTg = await this.socketService.getSocketByEmployeeId(requestData.request_receiver, 'telegram')
+        const receiver = await this.employeeService.getCleanEmployee(requestData.request_receiver.employee_id)
+        const socketTg = await this.socketService.getSocketByEmployeeId(receiver, 'telegram')
   
         if (!socketTg) {
           return requestData
@@ -133,7 +134,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   
         this.server.to(socketTg.client_id as string).emit('canceledRequest', requestData)
       } else if (requestData.request_receiver != null && employee_id == requestData.request_receiver.employee_id) {
-        const socket = await this.socketService.getSocketByEmployeeId(requestData.request_owner, 'telegram')
+        const owner = await this.employeeService.getCleanEmployee(requestData.request_owner.employee_id)
+        const socket = await this.socketService.getSocketByEmployeeId(owner, 'telegram')
   
         if (!socket) {
           return requestData
@@ -156,7 +158,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const requestData = await this.requestGatewayService.completeRequest(request_id)
   
       if (requestData.request_owner != null) {
-        const socket = await this.socketService.getSocketByEmployeeId(requestData.request_owner)
+        const owner = await this.employeeService.getCleanEmployee(requestData.request_owner.employee_id)
+        const socket = await this.socketService.getSocketByEmployeeId(owner)
   
         if (!socket) {
           return requestData
