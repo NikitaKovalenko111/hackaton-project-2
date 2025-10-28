@@ -7,6 +7,7 @@ import { SocketService } from './socket.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import ApiError from 'src/apiError';
 import { EmployeeService } from 'src/EmployeeModule/employee.service';
+import { log } from 'node:console';
 
 interface requestDto {
   requestType: requestType,
@@ -156,10 +157,15 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const { request_id } = request
   
       const requestData = await this.requestGatewayService.completeRequest(request_id)
+      console.log(requestData);
+      
   
       if (requestData.request_owner != null) {
         const owner = await this.employeeService.getCleanEmployee(requestData.request_owner.employee_id)
         const socket = await this.socketService.getSocketByEmployeeId(owner)
+        console.log(owner);
+        
+        console.log(socket);
   
         if (!socket) {
           return requestData
