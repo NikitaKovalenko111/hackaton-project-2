@@ -56,6 +56,25 @@ export class RequestService {
         }
     }
 
+    async getSendedRequests(employeeId: number): Promise<Request[]> {
+        try {
+            const employee = await this.employeeService.getCleanEmployee(employeeId)
+    
+            const requests = await this.requestRepository.find({
+                where: {
+                    request_owner: employee
+                },
+                relations: {
+                    request_receiver: true
+                }
+            })
+    
+            return requests
+        } catch (error) {
+            throw new ApiError(error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR, error.message ? error.message : error)
+        }
+    }
+
     async removeSocket(socketId: string): Promise<string> {
         const socket = await this.socketRepository.delete({
             client_id: socketId
