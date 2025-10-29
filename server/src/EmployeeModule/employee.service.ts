@@ -322,6 +322,8 @@ export class EmployeeService {
 
     async refresh(refreshToken: string | null): Promise<registerEmployeeReturnDto> {
         try {
+            console.log(refreshToken);        
+
             if (!refreshToken) {
                 throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
             }
@@ -329,6 +331,9 @@ export class EmployeeService {
             const employeeData = this.tokenService.validateRefreshToken(refreshToken)
     
             const dbToken = await this.tokenService.findToken(refreshToken)  
+
+            console.log(employeeData);
+            console.log(dbToken);
     
             if (!dbToken || !employeeData) {
                 throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
