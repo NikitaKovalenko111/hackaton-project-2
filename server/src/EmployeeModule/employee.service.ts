@@ -182,7 +182,13 @@ export class EmployeeService {
                     employee_password: true,
                     employee_name: true,
                     employee_email: true,
-                    employee_surname: true
+                    employee_surname: true,
+                    company: true,
+                    role: true
+                },
+                relations: {
+                    company: true,
+                    role: true
                 }
             })
     
@@ -224,12 +230,6 @@ export class EmployeeService {
                     employee_name: true,
                     employee_email: true,
                     employee_surname: true,
-                    company: true,
-                    role: true
-                },
-                relations: {
-                    company: true,
-                    role: true
                 }
             })
 
