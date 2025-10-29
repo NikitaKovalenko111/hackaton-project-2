@@ -21,6 +21,7 @@ export const useSocket = () => {
             if (socket) socket.disconnect()
             setReduxSocket({socket: null})
         }
+        return 
     }
 
     if (reduxSocket.socket) return

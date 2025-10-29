@@ -16,11 +16,11 @@ export const useLogin = () => {
     return useMutation({
         mutationKey: ["auth"],
         mutationFn: (data: AuthLoginDTO) => login(data),
-        onSuccess: () => {
+        onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["auth"] })
             toast.success('Вы вошли!')
-            if (companyId) {
-                saveCompanyStorage(companyId)
+            if (data.payload.company.company_id) {
+                saveCompanyStorage(data.payload.company.company_id)
                 push('/profile')
             }
             else push('/company')

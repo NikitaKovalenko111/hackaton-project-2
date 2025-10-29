@@ -14,9 +14,9 @@ export const ProfileSkillsTab = ({employeeId, skills}: {employeeId: number, skil
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const sendRequest = async (id: number, skill_id: number) => {
+    const sendRequest = (id: number, skill_id: number) => {
         setIsLoading(true)
-        await handleSendRequest('upgrade', id, skill_id)
+        handleSendRequest('upgrade', id, skill_id)
         setIsLoading(false)
     } 
 

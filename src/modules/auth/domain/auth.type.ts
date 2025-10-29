@@ -1,5 +1,6 @@
 import { ROLE } from "@/libs/constants"
 import { CompanyData } from "@/modules/company/domain/company.type"
+import { Role } from "@/modules/profile/domain/profile.types"
 
 export interface AuthSignupDTO {
     employee_name: string 
@@ -21,7 +22,7 @@ export interface Payload {
     employee_status: string 
     employee_photo: string 
     company: CompanyData
-    role: ROLE[]
+    role: Role
 }
 
 export interface AuthData {

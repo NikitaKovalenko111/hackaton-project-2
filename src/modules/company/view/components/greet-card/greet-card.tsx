@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { CreateCompany } from "../create-form/create-company"
 import { useAuth } from "@/libs/providers/ability-provider"
 import { useRouter } from "next/navigation"
+import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
 
 const variantStyleInfo: { [key in GreetMode]: string } = {
     info: 'left-0',
@@ -35,6 +36,11 @@ export const GreetCard = () => {
     const {push} = useRouter()
 
     const {companyId} = useAuth()
+    const {data} = useGetProfile()
+
+    useEffect(() => {
+        if (data?.company.company_id) push(`/profile`)
+    }, [])
 
     useEffect(() => {
         if (companyId) push('/profile')

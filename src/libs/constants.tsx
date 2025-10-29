@@ -50,7 +50,7 @@ export const ROLE_TRANSLATION: Record<ROLE, string> = {
 
 export const NavItems: NavItem[] = [
     {
-        roles: ['admin'],
+        roles: ['admin', 'teamlead'],
         title: 'Компетенции',
         href: '/skills-settings',
         icon: 'BicepsFlexed'

@@ -37,7 +37,7 @@ interface ProfileContentProps {
 }
 
 const tabList: Record<ROLE, string> = {
-    admin: 'grid-cols-4',
+    admin: 'grid-cols-3',
     techlead: 'grid-cols-4',
     teamlead: 'grid-cols-4',
     developer: 'grid-cols-3',
