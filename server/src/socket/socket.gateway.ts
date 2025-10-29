@@ -26,7 +26,10 @@ interface completeRequestDto {
 @WebSocketGateway({ cors: {
   origin: "http://localhost:3000",
   credentials: true
-}})
+},
+pingInterval: 10000,
+pingTimeout: 30000
+})
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly requestGatewayService: RequestService,
