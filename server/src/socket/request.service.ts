@@ -45,7 +45,8 @@ export class RequestService {
     
             const requests = await this.requestRepository.find({
                 where: {
-                    request_receiver: employee
+                    request_receiver: employee,
+                    request_status: 'pending'
                 },
                 relations: {
                     request_owner: true,
