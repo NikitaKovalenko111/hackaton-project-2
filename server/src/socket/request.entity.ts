@@ -14,7 +14,7 @@ export class Request {
     @Column({ default: 'pending' })
     request_status: requestStatus
 
-    @OneToOne(() => Skill)
+    @ManyToOne(() => Skill, skill => skill.requests)
     @JoinColumn({ name: "request_skill_id" })
     request_skill: Skill
 
