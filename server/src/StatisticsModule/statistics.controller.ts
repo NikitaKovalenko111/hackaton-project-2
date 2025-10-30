@@ -1,22 +1,25 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { StatisticsService } from './statistics.service';
-
-interface generateStatisticsBodyDto {
-    company_id: number
-}
+import { Body, Controller, Post } from '@nestjs/common'
+import { StatisticsService } from './statistics.service'
+import type { generateStatisticsBodyDto } from './statistics.dto'
 
 @Controller('statistics')
 export class StatisticsController {
-    constructor(
-        private readonly statisticsService: StatisticsService,
-    ) { }
+  constructor(private readonly statisticsService: StatisticsService) {}
 
-    @Post('/generate')
-    async generateStatistics(@Body() generateStatisticsBody: generateStatisticsBodyDto) {
-        const { company_id } = generateStatisticsBody
+  @Post('/generate')
+  async generateStatistics(
+    @Body() generateStatisticsBody: generateStatisticsBodyDto,
+  ) {
+    const { company_id } = generateStatisticsBody
 
-        const statistics = await this.statisticsService.generate(company_id, ['skillsByCount', 'skillsByLevel', 'interviewsByType', 'interviewsByStatus', 'employeeByRoles'])
+    const statistics = await this.statisticsService.generate(company_id, [
+      'skillsByCount',
+      'skillsByLevel',
+      'interviewsByType',
+      'interviewsByStatus',
+      'employeeByRoles',
+    ])
 
-        return statistics
-    }
+    return statistics
+  }
 }

@@ -1,55 +1,54 @@
-import { MessageBody, SubscribeMessage, WebSocketGateway, ConnectedSocket, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { clientType, requestType } from 'src/types';
-import { RequestService } from './request.service';
-import { TokenService } from 'src/EmployeeModule/token.service';
-import { SocketService } from './socket.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import ApiError from 'src/apiError';
-import { EmployeeService } from 'src/EmployeeModule/employee.service';
+import {
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  ConnectedSocket,
+  WebSocketServer,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets'
+import { Server, Socket } from 'socket.io'
+import { clientType } from 'src/types'
+import { RequestService } from './request.service'
+import { TokenService } from 'src/EmployeeModule/token.service'
+import { SocketService } from './socket.service'
+import { HttpException, HttpStatus } from '@nestjs/common'
+import ApiError from 'src/apiError'
+import { EmployeeService } from 'src/EmployeeModule/employee.service'
+import type {
+  cancelRequestDto,
+  completeRequestDto,
+  requestDto,
+} from './request-socket.dto'
 
-interface requestDto {
-  requestType: requestType,
-  skill_id: number
-  employeeId: number
-}
-
-interface cancelRequestDto {
-  request_id: number
-  employee_id: number
-}
-
-interface completeRequestDto {
-  request_id: number
-}
-
-@WebSocketGateway({ cors: {
-  origin: "http://localhost:3000",
-  credentials: true
-},
-pingInterval: 10000,
-pingTimeout: 30000
+@WebSocketGateway({
+  cors: {
+    origin: 'http://localhost:3000',
+    credentials: true,
+  },
+  pingInterval: 10000,
+  pingTimeout: 30000,
 })
 export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     private readonly requestGatewayService: RequestService,
     private readonly socketService: SocketService,
     private readonly tokenService: TokenService,
-    private readonly employeeService: EmployeeService
-  ) { }
+    private readonly employeeService: EmployeeService,
+  ) {}
 
   async handleConnection(client: Socket) {
     try {
-      const accessToken = client.request.headers.authorization?.split(" ")[1]
+      const accessToken = client.request.headers.authorization?.split(' ')[1]
       const clientType = client.request.headers.client_type as clientType
       const telegramId = client.request.headers.telegram_id as string
 
-      console.log(accessToken);
+      console.log(accessToken)
 
       if (!clientType) {
         throw new ApiError(HttpStatus.BAD_REQUEST, 'Не указан тип клиента!')
       }
-  
+
       if (!accessToken && clientType == 'web') {
         throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
       }
@@ -57,13 +56,21 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       let employee
 
       if (accessToken) {
-        employee = await this.tokenService.validateAccessToken(accessToken) as any
+        employee = (await this.tokenService.validateAccessToken(
+          accessToken,
+        )) as any
       } else if (!accessToken && telegramId && clientType == 'telegram') {
-        employee = await this.employeeService.getEmployeeByTgId(parseInt(telegramId))
+        employee = await this.employeeService.getEmployeeByTgId(
+          parseInt(telegramId),
+        )
       }
-      
-      const data = await this.socketService.saveSocket(client.id, employee.employee_id, clientType)
-  
+
+      const data = await this.socketService.saveSocket(
+        client.id,
+        employee.employee_id,
+        clientType,
+      )
+
       return data
     } catch (error) {
       throw new HttpException(error.message, error.status)
@@ -73,7 +80,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async handleDisconnect(client: Socket) {
     try {
       const status = await this.socketService.removeSocket(client.id)
-  
+
       if (status == 'deleted') {
         return 'disconnected'
       } else {
@@ -90,65 +97,96 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('addRequest')
   async handleSendRequest(
     @MessageBody() request: requestDto,
-    @ConnectedSocket() socket: Socket
+    @ConnectedSocket() socket: Socket,
   ) {
     try {
       const { requestType, employeeId, skill_id } = request
-  
-      const requestData = await this.requestGatewayService.sendRequest(requestType, employeeId, skill_id)
-  
+
+      const requestData = await this.requestGatewayService.sendRequest(
+        requestType,
+        employeeId,
+        skill_id,
+      )
+
       if (requestData.request_receiver != null) {
-        const socketWeb = await this.socketService.getSocketByEmployeeId(requestData.request_receiver)
-        const socketTg = await this.socketService.getSocketByEmployeeId(requestData.request_receiver, 'telegram')
-  
+        const socketWeb = await this.socketService.getSocketByEmployeeId(
+          requestData.request_receiver,
+        )
+        const socketTg = await this.socketService.getSocketByEmployeeId(
+          requestData.request_receiver,
+          'telegram',
+        )
+
         if (!socketWeb && !socketTg) {
           return requestData
-        }   
-  
+        }
+
         if (socketWeb) {
-          this.server.to(socketWeb.client_id as string).emit('newRequest', requestData, (err, response) => {
-            console.log(err);
-            
-            console.log(response);
-          })
+          this.server
+            .to(socketWeb.client_id as string)
+            .emit('newRequest', requestData, (err, response) => {
+              console.log(err)
+
+              console.log(response)
+            })
         }
         if (socketTg) {
-          this.server.to(socketTg.client_id as string).emit('newRequest', requestData)
+          this.server
+            .to(socketTg.client_id as string)
+            .emit('newRequest', requestData)
         }
       }
-    }
-    catch (error) {
+    } catch (error) {
       throw new HttpException(error.message, error.status)
     }
   }
 
   @SubscribeMessage('cancelRequest')
-  async handleCancelRequest(
-    @MessageBody() request: cancelRequestDto
-  ) {
+  async handleCancelRequest(@MessageBody() request: cancelRequestDto) {
     try {
       const { request_id, employee_id } = request
-  
-      const requestData = await this.requestGatewayService.cancelRequest(request_id)
-  
-      if (requestData.request_receiver != null && employee_id == requestData.request_owner.employee_id) {
-        const receiver = await this.employeeService.getCleanEmployee(requestData.request_receiver.employee_id)
-        const socketTg = await this.socketService.getSocketByEmployeeId(receiver, 'telegram')
-  
+
+      const requestData =
+        await this.requestGatewayService.cancelRequest(request_id)
+
+      if (
+        requestData.request_receiver != null &&
+        employee_id == requestData.request_owner.employee_id
+      ) {
+        const receiver = await this.employeeService.getCleanEmployee(
+          requestData.request_receiver.employee_id,
+        )
+        const socketTg = await this.socketService.getSocketByEmployeeId(
+          receiver,
+          'telegram',
+        )
+
         if (!socketTg) {
           return requestData
-        } 
+        }
 
-        this.server.to(socketTg.client_id as string).emit('canceledRequest', requestData)
-      } else if (requestData.request_receiver != null && employee_id == requestData.request_receiver.employee_id) {
-        const owner = await this.employeeService.getCleanEmployee(requestData.request_owner.employee_id)
-        const socket = await this.socketService.getSocketByEmployeeId(owner, 'telegram')
-  
+        this.server
+          .to(socketTg.client_id as string)
+          .emit('canceledRequest', requestData)
+      } else if (
+        requestData.request_receiver != null &&
+        employee_id == requestData.request_receiver.employee_id
+      ) {
+        const owner = await this.employeeService.getCleanEmployee(
+          requestData.request_owner.employee_id,
+        )
+        const socket = await this.socketService.getSocketByEmployeeId(
+          owner,
+          'telegram',
+        )
+
         if (!socket) {
           return requestData
-        }   
-  
-        this.server.to(socket.client_id as string).emit('canceledRequest', requestData)
+        }
+
+        this.server
+          .to(socket.client_id as string)
+          .emit('canceledRequest', requestData)
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
@@ -156,37 +194,39 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('completeRequest')
-  async handleCompleteRequest(
-    @MessageBody() request: completeRequestDto
-  ) {
+  async handleCompleteRequest(@MessageBody() request: completeRequestDto) {
     try {
       const { request_id } = request
-  
-      const requestData = await this.requestGatewayService.completeRequest(request_id)
-      console.log(requestData);
-      
-  
+
+      const requestData =
+        await this.requestGatewayService.completeRequest(request_id)
+      console.log(requestData)
+
       if (requestData.request_owner != null) {
-        const owner = await this.employeeService.getCleanEmployee(requestData.request_owner.employee_id)
+        const owner = await this.employeeService.getCleanEmployee(
+          requestData.request_owner.employee_id,
+        )
         const socket = await this.socketService.getSocketByEmployeeId(owner)
-        console.log(owner);
-        
-        console.log(socket);
-  
+        console.log(owner)
+
+        console.log(socket)
+
         if (!socket) {
           return requestData
         }
 
-        console.log(socket.client_id);
-        console.log(this.server.sockets);
-  
-        this.server.to(socket.client_id as string).emit('completedRequest', requestData, (err, responses) => {
-          console.log(responses);
-          console.log(err);
-        })
+        console.log(socket.client_id)
+        console.log(this.server.sockets)
+
+        this.server
+          .to(socket.client_id as string)
+          .emit('completedRequest', requestData, (err, responses) => {
+            console.log(responses)
+            console.log(err)
+          })
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
     }
   }
-} 
+}
