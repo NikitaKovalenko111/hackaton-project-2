@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common'
 import { CompanyService } from './company.service'
 import { Company } from './company.entity'
-import { employeePayloadDto } from 'src/EmployeeModule/employee.controller'
+import { employeePayloadDto } from 'src/EmployeeModule/employee.dto'
 import { SkillShape } from 'src/SkillModule/skillShape.entity'
 import { Skill } from 'src/SkillModule/skill.entity'
 import { SkillService } from 'src/SkillModule/skill.service'

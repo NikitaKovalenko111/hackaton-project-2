@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Interview } from './interview.entity'
-import { interviewType } from 'src/types'
+import { interviewStatusType, interviewType } from 'src/types'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
@@ -64,7 +64,7 @@ export class InterviewService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Интервью не найдено!')
       }
 
-      interview.interview_status = 'completed'
+      interview.interview_status = interviewStatusType.COMPLETED
       interview.interview_duration = interviewDuration
       interview.interview_comment = interviewComment
 
@@ -91,7 +91,7 @@ export class InterviewService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Интервью не найдено!')
       }
 
-      interview.interview_status = 'canceled'
+      interview.interview_status = interviewStatusType.CANCELED
 
       const interviewData = await this.interviewRepository.save(interview)
 

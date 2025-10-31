@@ -9,6 +9,7 @@ import type {
   cancelInterviewBodyDto,
   finishInterviewBodyDto,
 } from './interview.dto'
+import { clientType } from 'src/types'
 
 @Controller('interview')
 export class InterviewController {
@@ -48,7 +49,7 @@ export class InterviewController {
         await this.socketService.getSocketByEmployeeId(interviewSubjectData)
       const socketTg = await this.socketService.getSocketByEmployeeId(
         interviewSubjectData,
-        'telegram',
+        clientType.TELEGRAM,
       )
 
       if (!socketWeb && !socketTg) {

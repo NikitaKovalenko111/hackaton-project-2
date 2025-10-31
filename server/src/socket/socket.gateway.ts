@@ -114,7 +114,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         )
         const socketTg = await this.socketService.getSocketByEmployeeId(
           requestData.request_receiver,
-          'telegram',
+          clientType.TELEGRAM,
         )
 
         if (!socketWeb && !socketTg) {
@@ -158,7 +158,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         )
         const socketTg = await this.socketService.getSocketByEmployeeId(
           receiver,
-          'telegram',
+          clientType.TELEGRAM,
         )
 
         if (!socketTg) {
@@ -177,7 +177,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         )
         const socket = await this.socketService.getSocketByEmployeeId(
           owner,
-          'telegram',
+          clientType.TELEGRAM,
         )
 
         if (!socket) {

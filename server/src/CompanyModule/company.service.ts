@@ -283,7 +283,7 @@ export class CompanyService {
 
       const role = new Role({
         employee: employeeData,
-        role_name: 'admin',
+        role_name: RoleType.ADMIN,
         company: companyData,
       })
 

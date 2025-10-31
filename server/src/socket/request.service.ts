@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Socket } from './socket.entity'
 import { Repository } from 'typeorm'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
-import { requestType } from 'src/types'
+import { requestStatus, requestType, RoleType } from 'src/types'
 import { Request } from './request.entity'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
@@ -46,7 +46,7 @@ export class RequestService {
       const requests = await this.requestRepository.find({
         where: {
           request_receiver: employee,
-          request_status: 'pending',
+          request_status: requestStatus.PENDING,
         },
         relations: {
           request_owner: true,
@@ -127,10 +127,10 @@ export class RequestService {
     const request = new Request({
       request_type: requestType,
       request_owner: employee,
-      request_status: 'pending',
+      request_status: requestStatus.PENDING,
       request_skill: skill,
       request_receiver: employee.team.teamlead,
-      request_role_receiver: 'teamlead',
+      request_role_receiver: RoleType.TEAMLEAD,
     })
 
     const requestData = await this.requestRepository.save(request)
@@ -153,7 +153,7 @@ export class RequestService {
       throw new Error('Запрос не найден!')
     }
 
-    request.request_status = 'canceled'
+    request.request_status = requestStatus.CANCELED
 
     const requestData = await this.requestRepository.save(request)
 
@@ -174,7 +174,7 @@ export class RequestService {
       throw new Error('Запрос не найден!')
     }
 
-    request.request_status = 'completed'
+    request.request_status = requestStatus.COMPLETED
 
     const requestData = await this.requestRepository.save(request)
 

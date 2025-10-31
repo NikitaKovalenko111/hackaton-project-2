@@ -78,13 +78,13 @@ export class SocketService {
 
   async getSocketByEmployeeId(
     employee: Employee,
-    clientType: clientType = 'web',
+    client: clientType = clientType.WEB,
   ): Promise<Socket | null> {
     try {
       const socket = await this.socketRepository.findOne({
         where: {
           employee: employee,
-          client_type: clientType,
+          client_type: client,
         },
       })
 

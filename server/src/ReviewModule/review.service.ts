@@ -11,6 +11,7 @@ import { CompanyService } from 'src/CompanyModule/company.service'
 import { SocketService } from 'src/socket/socket.service'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import ApiError from 'src/apiError'
+import { reviewStatus } from 'src/types'
 
 @Injectable()
 export class ReviewService {
@@ -114,7 +115,7 @@ export class ReviewService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
       }
 
-      review.review_status = 'active'
+      review.review_status = reviewStatus.ACTIVE
 
       const reviewData = await this.reviewRepository.save(review)
 
@@ -161,7 +162,7 @@ export class ReviewService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
       }
 
-      review.review_status = 'pending'
+      review.review_status = reviewStatus.PENDING
 
       const reviewData = await this.reviewRepository.save(review)
 
