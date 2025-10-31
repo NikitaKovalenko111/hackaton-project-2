@@ -26,6 +26,7 @@ import { Review } from './ReviewModule/review.entity'
 import { ReviewModule } from './ReviewModule/review.module'
 import { Statistics } from './StatisticsModule/statistics.entity'
 import { StatisticsModule } from './StatisticsModule/statistics.module'
+import { AIModule } from './AIModule/ai.module'
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { StatisticsModule } from './StatisticsModule/statistics.module'
     SocketGatewayModule,
     ReviewModule,
     StatisticsModule,
+    AIModule,
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -105,6 +107,7 @@ export class AppModule implements NestModule {
         'statistics/generate',
         'request/received/getAll',
         'request/sended/getAll',
+        'ai/get/plan'
       )
   }
 }

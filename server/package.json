@@ -29,6 +29,7 @@
     "@nestjs/websockets": "^11.1.7",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
+    "gigachat": "^0.0.16",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
