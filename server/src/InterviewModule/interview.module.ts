@@ -10,6 +10,7 @@ import { Request } from 'src/socket/request.entity'
 import { SocketGatewayModule } from 'src/socket/socket.module'
 import { EmployeeModule } from 'src/EmployeeModule/employee.module'
 import { CompanyModule } from 'src/CompanyModule/company.module'
+import { Role } from 'src/EmployeeModule/role.entity'
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CompanyModule } from 'src/CompanyModule/company.module'
       Employee_token,
       Socket,
       Request,
+      Role
     ]),
     SocketGatewayModule,
   ],

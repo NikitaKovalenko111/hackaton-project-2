@@ -1,18 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { Interview } from './interview.entity'
-import { interviewStatusType, interviewType } from 'src/types'
+import { interviewStatusType, interviewType, RoleType } from 'src/types'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
 import { CompanyService } from 'src/CompanyModule/company.service'
+import { Role } from 'src/EmployeeModule/role.entity'
 
 @Injectable()
 export class InterviewService {
   constructor(
     @InjectRepository(Interview)
     private interviewRepository: Repository<Interview>,
+
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
 
     private employeeService: EmployeeService,
     private companyService: CompanyService,
@@ -80,6 +84,41 @@ export class InterviewService {
         error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
         error.message ? error.message : error,
       )
+    }
+  }
+
+  async getPlannedInterviews(employeeId: number): Promise<Interview[]> {
+    const employee = await this.employeeService.getCleanEmployee(employeeId)
+
+    const role = await this.roleRepository.find({
+      where: {
+        employee: employee,
+        role_name: In([RoleType.HR, RoleType.TEAMLEAD, RoleType.ADMIN])
+      }
+    })
+
+    if (role.length != 0) {
+      const interviews = await this.interviewRepository.find({
+        where: {
+          interview_owner: employee
+        },
+        relations: {
+          interview_subject: true
+        }
+      })
+
+      return interviews
+    } else { 
+      const interviews = await this.interviewRepository.find({
+        where: {
+          interview_subject: employee
+        },
+        relations: {
+          interview_owner: true
+        }
+      })
+
+      return interviews
     }
   }
 

@@ -73,27 +73,14 @@ export class InterviewController {
     }
   }
 
-  @Get('/get/planned')
+  @Get('/get')
   async getPlannedInterviews(@Req() req: Request): Promise<Interview[]> {
     try {
       const employeeId = (req as any).employee.employee_id
 
-      const employee = await this.employeeService.getEmployee(employeeId)
+      const interviews = await this.interviewService.getPlannedInterviews(employeeId)
 
-      return employee.plannedInterviews
-    } catch (error) {
-      throw new HttpException(error.message, error.status)
-    }
-  }
-
-  @Get('/get/created')
-  async getCreatedInterviews(@Req() req: Request): Promise<Interview[]> {
-    try {
-      const employeeId = (req as any).employee.employee_id
-
-      const employee = await this.employeeService.getEmployee(employeeId)
-
-      return employee.createdInterviews
+      return interviews
     } catch (error) {
       throw new HttpException(error.message, error.status)
     }
