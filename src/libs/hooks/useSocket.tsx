@@ -15,12 +15,13 @@ export const useSocket = () => {
     useEffect(() => {
 
     const token = Cookies.get("accessToken")
-    
     if (!token) {
-        if (socket || reduxSocket) {
+        console.log(reduxSocket)
+        if (socket || reduxSocket.socket) {
             if (socket) socket.disconnect()
             setReduxSocket({socket: null})
         }
+
         return 
     }
 
@@ -87,33 +88,28 @@ export const useSocket = () => {
             })
     }
 
-    const acceptRequest = useCallback(async (
+    const acceptRequest = (
         request_id: number
     ) => {
         if (!reduxSocket.socket) {
-            return Promise.reject(new Error('Socket is not connected'))
+            return
         }
+        
+        reduxSocket.socket!.timeout(5000).emit('completeRequest', {request_id})
+    }
 
-        return new Promise(() => {
-            reduxSocket.socket!.timeout(15000).emit('completeRequest', {request_id})
-        })
-    }, [reduxSocket.socket])
-
-    const cancelRequest = useCallback(async (
+    const cancelRequest = (
         request_id: number,
         employee_id: number
     ) => {
         if (!reduxSocket.socket) {
-            return Promise.reject(new Error('Socket is not connected'))
+            return 
         }
-
-        return new Promise(() => {
-            reduxSocket.socket!.timeout(5000).emit('cancelRequest', {
-                request_id,
-                employee_id
-            })
+        reduxSocket.socket!.timeout(5000).emit('cancelRequest', {
+            request_id,
+            employee_id
         })
-    }, [reduxSocket.socket])
+    }
 
     return {
         socket,

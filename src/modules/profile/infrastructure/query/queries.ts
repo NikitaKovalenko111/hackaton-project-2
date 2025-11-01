@@ -5,7 +5,9 @@ export const useGetProfile = () => {
 
     return useQuery({
         queryKey: ['profile'],
-        queryFn: () => getProfile()
+        queryFn: () => getProfile(),
+        retry: 2,
+        enabled: false
     })
 }
 

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AddEmployeeDTO, AddEmployeeToTeam } from "../../domain/employees.type";
-import { addEmployeeToCompany, addEmployeeToTeam } from "../employees-api";
+import { addEmployeeToCompany, addEmployeeToTeam, deleteEmployee } from "../employees-api";
 import toast from "react-hot-toast";
 
 export const useAddEmployeeToCompany = () => {
@@ -30,6 +30,22 @@ export const useAddEmployeeToTeam = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["teams", "company-employee", "company-employees"] })
             toast.success('Сотрудник добавлен в команду!')
+        },
+        onError: (e: any) => {
+            toast.error('Возникла ошибка!')
+        }
+    })
+}
+
+export const useDeleteEmployee = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationKey: ["delete-employee"],
+        mutationFn: (employeeId: number) => deleteEmployee(employeeId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["company-employees"] })
+            toast.success('Сотрудник удален из компании!')
         },
         onError: (e: any) => {
             toast.error('Возникла ошибка!')

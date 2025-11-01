@@ -13,7 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, UserPen } from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Trash, UserPen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -33,6 +33,7 @@ import { useAuth } from "@/libs/providers/ability-provider";
 import { InfoDialog } from "../info-dialog/info-dialog";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ConfirmDeletionOfTeam } from "../../ui/confirm-delete/confirm-delete";
 const Cookies = require("js-cookie")
 
 
@@ -46,8 +47,19 @@ interface SkillsTableProps {
 export function SkillsTable({data, isFetching}: SkillsTableProps) {
 
     const [openCreateDialog, setOpenCreateDialog] = React.useState<boolean>(false)
-    const [openInfoDialog, setOpenInfoDialog] = React.useState<boolean>(false)
+    // const [openInfoDialog, setOpenInfoDialog] = React.useState<boolean>(false)
     const [skillId, setSkillId] = React.useState<number>(0)
+    const [openConfirmDelete, setOpenConfirmDelete] = React.useState<boolean>(false)
+
+    const handleOpenConfirmDeleteDialog = (employeeId: number) => {
+        setSkillId(employeeId)
+        setOpenConfirmDelete(true)
+    }
+
+    const handleCloseConfirmDeleteDialog = () => {
+        setSkillId(0)
+        setOpenConfirmDelete(false)
+    }
 
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -65,15 +77,15 @@ export function SkillsTable({data, isFetching}: SkillsTableProps) {
         setOpenCreateDialog(true)
     }
 
-    const handleCloseInfoDialog = () => {
-        setSkillId(0)
-        setOpenInfoDialog(false)
-    }
+    // const handleCloseInfoDialog = () => {
+    //     setSkillId(0)
+    //     setOpenInfoDialog(false)
+    // }
 
-    const handleOpenInfoDialog = (skillId: number) => {
-        setSkillId(skillId)
-        setOpenInfoDialog(true)
-    }
+    // const handleOpenInfoDialog = (skillId: number) => {
+    //     setSkillId(skillId)
+    //     setOpenInfoDialog(true)
+    // }
 
     const {push} = useRouter()
 
@@ -117,8 +129,12 @@ export function SkillsTable({data, isFetching}: SkillsTableProps) {
             cell: ({ row }) => {
 
             return (
-                <div className="flex justify-center cursor-pointer">
-                    <UserPen className="w-5 h-5" onClick={() => push(`skills-settings/${row.original.skill_shape_id}`)} />
+                <div className="flex gap-2 justify-center">
+                    <UserPen className="w-4 h-4 cursor-pointer" onClick={() => push(`skills-settings/${row.original.skill_shape_id}`)} />
+                    <Trash 
+                        className="w-4 h-4 cursor-pointer"
+                        onClick={() => handleOpenConfirmDeleteDialog(row.original.skill_shape_id)}
+                    />
                 </div>
             );
             },
@@ -248,6 +264,9 @@ export function SkillsTable({data, isFetching}: SkillsTableProps) {
                     </div>
                 </div>
                 <CreateSkill handleCloseDialog={handleCloseCreateDialog} companyId={companyId!} />
+            </Dialog>
+            <Dialog open={openConfirmDelete} onOpenChange={handleCloseConfirmDeleteDialog}>
+                {openConfirmDelete && <ConfirmDeletionOfTeam handleClose={handleCloseConfirmDeleteDialog} skillId={skillId} />}
             </Dialog>
         </div>
     );

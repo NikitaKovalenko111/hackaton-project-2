@@ -29,3 +29,7 @@ export const giveSkill = async (data: GiveSkillDTO) => {
 export const removeSkill = async (id: number) => {
     await http.remove(`skill/${id}/delete`, {})
 }
+
+export const removeSkillFromCompany = async (id: number) => {
+    await http.remove(`company/skillShape/remove/${id}`, {})
+}

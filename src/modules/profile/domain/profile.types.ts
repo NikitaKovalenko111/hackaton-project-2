@@ -1,6 +1,6 @@
 import { ROLE } from "@/libs/constants";
 import { CompanyData } from "@/modules/company/domain/company.type";
-import { Skill } from "@/modules/skills/domain/skills.types";
+import { Skill, SkillLevel, SkillShape } from "@/modules/skills/domain/skills.types";
 import { Team } from "@/modules/teams/domain/teams.type";
 
 export interface Role {
@@ -21,4 +21,15 @@ export interface Employee {
     company: CompanyData
     team: Team
     skills: Skill[]
+}
+
+export interface AiPlanDTO {
+    skill_shape_id: number
+    skill_level: SkillLevel
+}
+
+export interface AiPlanData {
+    message: string
+    skill_shape: SkillShape
+    skill_level: SkillLevel
 }

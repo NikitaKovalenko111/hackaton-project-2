@@ -1,5 +1,5 @@
 import http from "@/libs/http/http"
-import { Employee } from "../domain/profile.types"
+import { AiPlanData, AiPlanDTO, Employee } from "../domain/profile.types"
 import { Request } from "@/libs/constants"
 const Cookies = require('js-cookie')
 
@@ -34,6 +34,13 @@ export const getTeam = async () => {
 
 export const getRequests = async (): Promise<Request[]> => {
     const res = await http.get("request/received/getAll", {})
+    debugger
 
+    return res.data
+}
+
+export const requestAiPlan = async (data: AiPlanDTO): Promise<AiPlanData> => {
+    const res = await http.post("ai/get/plan", data)
+    debugger
     return res.data
 }

@@ -10,7 +10,7 @@ export const addEmployeeToCompany = async (data: AddEmployeeDTO) => {
 
 export const getCompanyEmployees = async (): Promise<Employee[]> => {
     const res = await http.get("company/employees", {})
-
+    debugger
     return res.data
 }
 
@@ -28,6 +28,12 @@ export const addEmployeeToTeam = async (data: AddEmployeeToTeam): Promise<Employ
     }
 
     const res = await http.post("team/add/employee", new_data)
+
+    return res.data
+}
+
+export const deleteEmployee = async (employeeId: number) => {
+    const res = await http.remove(`company/employee/remove/${employeeId}`, {})
 
     return res.data
 }

@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
     allowedRoles?: ROLE[]
 }
 
-export default function ProtectedRoute({children, allowedRoles=['developer']}: ProtectedRouteProps) {
+export default function ProtectedRoute({children, allowedRoles=['developer', 'admin', 'hr', 'moderator', 'teamlead', 'techlead']}: ProtectedRouteProps) {
     const {role} = useAuth()
     if (allowedRoles.includes(role)) return children
 

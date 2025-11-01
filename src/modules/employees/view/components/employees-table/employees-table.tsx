@@ -266,7 +266,7 @@ export const EmployeesTable = ({data, isFetching}: {isFetching: boolean, data: E
                 <InfoDialog open={openInfoDialog} team={employeeTeam} id={employeeId} />
             </Dialog>}
             <Dialog open={openConfirmDelete} onOpenChange={handleCloseConfirmDeleteDialog}>
-                <ConfirmDeleteDialog />
+                {openConfirmDelete && <ConfirmDeleteDialog employeeId={employeeId} handleClose={handleCloseConfirmDeleteDialog} />}
             </Dialog>
         </div>
     );

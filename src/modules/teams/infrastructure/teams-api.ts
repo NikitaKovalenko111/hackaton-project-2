@@ -7,6 +7,12 @@ export const getTeams = async (companyId: number): Promise<Team[]> => {
     return res.data
 }
 
+export const getTeamInfo = async (): Promise<Team> => {
+    const res = await http.get("team/info", {})
+
+    return res.data
+}
+
 export const addTeam = async (data: AddTeamDTO): Promise<Team> => {
     
     const new_data = {
@@ -17,6 +23,12 @@ export const addTeam = async (data: AddTeamDTO): Promise<Team> => {
     }
 
     const res = await http.post("team/add", new_data)
+
+    return res.data
+}
+
+export const deleteTeam = async (id: number) => {
+    const res = await http.remove(`team/remove/${id}`, {})
 
     return res.data
 }

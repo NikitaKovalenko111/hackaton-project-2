@@ -26,7 +26,7 @@ export const login = async (data: AuthLoginDTO): Promise<AuthData> => {
 }
 
 export const refreshToken = async (): Promise<AuthData> => {
-    
+
     const res = await http.get('employee/refresh', {
         withCredentials: true,
     })

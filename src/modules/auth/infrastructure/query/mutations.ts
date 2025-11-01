@@ -44,8 +44,9 @@ export const useSignup = () => {
             toast.success('Вы зарегистрировались!')
             push('/company')
         },
-        onError: () => {
+        onError: (error) => {
             toast.error('Возникла ошибка!')
+            // toast.error(error.message)
         }
     })
 }

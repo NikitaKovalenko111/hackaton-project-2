@@ -6,6 +6,7 @@ import { useGetProfile } from "@/modules/profile/infrastructure/query/queries";
 import { getProfile } from "@/modules/profile/infrastructure/profile-api";
 import { saveRoleStorage } from "@/modules/auth/infrastructure/auth-token";
 import { saveCompanyStorage } from "@/modules/company/infrastructure/company-storage";
+const Cookies = require('js-cookie')
 
 interface RoleContextValue {
     role: ROLE,
@@ -18,7 +19,12 @@ export const RoleProvider = ({children}: {children: React.ReactNode}) => {
     const [role, setRole] = useState<ROLE>('developer')
     const [companyId, setCompanyId] = useState<number | null>(null)
 
-    const {data} = useGetProfile()
+    const {data, refetch} = useGetProfile()
+
+    useEffect(() => {
+        const token = Cookies.get("accessToken")
+        if (token) refetch()
+    }, [])
 
     useEffect(() => {
         

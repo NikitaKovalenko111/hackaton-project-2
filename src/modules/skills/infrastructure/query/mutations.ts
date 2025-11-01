@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { CreateSkillDTO, GiveSkillDTO } from "../../domain/skills.types"
-import { createSkill, giveSkill, removeSkill } from "../skills-api"
+import { createSkill, giveSkill, removeSkill, removeSkillFromCompany } from "../skills-api"
 import toast from "react-hot-toast"
 
 export const useCreateSkill = () => {
@@ -44,6 +44,22 @@ export const useRemoveSkill = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["skills"] })
             toast.success('Компетенция удалена у сотрудника!')
+        },
+        onError: (e: any) => {
+            toast.error('Возникла ошибка!')
+        }
+    })
+}
+
+export const useRemoveSkillFromCompany = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationKey: ["remove-skill-company"],
+        mutationFn: (id: number) => removeSkillFromCompany(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["skills"] })
+            toast.success('Компетенция удалена из компании!')
         },
         onError: (e: any) => {
             toast.error('Возникла ошибка!')

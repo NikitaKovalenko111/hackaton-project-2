@@ -6,18 +6,24 @@ import { ProfileHeader } from "../profile-header/profile-header"
 import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
 import { SkeletonHeader } from "../../ui/skeleton-header"
 import { SkeletonContent } from "../../ui/skeleton-content"
+import { Employee } from "@/modules/profile/domain/profile.types"
 
 export const Profile = () => {
 
-    const {data, isSuccess, isError, isPending, isRefetching, refetch} = useGetProfile()
+    const [data, setData] = useState<Employee | null>(null)
+    const {data: profileData, isSuccess, isError, isPending, isRefetching, refetch} = useGetProfile()
 
     useEffect(() => {
         refetch()
     }, [])
+
+    useEffect(() => {
+        if (profileData) setData(profileData)
+    }, [profileData])
     
     return (
         <div className="mx-auto max-w-4xl space-y-6 px-4 py-10">
-            {isPending || isError || isRefetching ? 
+            {isPending || isError || isRefetching || !data ? 
                 <SkeletonHeader /> : 
                 <ProfileHeader  
                     employee_email={data.employee_email}
@@ -34,7 +40,7 @@ export const Profile = () => {
                     skills={data.skills}
                 />
             }
-            {isPending || isError || isRefetching ? 
+            {isPending || isError || isRefetching || !data ? 
                 <SkeletonContent /> : 
                 <ProfileContent 
                     id={data.employee_id}

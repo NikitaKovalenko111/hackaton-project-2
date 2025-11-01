@@ -36,11 +36,15 @@ export const GreetCard = () => {
     const {push} = useRouter()
 
     const {companyId} = useAuth()
-    const {data} = useGetProfile()
+    const {data, refetch} = useGetProfile()
 
     useEffect(() => {
-        if (data?.company.company_id) push(`/profile`)
+        refetch()
     }, [])
+
+    useEffect(() => {
+        if (data?.company && data?.company.company_id) push(`/profile`)
+    }, [data])
 
     useEffect(() => {
         if (companyId) push('/profile')

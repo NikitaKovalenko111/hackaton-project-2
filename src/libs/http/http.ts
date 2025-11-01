@@ -1,11 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios'
-import { createTokenRefreshMiddleware } from 'axios-jwt-refresh-token';
 import authConfig from "@/libs/configs/auth";
-import { refreshToken } from '@/modules/auth/infrastructure/auth-api';
-import { saveRefreshStorage, saveRoleStorage, saveTokenStorage } from '@/modules/auth/infrastructure/auth-token';
-import { saveCompanyStorage } from '@/modules/company/infrastructure/company-storage';
-
+import { logout } from '@/modules/profile/infrastructure/profile-api';
 const Cookies = require("js-cookie")
 
 const http = axios.create({
@@ -21,43 +17,82 @@ const https = axios.create({
     // baseURL: 'http://0.0.0.0:8000/'
 })
 
-let isRefetching = false
-let failedQueue: any[] = []
-
-const processQueue = (error: any, token: any = null) => {
-    failedQueue.forEach(prom => {
-        if (error) {
-        prom.reject(error);
-        } else {
-        prom.resolve(token);
-        }
-    });
-    failedQueue = [];
-};
-
-const refreshTokens = async () => {
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/employee/refresh`, {}, {
-        withCredentials: true,
-        
-    })
-    debugger
-    Cookies.set("accessToken", res.data.accessToken)
-
-    return {
-        accessToken: res.data.accessToken,
-        refreshToken: res.data.refreshToken
-    }
-}
-
-const requestAccessMiddleware = createTokenRefreshMiddleware({
-    requestTokens: refreshTokens,
-    onRefreshAndAccessExpire: () => {
-        window.location.href = '/auth'
-    },
-    accessTokenKey: 'accessToken',
-    refreshTokenKey: 'refreshToken',
-    cookiesOptions: { secure: true, sameSite: 'strict' }
+const refreshAxios = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
+    withCredentials: true
 })
+
+refreshAxios.interceptors.request.use(
+    (config) => {
+        if (typeof window != 'undefined') {
+            // const token = localStorage.getItem(authConfig.storageTokenKeyName) || ''
+            const token = Cookies.get('refreshToken') || ''
+            if (token) {
+                config.headers['refreshToken'] =  token
+            }
+        }
+        
+
+        return config
+    },
+    (error) => {
+        return Promise.reject(error)
+    },
+)
+
+let isRefetching = false
+// let failedQueue: any[] = []
+
+// const refreshTokens = async () => {
+//     const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/employee/refresh`, {}, {
+//         withCredentials: true,
+        
+//     })
+//     debugger
+//     Cookies.set("accessToken", res.data.accessToken)
+
+//     return {
+//         accessToken: res.data.accessToken,
+//         refreshToken: res.data.refreshToken
+//     }
+// }
+
+let failedQueue: Array<{ resolve: (value: any) => void; reject: (reason?: any) => void }> = [];
+
+export const refreshTokens = async (): Promise<{accessToken: string, refreshToken: string}> => {
+    if (isRefetching) {
+        return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+        });
+    }
+
+    isRefetching = true;
+
+    try {
+        const res = await refreshAxios.post('/employee/refresh', {}, {
+            withCredentials: true,
+        });
+
+        const { accessToken, refreshToken } = res.data;
+        Cookies.set("accessToken", accessToken);
+        if (refreshToken) Cookies.set("refreshToken", refreshToken);
+
+        failedQueue.forEach(p => p.resolve({ accessToken, refreshToken }));
+        failedQueue = [];
+
+        return { accessToken, refreshToken };
+    } catch (err) {
+        failedQueue.forEach(p => p.reject(err));
+        failedQueue = [];
+        await logout()
+    } finally {
+        isRefetching = false;
+        return {
+            accessToken: '',
+            refreshToken: '',
+        }
+    }
+};
 
 http.interceptors.request.use(
     (config) => {
@@ -83,7 +118,7 @@ http.interceptors.response.use(
         return res
     },
     async (err) => {
-        
+        debugger
         const accessToken = Cookies.get("accessToken")
         const refreshToken = Cookies.get("refreshToken")
 
@@ -91,15 +126,17 @@ http.interceptors.response.use(
         
         if (err.response.status === 401 && !config._retry) {
             config._retry = true
-            isRefetching = true
-            const res = await refreshTokens()
-            debugger
-
-            if (res.accessToken) {
-                config.headers.Authorization = `Bearer ${res.accessToken}`
+            // isRefetching = true
+            try {
+                const res = await refreshTokens()
+                if (res.accessToken) {
+                    config.headers.Authorization = `Bearer ${res.accessToken}`
+                }
+                if (!res.accessToken) return Promise.reject()
+                return http(config)
+            } catch (err) {
+                return Promise.reject(err)
             }
-
-            return http(config)
         }
 
         return Promise.reject(err)

@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
@@ -10,6 +10,7 @@ import React from "react";
 import { useAuth } from "@/libs/providers/ability-provider";
 import { Team } from "@/modules/teams/domain/teams.type";
 import { AddTeam } from "../add-team/add-team";
+import { ConfirmDeletionOfTeam } from "../confirm-delete/confirm-delete";
 
 
 export const TeamsTable = ({data}: {data: Team[]}) => {
@@ -92,10 +93,10 @@ export const TeamsTable = ({data}: {data: Team[]}) => {
                 
                 return (
                     <div className="flex justify-center gap-1">
-                        <Pen 
+                        {/* <Pen 
                             className="w-4 h-4 cursor-pointer" 
                             onClick={() => handleOpenInfoDialog(row.original.team_id)}
-                        />
+                        /> */}
                         <Trash 
                             className="w-4 h-4 cursor-pointer"
                             onClick={() => handleOpenConfirmDeleteDialog(row.original.team_id)}
@@ -214,12 +215,9 @@ export const TeamsTable = ({data}: {data: Team[]}) => {
                 </div>
                 <AddTeam companyId={companyId!} handleCloseDialog={handleCloseAddDialog} />
             </Dialog>
-            {/* <Dialog open={openInfoDialog} onOpenChange={handleCloseInfoDialog}>
-                <InfoDialog id={employeeId} />
-            </Dialog>
             <Dialog open={openConfirmDelete} onOpenChange={handleCloseConfirmDeleteDialog}>
-                <ConfirmDeleteDialog />
-            </Dialog> */}
+                {openConfirmDelete && (<ConfirmDeletionOfTeam teamId={teamId} handleClose={handleCloseConfirmDeleteDialog}  />)}
+            </Dialog>
         </div>
     );
 }

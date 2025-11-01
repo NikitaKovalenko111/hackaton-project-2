@@ -69,6 +69,12 @@ export const NavItems: NavItem[] = [
     },
     {
         roles: ['admin', 'developer', 'hr', 'moderator', 'teamlead', 'techlead'],
+        title: 'Собеседования',
+        href: '/interviews',
+        icon: 'MessagesSquare'
+    },
+    {
+        roles: ['admin', 'developer', 'hr', 'moderator', 'teamlead', 'techlead'],
         title: 'Профиль',
         href: '/profile',
         icon: 'CircleUser'
