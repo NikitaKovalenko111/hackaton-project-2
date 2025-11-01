@@ -147,11 +147,7 @@ export class EmployeeController {
     try {
       const { refreshToken } = request.cookies
 
-      console.log(refreshToken)
-
       const data = await this.employeeService.refresh(refreshToken)
-
-      console.log(data)
 
       response.cookie('refreshToken', data.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,

@@ -44,10 +44,11 @@ export class RequestService {
     try {
       const employee = await this.employeeService.getCleanEmployee(employeeId)
 
+      console.log(employee);
+
       const requests = await this.requestRepository.find({
         where: {
           request_receiver: employee,
-          request_status: requestStatus.PENDING,
         },
         relations: {
           request_owner: true,
