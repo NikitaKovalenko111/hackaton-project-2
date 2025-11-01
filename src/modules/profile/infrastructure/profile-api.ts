@@ -5,6 +5,7 @@ const Cookies = require('js-cookie')
 
 export const getProfile = async (): Promise<Employee> => {
     const res = await http.get('employee/profile', {})
+    debugger
 
     return res.data
 }
@@ -34,13 +35,12 @@ export const getTeam = async () => {
 
 export const getRequests = async (): Promise<Request[]> => {
     const res = await http.get("request/received/getAll", {})
-    debugger
 
     return res.data
 }
 
 export const requestAiPlan = async (data: AiPlanDTO): Promise<AiPlanData> => {
     const res = await http.post("ai/get/plan", data)
-    debugger
+    
     return res.data
 }

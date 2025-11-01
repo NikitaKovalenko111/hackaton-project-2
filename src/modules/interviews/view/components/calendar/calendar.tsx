@@ -41,6 +41,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Textarea } from "@/components/ui/textarea"
 import { DialogClose } from "@radix-ui/react-dialog"
 import { getInterviewType } from "../../ui/interview-type"
+import ProtectedRoute from "@/libs/protected-route"
 // import { getBankList } from '@/api/requests/income'
 
 // Types
@@ -355,16 +356,18 @@ const CalendarInterview = () => {
                         </CardTitle>
                         <CardDescription>
                             <div className='flex gap-2 flex-col'>
-                                <div className='w-full'>
-                                    <Button
-                                        onClick={() => {
-                                            setAddEventDialogOpen(true)
-                                        }}
-                                    >
-                                        <Plus />
-                                        Добавить собеседование
-                                    </Button>
-                                </div>
+                                <ProtectedRoute allowedRoles={['admin', 'teamlead', 'techlead', 'hr']}>
+                                    <div className='w-full'>
+                                        <Button
+                                            onClick={() => {
+                                                setAddEventDialogOpen(true)
+                                            }}
+                                        >
+                                            <Plus />
+                                            Добавить собеседование
+                                        </Button>
+                                    </div>
+                                </ProtectedRoute>
                                 <div className='flex flex-row gap-2'>
                                     <Button
                                         variant={currentView === 'dayGridMonth' ? 'default' : 'outline'}
