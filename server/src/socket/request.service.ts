@@ -142,6 +142,27 @@ export class RequestService {
     return requestData
   }
 
+  async removeRequestsBySkillShape(skillShapeId: number): Promise<Request[]> {
+    const requests = await this.requestRepository.find({
+      where: {
+        request_skill: {
+          skill_shape: {
+            skill_shape_id: skillShapeId
+          }
+        }
+      },
+      relations: {
+        request_skill: {
+          skill_shape: true
+        }
+      }
+    })
+
+    const requestsData = await this.requestRepository.remove(requests)
+
+    return requestsData
+  }
+
   async cancelRequest(requestId: number): Promise<Request> {
     const request = await this.requestRepository.findOne({
       where: {

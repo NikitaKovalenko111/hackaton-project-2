@@ -8,6 +8,7 @@ import { Company } from 'src/CompanyModule/company.entity'
 import { skillLevel } from 'src/types'
 import { employeePayloadDto } from 'src/EmployeeModule/employee.dto'
 import ApiError from 'src/apiError'
+import { RequestService } from 'src/socket/request.service'
 
 @Injectable()
 export class SkillService {
@@ -20,6 +21,8 @@ export class SkillService {
 
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
+
+    private requestService: RequestService
   ) {}
 
   async createSkill(
@@ -208,6 +211,8 @@ export class SkillService {
       if (!skillShape) {
         throw new ApiError(HttpStatus.NOT_FOUND, "Компетенция не найдена!")
       }
+
+      const requests = await this.requestService.removeRequestsBySkillShape(skillShapeId)
 
       const skills = await this.skillRepository.find({
         where: {
