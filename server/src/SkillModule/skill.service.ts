@@ -197,6 +197,42 @@ export class SkillService {
     }
   }
 
+  async deleteSkillShape(skillShapeId: number): Promise<SkillShape> {
+    try {
+      const skillShape = await this.skillShapeRepository.findOne({
+        where: {
+          skill_shape_id: skillShapeId
+        }
+      })
+
+      if (!skillShape) {
+        throw new ApiError(HttpStatus.NOT_FOUND, "Компетенция не найдена!")
+      }
+
+      const skills = await this.skillRepository.find({
+        where: {
+          skill_shape: {
+            skill_shape_id: skillShapeId
+          }
+        }, 
+        relations: {
+          skill_shape: true
+        }
+      })
+
+      await this.skillRepository.remove(skills)
+
+      const skillShapeData = await this.skillShapeRepository.remove(skillShape)
+
+      return skillShapeData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
   async getSkillShapeById(skillShapeId: number): Promise<SkillShape> {
     try {
       const skillShape = await this.skillShapeRepository.findOne({

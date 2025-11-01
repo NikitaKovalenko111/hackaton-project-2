@@ -19,10 +19,9 @@ export interface employeePayloadDto {
   employee_status: string
   employee_photo: string
   employeeSkills?: Skill[]
-  employeeRole?: Role
-  company?: Company
-  team?: Team
-  workedWith?: Employee[]
+  employeeRole?: Role | null
+  company?: Company | null
+  team?: Team | null
 }
 
 export interface authEmployeeBodyDto {

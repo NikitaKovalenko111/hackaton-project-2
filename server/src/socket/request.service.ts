@@ -124,6 +124,10 @@ export class RequestService {
     const employee = await this.employeeService.getEmployee(employeeId)
     const skill = await this.skillService.getSkillById(skill_id)
 
+    if (employee.team == null) {
+      throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+    }
+
     const request = new Request({
       request_type: requestType,
       request_owner: employee,

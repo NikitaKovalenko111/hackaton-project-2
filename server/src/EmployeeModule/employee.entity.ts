@@ -69,21 +69,25 @@ export class Employee {
 
   @OneToOne(() => Role, (role) => role.employee, {
     cascade: true,
+    onDelete: 'CASCADE',
+    nullable: true
   })
-  role: Role
+  role: Role | null
 
   @OneToMany(() => Skill, (skill) => skill.employee, {
     cascade: true,
+    onDelete: 'CASCADE'
   })
   skills: Skill[]
 
   @ManyToOne(() => Company, (company) => company.employees, {
     nullable: true,
+    onDelete: 'CASCADE'
   })
   @JoinColumn({ 
     name: 'company_id' 
   })
-  company: Company
+  company: Company | null
 
   @ManyToOne(() => Team, (team) => team.employees, {
     nullable: true,
@@ -91,40 +95,47 @@ export class Employee {
   @JoinColumn({ 
     name: 'team_id' 
   })
-  team: Team
+  team: Team | null
 
   @OneToMany(() => Request, (request) => request.request_owner, {
     cascade: true,
+    onDelete: 'CASCADE'
   })
   sendedRequests: Request[]
 
   @OneToMany(() => Request, (request) => request.request_receiver, {
     cascade: true,
+    onDelete: 'CASCADE'
   })
   receivedRequests: Request[]
 
   @OneToMany(() => Interview, (interview) => interview.interview_owner, {
     cascade: true,
+    onDelete: 'CASCADE'
   })
   createdInterviews: Interview[]
 
   @OneToMany(() => Interview, (interview) => interview.interview_subject, {
     cascade: true,
+    onDelete: 'CASCADE'
   })
   plannedInterviews: Interview[]
 
   @OneToMany(() => Answer, (answer) => answer.employee, {
     cascade: true,
+    onDelete: 'CASCADE'
   })
   answers: Answer[]
 
   @OneToMany(() => Answer, (answer) => answer.employee_answer_to, {
     cascade: true,
+    onDelete: 'CASCADE'
   })
   answersOn: Answer[]
 
   @OneToMany(() => Socket, (socket) => socket.employee, {
     cascade: true,
+    onDelete: 'CASCADE'
   })
   sockets: Socket[]
 

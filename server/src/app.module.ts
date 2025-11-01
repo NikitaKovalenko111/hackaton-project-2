@@ -108,7 +108,10 @@ export class AppModule implements NestModule {
         'request/received/getAll',
         'request/sended/getAll',
         'ai/get/plan',
-        'team/employees'
+        'team/employees',
+        'company/employee/remove/:id',
+        'team/remove/:id',
+        'company/skillShape/remove/:id'
       )
   }
 }

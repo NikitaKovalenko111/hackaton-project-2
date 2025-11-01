@@ -5,7 +5,7 @@ import { Like, Repository } from 'typeorm'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { SkillShape } from 'src/SkillModule/skillShape.entity'
 import { Employee } from 'src/EmployeeModule/employee.entity'
-import { RoleType } from 'src/types'
+import { interviewStatusType, requestStatus, RoleType } from 'src/types'
 import { Role } from 'src/EmployeeModule/role.entity'
 import { Review } from 'src/ReviewModule/review.entity'
 import ApiError from 'src/apiError'
@@ -235,6 +235,23 @@ export class CompanyService {
     const teams = company.teams
 
     return teams
+  }
+
+  async removeEmployee(employeeId: number): Promise<Employee> {
+    const employee = await this.employeeService.getEmployee(employeeId)
+
+    employee.company = null
+    employee.team = null
+    employee.skills = []
+    employee.sendedRequests = employee.sendedRequests.filter(el => el.request_status != requestStatus.PENDING)
+    employee.plannedInterviews = employee.plannedInterviews.filter(el => el.interview_status != interviewStatusType.PLANNED)
+
+    const employeeData = await this.employeeRepository.save(employee)
+    const role = await this.roleRepository.delete({
+      employee: employee
+    })
+
+    return employeeData
   }
 
   async getSkills(companyId: number): Promise<SkillShape[]> {

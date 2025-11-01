@@ -18,7 +18,9 @@ export class Role {
   @Column()
   role_name: RoleType
 
-  @OneToOne(() => Employee)
+  @OneToOne(() => Employee, {
+    onDelete: 'CASCADE'
+  })
   @JoinColumn({ name: 'employee_id' })
   employee: Employee
 

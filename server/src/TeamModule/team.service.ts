@@ -20,6 +20,33 @@ export class TeamService {
     private employeeService: EmployeeService,
   ) {}
 
+  async removeTeam(teamId: number): Promise<Team> {
+    const team = await this.teamRepository.findOne({
+      where: {
+        team_id: teamId
+      }
+    })
+
+    if (!team) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Команда не найдена!')
+    }
+
+    const employees = await this.employeeRepository.find({
+      where: {
+        team: team
+      }
+    })
+
+    employees.forEach(el => {
+      el.team = null
+    })
+
+    await this.employeeRepository.save(employees)
+    const teamData = await this.teamRepository.remove(team)
+
+    return teamData
+  }
+
   async addTeam(
     companyId: number,
     teamName: string,
@@ -98,6 +125,11 @@ export class TeamService {
   async getTeamEmployees(employeeId: number): Promise<Employee[]> {
     try {
       const employee = await this.employeeService.getEmployee(employeeId)
+      
+      if (employee.team == null) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+      }
+
       const employees = await this.employeeService.getEmployeesByTeam(employee.team.team_id)
 
       return employees
@@ -112,6 +144,10 @@ export class TeamService {
   async getTeam(employeeId: number): Promise<Team> {
     try {
       const employee = await this.employeeService.getEmployee(employeeId)
+
+      if (employee.team == null) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+      }
 
       const team = await this.teamRepository.findOne({
         where: {

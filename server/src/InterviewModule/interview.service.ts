@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { Interview } from './interview.entity'
@@ -27,6 +27,10 @@ export class InterviewService {
   ): Promise<Interview> {
     try {
       const employee = await this.employeeService.getEmployee(employeeId)
+
+      if (employee.company == null) {
+        throw new HttpException('Сотрудник не в компании!', HttpStatus.NOT_ACCEPTABLE)
+      }
 
       const interview = new Interview({
         interview_date: interviewDate,

@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -25,6 +27,7 @@ import type {
   giveSkillBodyDto,
   giveSkillToManyBodyDto,
 } from './company.dto'
+import { Employee } from 'src/EmployeeModule/employee.entity'
 
 @Controller('company')
 export class CompanyController {
@@ -49,6 +52,17 @@ export class CompanyController {
     }
   }
 
+  @Delete('/skillShape/remove/:id')
+  async removeSkillShape(@Param('id') skillShapeId: number): Promise<SkillShape> {
+    try {
+      const skillShape = await this.skillService.deleteSkillShape(skillShapeId)
+  
+      return skillShape
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
   @Get('/employees')
   async getEmployees(
     @Req() req: Request,
@@ -61,6 +75,10 @@ export class CompanyController {
       const employeeData = await this.employeeService.getEmployee(
         employee.employee_id,
       )
+
+      if (employeeData.company == null) {
+        throw new HttpException('Сотрудник не в компании!', HttpStatus.NOT_ACCEPTABLE)
+      }
 
       const employees = await this.companyService.getEmployees(
         employeeData.company.company_id,
@@ -81,6 +99,10 @@ export class CompanyController {
       const employeeData = await this.employeeService.getEmployee(
         employee.employee_id,
       )
+
+      if (employeeData.company == null) {
+        throw new HttpException('Сотрудник не в компании!', HttpStatus.NOT_ACCEPTABLE)
+      }
 
       const skills = await this.companyService.getSkills(
         employeeData.company.company_id,
@@ -150,6 +172,13 @@ export class CompanyController {
     } catch (error) {
       throw new HttpException(error.message, error.status)
     }
+  }
+
+  @Delete('/employee/remove/:id')
+  async removeEmployee(@Param('id') employeeId: number, @Req() req: Request): Promise<Employee> {
+    const employee = await this.companyService.removeEmployee(employeeId)
+
+    return employee
   }
 
   @Post('/employee/addByEmail')

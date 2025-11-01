@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Post, Req } from '@nestjs/common'
+import { Body, Controller, Delete, Get, HttpException, Param, Post, Req } from '@nestjs/common'
 import { TeamService } from './team.service'
 import { Team } from './team.entity'
 import { employeeDto } from 'src/types'
@@ -8,6 +8,13 @@ import { Employee } from 'src/EmployeeModule/employee.entity'
 @Controller('team')
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
+
+  @Delete('/remove/:id')
+  async removeTeamById(@Param('id') teamId: number): Promise<Team> {
+    const team = await this.teamService.removeTeam(teamId)
+
+    return team
+  }
 
   @Get('/info')
   async getTeamInfo(@Req() req: Request): Promise<Team> {
