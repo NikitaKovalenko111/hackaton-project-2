@@ -12,9 +12,9 @@ export class TeamController {
   @Get('/info')
   async getTeamInfo(@Req() req: Request): Promise<Team> {
     try {
-      const employee = (req as any).employee
+      const employeeId = (req as any).employee.employee_id
 
-      const team = await this.teamService.getTeam(employee.team.team_id)
+      const team = await this.teamService.getTeam(employeeId)
 
       return team
     } catch (error) {
@@ -25,9 +25,9 @@ export class TeamController {
   @Get('/employees')
   async getTeamEmployees(@Req() req: Request): Promise<Employee[]> {
     try {
-      const employee = (req as any).employee
+      const employeeId = (req as any).employee.employee_id
 
-      const employees = await this.teamService.getTeamEmployees(employee.team.team_id)
+      const employees = await this.teamService.getTeamEmployees(employeeId)
 
       return employees
     } catch (error) {

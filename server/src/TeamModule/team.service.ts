@@ -95,9 +95,10 @@ export class TeamService {
     }
   }
 
-  async getTeamEmployees(teamId: number): Promise<Employee[]> {
+  async getTeamEmployees(employeeId: number): Promise<Employee[]> {
     try {
-      const employees = await this.employeeService.getEmployeesByTeam(teamId)
+      const employee = await this.employeeService.getEmployee(employeeId)
+      const employees = await this.employeeService.getEmployeesByTeam(employee.team.team_id)
 
       return employees
     } catch (error) {
@@ -108,11 +109,13 @@ export class TeamService {
     }
   }
 
-  async getTeam(teamId: number): Promise<Team> {
+  async getTeam(employeeId: number): Promise<Team> {
     try {
+      const employee = await this.employeeService.getEmployee(employeeId)
+
       const team = await this.teamRepository.findOne({
         where: {
-          team_id: teamId,
+          team_id: employee.team.team_id,
         },
         relations: {
           teamlead: true,
