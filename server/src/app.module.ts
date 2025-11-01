@@ -107,7 +107,8 @@ export class AppModule implements NestModule {
         'statistics/generate',
         'request/received/getAll',
         'request/sended/getAll',
-        'ai/get/plan'
+        'ai/get/plan',
+        'team/employees'
       )
   }
 }
