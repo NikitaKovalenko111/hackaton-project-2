@@ -95,6 +95,19 @@ export class TeamService {
     }
   }
 
+  async getTeamEmployees(teamId: number): Promise<Employee[]> {
+    try {
+      const employees = await this.employeeService.getEmployeesByTeam(teamId)
+
+      return employees
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
   async getTeam(teamId: number): Promise<Team> {
     try {
       const team = await this.teamRepository.findOne({

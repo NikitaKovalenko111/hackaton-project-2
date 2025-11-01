@@ -22,6 +22,22 @@ export class EmployeeService {
     private tokenService: TokenService,
   ) {}
 
+  async getEmployeesByTeam(teamId: number): Promise<Employee[]> {
+    const employees = await this.employeeRepository.find({
+      where: {
+        team: {
+          team_id: teamId
+        }
+      },
+      relations: {
+        team: true,
+        role: true,
+      }
+    })
+
+    return employees
+  }
+
   async getEmployee(employeeId: number) {
     try {
       const employee = await this.employeeRepository.findOne({

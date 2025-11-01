@@ -3,6 +3,7 @@ import { TeamService } from './team.service'
 import { Team } from './team.entity'
 import { employeeDto } from 'src/types'
 import type { addEmployeeBodyDto, addTeamBodyDto } from './team.dto'
+import { Employee } from 'src/EmployeeModule/employee.entity'
 
 @Controller('team')
 export class TeamController {
@@ -16,6 +17,19 @@ export class TeamController {
       const team = await this.teamService.getTeam(employee.team.team_id)
 
       return team
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
+  @Get('/employees')
+  async getTeamEmployees(@Req() req: Request): Promise<Employee[]> {
+    try {
+      const employee = (req as any).employee
+
+      const employees = await this.teamService.getTeamEmployees(employee.team.team_id)
+
+      return employees
     } catch (error) {
       throw new HttpException(error.message, error.status)
     }
