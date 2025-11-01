@@ -103,7 +103,8 @@ export class InterviewService {
           interview_owner: employee
         },
         relations: {
-          interview_subject: true
+          interview_subject: true,
+          interview_owner: true
         }
       })
 
@@ -114,7 +115,8 @@ export class InterviewService {
           interview_subject: employee
         },
         relations: {
-          interview_owner: true
+          interview_owner: true,
+          interview_subject: true
         }
       })
 
