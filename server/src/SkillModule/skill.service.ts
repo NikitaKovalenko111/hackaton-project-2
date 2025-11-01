@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import { SkillShape } from './skillShape.entity'
@@ -22,7 +22,8 @@ export class SkillService {
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
 
-    private requestService: RequestService
+    @Inject(forwardRef(() => RequestService))
+    private readonly requestService: RequestService
   ) {}
 
   async createSkill(

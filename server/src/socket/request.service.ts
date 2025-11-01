@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common'
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Socket } from './socket.entity'
 import { Repository } from 'typeorm'
@@ -19,6 +19,7 @@ export class RequestService {
     private requestRepository: Repository<Request>,
 
     private employeeService: EmployeeService,
+    @Inject(forwardRef(() => SkillService))
     private skillService: SkillService,
   ) {}
 

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { SocketGateway } from './socket.gateway'
 import { RequestService } from './request.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -15,7 +15,7 @@ import { SkillModule } from 'src/SkillModule/skill.module'
 @Module({
   imports: [
     EmployeeModule,
-    SkillModule,
+    forwardRef(() => SkillModule),
     TypeOrmModule.forFeature([
       Request,
       Socket,
