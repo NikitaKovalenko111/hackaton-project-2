@@ -200,16 +200,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       const requestData =
         await this.requestGatewayService.completeRequest(request_id)
-      console.log(requestData)
 
       if (requestData.request_owner != null) {
         const owner = await this.employeeService.getCleanEmployee(
           requestData.request_owner.employee_id,
         )
         const socket = await this.socketService.getSocketByEmployeeId(owner)
-        console.log(owner)
-
-        console.log(socket)
 
         if (!socket) {
           return requestData
@@ -221,8 +217,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         this.server
           .to(socket.client_id as string)
           .emit('completedRequest', requestData, (err, responses) => {
-            console.log(responses)
-            console.log(err)
           })
       }
     } catch (error) {

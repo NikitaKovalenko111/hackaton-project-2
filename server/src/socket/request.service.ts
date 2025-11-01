@@ -3,11 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Socket } from './socket.entity'
 import { Repository } from 'typeorm'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
-import { requestStatus, requestType, RoleType } from 'src/types'
+import { requestStatus, requestType, RoleType, skillLevel } from 'src/types'
 import { Request } from './request.entity'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
 import { SkillService } from 'src/SkillModule/skill.service'
+import { Skill } from 'src/SkillModule/skill.entity'
 
 @Injectable()
 export class RequestService {
@@ -17,6 +18,9 @@ export class RequestService {
 
     @InjectRepository(Request)
     private requestRepository: Repository<Request>,
+
+    @InjectRepository(Skill)
+    private skillRepository: Repository<Skill>,
 
     private employeeService: EmployeeService,
     @Inject(forwardRef(() => SkillService))
@@ -49,6 +53,7 @@ export class RequestService {
       const requests = await this.requestRepository.find({
         where: {
           request_receiver: employee,
+          request_status: requestStatus.PENDING
         },
         relations: {
           request_owner: true,
@@ -194,12 +199,24 @@ export class RequestService {
       },
       relations: {
         request_owner: true,
+        request_skill: true
       },
     })
 
     if (!request) {
       throw new Error('Запрос не найден!')
     }
+
+    const skill = await this.skillService.getSkillById(request?.request_skill.skill_connection_id)
+
+    const skillLevels = ['junior', 'junior+', 'middle', 'middle+', 'senior']
+    const levelId = skillLevels.indexOf(request.request_skill.skill_level)
+
+    if (levelId != 4) {
+      skill.skill_level = skillLevels[levelId+1] as skillLevel
+    }
+
+    await this.skillRepository.save(skill)
 
     request.request_status = requestStatus.COMPLETED
 

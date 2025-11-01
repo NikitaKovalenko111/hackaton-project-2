@@ -11,6 +11,7 @@ import { Interview } from 'src/InterviewModule/interview.entity'
 import { EmployeeModule } from 'src/EmployeeModule/employee.module'
 import { RequestController } from './request.controller'
 import { SkillModule } from 'src/SkillModule/skill.module'
+import { Skill } from 'src/SkillModule/skill.entity'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SkillModule } from 'src/SkillModule/skill.module'
       Request,
       Socket,
       Employee,
+      Skill,
       Employee_token,
       Interview,
     ]),
