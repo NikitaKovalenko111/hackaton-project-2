@@ -23,7 +23,7 @@ import type {
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_ORIGIN,
     credentials: true,
   },
   pingInterval: 10000,
