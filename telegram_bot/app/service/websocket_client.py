@@ -57,41 +57,68 @@ class WebSocketClient:
 
     async def _new_request(self, data: dict):
         """Обработка нового запроса"""
+        print(data.get('request_date', 'N/A'))
+        """Формат времени"""
+        interview_dtime = data.get('request_date', 'N/A')[:-6].split(
+            "T")
+        interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
+        interview_dtime[0][1] = \
+            ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
+             "декабря"][int(interview_dtime[0][1]) - 1]
+
         request_info = (
             "❗️ Новый запрос "
             f"№ {data.get('request_id', 'N/A')}\n"
             f"📋Тип: {'повышение компетенции' if data.get('request_type') == 'upgrade' else data.get('request_type', 'N/A')}\n"
             f"📊Статус: {data.get('request_status', 'N/A')}\n"
-            f"📅Дата: {data.get('request_date', 'N/A').split('T')[0]}\n"
+            f"📅Дата: {interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
             f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
         )
         await self._send_telegram_message(request_info)
 
     async def _cancel_request(self, data: dict):
         """Сообщение об отмен запроса"""
+        print(data.get('request_date', 'N/A'))
+        """Формат времени"""
+        interview_dtime = data.get('request_date', 'N/A')[:-6].split(
+            "T")
+        interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
+        interview_dtime[0][1] = \
+            ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
+             "декабря"][int(interview_dtime[0][1]) - 1]
+
         request_info = (
             f"❗️ Запрос № {data.get('request_id', 'N/A')} <b>отменен</b>\n"
             f"📋Тип: {'повышение компетенции' if data.get('request_type') == 'upgrade' else data.get('request_type', 'N/A')}\n"
             f"📊Статус: {data.get('request_status', 'N/A')}\n"
-            f"📅Дата: {data.get('request_date', 'N/A').split('T')[0]}\n"
+            f"📅Дата: {interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
             f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
         )
         await self._send_telegram_message(request_info)
 
     async def _complete_request(self, data: dict):
         """Сообщение, что запррс выполнен"""
+        print(data.get('request_date', 'N/A'))
+        """Формат времени"""
+        interview_dtime = data.get('request_date', 'N/A')[:-6].split(
+            "T")
+        interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
+        interview_dtime[0][1] = \
+            ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
+             "декабря"][int(interview_dtime[0][1]) - 1]
+
         request_info = (
             f"❗️ Запрос № {data.get('request_id', 'N/A')} <b>одобрен</b>\n"
             f"📋Тип: {'повышение компетенции' if data.get('request_type') == 'upgrade' else data.get('request_type', 'N/A')}\n"
             f"📊Статус: {data.get('request_status', 'N/A')}\n"
-            f"📅Дата: {data.get('request_date', 'N/A').split('T')[0]}\n"
+            f"📅Дата: {interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
             f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
         )
         await self._send_telegram_message(request_info)
 
     async def _new_interview(self, data: dict):
         """Сообщение о новом интервью"""
-        interview_dtime = data.get('interview_date', 'N/A').replace('.000Z', '').split(
+        interview_dtime = data.get('interview_date', 'N/A')[:-6].split(
             "T")  
         interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
         interview_dtime[0][1] = \
