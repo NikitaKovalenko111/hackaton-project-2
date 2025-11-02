@@ -44,13 +44,14 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const telegramId = client.request.headers.telegram_id as string
 
       console.log(accessToken)
+      console.log(clientType);
 
       if (!clientType) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, 'Не указан тип клиента!')
+        throw new HttpException('Не указан тип клиента!', HttpStatus.BAD_REQUEST)
       }
 
       if (!accessToken && clientType == 'web') {
-        throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
+        throw new HttpException('Вы не авторизованы!', HttpStatus.UNAUTHORIZED)
       }
 
       let employee
