@@ -1,3 +1,7 @@
+telegram_bot/config.py
+.idea
+**/__pycache__
+.env
 node_modules
 profilePhotos/*
 .env
