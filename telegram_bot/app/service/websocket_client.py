@@ -20,6 +20,9 @@ class WebSocketClient:
     async def connect(self, telegram_id: int, employee_data: dict):
         """Подключение к Socket.IO серверу только для newRequest"""
         try:
+            if self.is_connected:
+                await self.disconnect()
+                print("🔌 Предыдущее подключение отключено")
             self.telegram_id = telegram_id
 
             print(f"🔌 Подключаюсь к Socket.IO...")
@@ -47,7 +50,7 @@ class WebSocketClient:
         """Отправка сообщения в Telegram"""
         try:
             if self.telegram_id:
-                await self.bot.send_message(self.telegram_id, text)
+                await self.bot.send_message(self.telegram_id, text,  parse_mode="HTML")
         except Exception as e:
             print(f"❌ Ошибка отправки сообщения в Telegram: {e}")
 
@@ -90,7 +93,12 @@ class WebSocketClient:
         if self.sio.connected:
             await self.sio.disconnect()
             self.is_connected = False
+            self.telegram_id = None
             print("🔌 Отключился от Socket.IO")
 
+    async def disconnect_user(self, telegram_id: int):
+        """Отключение конкретного пользователя"""
+        if self.is_connected and self.telegram_id == telegram_id:
+            await self.disconnect()
 
 websocket_client = WebSocketClient()

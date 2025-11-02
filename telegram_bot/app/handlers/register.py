@@ -1,5 +1,5 @@
 from aiogram import Router, types
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 import sys
@@ -16,6 +16,7 @@ class AuthStates(StatesGroup):
     waiting_for_email = State()
     waiting_for_password = State()
 
+authorized_users = {}
 
 async def send_to_server(user_data: dict, password: str) -> dict:
     """Отправка данных на сервер"""
@@ -41,6 +42,7 @@ async def send_to_server(user_data: dict, password: str) -> dict:
                     response_data = await response.json()
                     print("✅ Данные успешно получены от сервера")
                     print(response_data)
+                    authorized_users[user_data['tg_id']] = response_data
                     asyncio.create_task(websocket_client.connect(user_data['tg_id'], response_data))
                     return {"success": True, "data": response_data}
                 else:
@@ -58,6 +60,21 @@ router = Router()
 
 @router.message(CommandStart())
 async def cmd_start(message: types.Message, state: FSMContext):
+    tg_id = message.from_user.id
+    if tg_id in authorized_users:
+
+        employee_data = authorized_users[tg_id]
+
+        welcome_text = (
+            "👋 <b>С возвращением!</b>\n\n"
+            f"Вы уже авторизованы как:\n"
+            f"👤 {employee_data.get('employee_name', 'N/A')} {employee_data.get('employee_surname', 'N/A')}\n"
+            f"📧 {employee_data.get('employee_email', 'N/A')}\n\n"
+            "Если хотите выйти из аккаунта, используйте /logout\n"
+            "Или продолжите работу с ботом."
+        )
+        await message.answer(welcome_text)
+        return
     await state.update_data(tg_id=message.from_user.id)
     welcome_text = (
         "👋 <b>Добро пожаловать!</b>\n\n"
@@ -109,6 +126,15 @@ async def process_password(message: types.Message, state: FSMContext):
 
     else:
         await message.answer("❌ Неверные данные. Попробуйте снова /start")
-
-
     await state.clear()
+
+@router.message(Command("logout"))
+async def cmd_logout(message: types.Message):
+        tg_id = message.from_user.id
+        if tg_id in authorized_users:
+            await websocket_client.disconnect_user(tg_id)
+            del authorized_users[tg_id]
+            await message.answer("✅ Вы успешно вышли из системы. Для повторной авторизации используйте /start")
+        else:
+            await message.answer("❌ Вы не авторизованы. Используйте /start для авторизации")
+
