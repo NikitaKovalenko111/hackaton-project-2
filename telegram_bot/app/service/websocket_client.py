@@ -16,6 +16,7 @@ class WebSocketClient:
         self.sio.on('newRequest', self._new_request)
         self.sio.on('canceledRequest', self._cancel_request)
         self.sio.on('completedRequest', self._complete_request)
+        self.sio.on('completedRequest', self._complete_request)
 
     async def connect(self, telegram_id: int, employee_data: dict):
         """Подключение к Socket.IO серверу только для newRequest"""
