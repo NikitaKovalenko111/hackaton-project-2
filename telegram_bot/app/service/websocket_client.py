@@ -134,7 +134,7 @@ class WebSocketClient:
             f"<b>🔧 Тип собеседования:</b>\n"
             f"{ {'tech': 'Техническое собеседование', 'soft': 'Собеседование на софт-скиллы', 'hr': 'HR-собеседование', 'case': 'Кейс-собеседование'}.get(data.get('interview_type', 'N/A'), 'Тип собеседования скрыт.')}\n"  
             f"<b>👨‍💼 Собеседующий:</b>\n"
-            f"{data.get('interview_owner', {}).get('employee_name')} {data.get('interview_owner', {}).get('employee_surname')}\n"
+            f"<b>👨‍💼 Собеседующий:</b> <a href=\"tg://openmessage?user_id={data.get('interview_owner', {}).get('telegram_id', '')}\">{data.get('interview_owner', {}).get('employee_name')} {data.get('interview_owner', {}).get('employee_surname')}</a> ({data.get('interview_owner', {}).get('employee_email')})\n"
             f"<i>ID собеседования: #{data.get('interview_id', 'N/A')}</i>\n"
         )
         await self._send_telegram_message(interview_info)
