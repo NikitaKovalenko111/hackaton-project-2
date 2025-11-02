@@ -39,18 +39,20 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     try {
+      console.log(client.request.headers);
+      
       const accessToken = client.request.headers.authorization?.split(' ')[1]
-      const clientType = client.request.headers.client_type as clientType
+      const client_type = client.request.headers.client_type as clientType
       const telegramId = client.request.headers.telegram_id as string
 
       console.log(accessToken)
-      console.log(clientType);
+      console.log(client_type);
 
-      if (!clientType) {
+      if (!client_type) {
         throw new HttpException('Не указан тип клиента!', HttpStatus.BAD_REQUEST)
       }
 
-      if (!accessToken && clientType == 'web') {
+      if (!accessToken && client_type == clientType.WEB) {
         throw new HttpException('Вы не авторизованы!', HttpStatus.UNAUTHORIZED)
       }
 
@@ -60,7 +62,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         employee = (await this.tokenService.validateAccessToken(
           accessToken,
         )) as any
-      } else if (!accessToken && telegramId && clientType == 'telegram') {
+      } else if (!accessToken && telegramId && client_type == clientType.TELEGRAM) {
         employee = await this.employeeService.getEmployeeByTgId(
           parseInt(telegramId),
         )
@@ -69,7 +71,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const data = await this.socketService.saveSocket(
         client.id,
         employee.employee_id,
-        clientType,
+        client_type,
       )
 
       return data
