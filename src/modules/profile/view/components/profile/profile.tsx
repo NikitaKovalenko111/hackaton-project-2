@@ -7,23 +7,34 @@ import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
 import { SkeletonHeader } from "../../ui/skeleton-header"
 import { SkeletonContent } from "../../ui/skeleton-content"
 import { Employee } from "@/modules/profile/domain/profile.types"
+import { getProfile } from "@/modules/profile/infrastructure/profile-api"
+const Cookies = require('js-cookie')
 
 export const Profile = () => {
 
     const [data, setData] = useState<Employee | null>(null)
-    const {data: profileData, isSuccess, isError, isPending, isRefetching, refetch} = useGetProfile()
+    const [loading, setLoading] = useState<boolean>(false)
+    // const {data: profileData, isSuccess, isError, isPending, isRefetching, refetch} = useGetProfile()
+
+    const fetchData = async () => {
+        setLoading(true)
+        const res = await getProfile()
+        setData(res)
+        setLoading(false)
+    }
 
     useEffect(() => {
-        refetch()
+        fetchData()
     }, [])
 
-    useEffect(() => {
-        if (profileData) setData(profileData)
-    }, [profileData])
+    // useEffect(() => {
+    //     debugger
+    //     if (profileData) setData(profileData)
+    // }, [isRefetching])
     
     return (
         <div className="mx-auto max-w-4xl space-y-6 px-4 py-10">
-            {isPending || isError || isRefetching || !data ? 
+            {loading || !data ? 
                 <SkeletonHeader /> : 
                 <ProfileHeader  
                     employee_email={data.employee_email}
@@ -40,7 +51,7 @@ export const Profile = () => {
                     skills={data.skills}
                 />
             }
-            {isPending || isError || isRefetching || !data ? 
+            {loading || !data ? 
                 <SkeletonContent /> : 
                 <ProfileContent 
                     id={data.employee_id}

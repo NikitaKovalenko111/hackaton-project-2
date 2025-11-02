@@ -9,7 +9,7 @@ import { useGetRequests } from "@/modules/profile/infrastructure/query/queries"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-export const RequestsTab = () => {
+export const RequestsTab = ({employeeId}: {employeeId: number}) => {
 
     const {data, refetch, isFetching} = useGetRequests()
     const {acceptRequest, cancelRequest} = useSocket()
@@ -28,7 +28,7 @@ export const RequestsTab = () => {
 
     const handleCancelRequest = async (request_id: number, employee_id: number) => {
         console.log('cancel sent')
-        await cancelRequest(request_id, employee_id)
+        cancelRequest(request_id, employee_id)
         console.log('cancel')
         toast.success('Запрос отклонен!')
         handleDeleteRequest(request_id)
@@ -74,6 +74,7 @@ export const RequestsTab = () => {
                 ) : (
                     <>
                         {requests && requests.map((rq, id) => {
+                            debugger
                             return (
                                 <div key={id} className="flex items-center justify-between">
                                     <div className="flex gap-2 items-center">
@@ -92,7 +93,7 @@ export const RequestsTab = () => {
                                     </div>
                                     <div className="flex gap-2">
                                         <Button onClick={() => handleAcceptRequest(rq.request_id)}>Одобрить</Button>
-                                        <Button onClick={() => handleCancelRequest(rq.request_id, rq.request_owner.employee_id)} variant="destructive">Отклонить</Button>
+                                        <Button onClick={() => handleCancelRequest(rq.request_id, employeeId)} variant="destructive">Отклонить</Button>
                                     </div>
                                 </div>
                             )

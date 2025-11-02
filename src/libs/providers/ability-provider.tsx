@@ -20,11 +20,35 @@ export const RoleProvider = ({children}: {children: React.ReactNode}) => {
     const [companyId, setCompanyId] = useState<number | null>(null)
 
     const {data, refetch} = useGetProfile()
+    // const [data, setData] = useState<RoleContextValue | null>(null)
+
+    // const fetchData = async () => {
+    //     const res = await getProfile()
+    //     debugger
+    //     setData({
+    //         companyId: res.company && res.company.company_id ? res.company.company_id : 0,
+    //         role: res.role ? res.role.role_name : 'developer'
+    //     })
+    // }
+
+    // useEffect(() => {
+    //     fetchData()
+    // }, [])
 
     useEffect(() => {
         const token = Cookies.get("accessToken")
         if (token) refetch()
-    }, [])
+    }, [refetch])
+
+    // useEffect(() => {
+    //     const role = Cookies.get("role")
+    //     const compId = Cookies.get("companyId")
+
+    //     setData({
+    //         companyId: compId,
+    //         role: role
+    //     })
+    // }, [])
 
     useEffect(() => {
         
@@ -36,6 +60,14 @@ export const RoleProvider = ({children}: {children: React.ReactNode}) => {
                 saveCompanyStorage(data.company.company_id)
             }
         }
+        // if (data?.role) {
+        //     setRole(data.role)
+        //     saveRoleStorage(data.role)
+        //     if (data.companyId) {
+        //         setCompanyId(data.companyId)
+        //         saveCompanyStorage(data.companyId)
+        //     }
+        // }
     }, [data])
 
     return (

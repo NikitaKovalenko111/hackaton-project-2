@@ -89,7 +89,9 @@ export const ProfileContent = ({
         />
 
         <ProtectedRoute allowedRoles={['teamlead', 'techlead']}>
-            <RequestsTab />
+            <RequestsTab 
+                employeeId={id}
+            />
         </ProtectedRoute>
 
         {/* Account Settings */}

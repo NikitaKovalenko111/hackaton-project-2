@@ -11,15 +11,13 @@ export const useLogin = () => {
 
     const {push} = useRouter()
 
-    const {companyId} = useAuth()
-
     return useMutation({
         mutationKey: ["auth"],
         mutationFn: (data: AuthLoginDTO) => login(data),
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ["auth"] })
+            queryClient.invalidateQueries({ queryKey: ["profile"] })
             toast.success('Вы вошли!')
-            if (data.payload.company.company_id) {
+            if (data.payload.company && data.payload.company.company_id) {
                 saveCompanyStorage(data.payload.company.company_id)
                 push('/profile')
             }
@@ -40,7 +38,7 @@ export const useSignup = () => {
         mutationKey: ["auth"],
         mutationFn: (data: AuthSignupDTO) => register(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["auth"] })
+            queryClient.invalidateQueries({ queryKey: ["profile"] })
             toast.success('Вы зарегистрировались!')
             push('/company')
         },

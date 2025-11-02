@@ -8,6 +8,7 @@ import { AiPlanData } from "@/modules/profile/domain/profile.types";
 import { useRequestAiPlan } from "@/modules/profile/infrastructure/query/mutations";
 import { Dialog } from "@/components/ui/dialog";
 import { AiPlanDialog } from "../ai-plan-dialog/ai-plan-dialog";
+import ProtectedRoute from "@/libs/protected-route";
 
 export const SkillRow = ({
     skill,
@@ -71,12 +72,15 @@ export const SkillRow = ({
             >
                 AI-План
             </Button>
-            <Button
-                onClick={() => sendRequest(employeeId, skill.skill_connection_id)}
-                disabled={isLoading}
-            >
-                Отправить запрос
-            </Button>
+            <ProtectedRoute allowedRoles={['developer', 'hr', 'moderator']}>
+                <Button
+                    onClick={() => sendRequest(employeeId, skill.skill_connection_id)}
+                    disabled={isLoading}
+                >
+                    Отправить запрос
+                </Button>
+            </ProtectedRoute>
+            
             </div>
             <Dialog open={openAiDataDialog} onOpenChange={handleCloseAiPlan}>
                 {openAiDataDialog && aiData && (

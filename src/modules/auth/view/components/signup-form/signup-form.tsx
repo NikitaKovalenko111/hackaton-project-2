@@ -155,7 +155,7 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
             </CardContent>
             <CardFooter className="flex-col overflow-hidden">
                 <Button type="submit" form="signup-form" className="w-full cursor-pointer">
-                    Зарегестрироваться
+                    Зарегистрироваться
                 </Button>
             </CardFooter>
         </div>

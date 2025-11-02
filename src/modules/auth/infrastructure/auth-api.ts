@@ -16,11 +16,11 @@ export const login = async (data: AuthLoginDTO): Promise<AuthData> => {
     const res = await http.post('employee/authorization', data, {})
 
     const user: Payload = res.data.payload
-
+    
     if (res.data.accessToken) saveTokenStorage(res.data.accessToken)
     if (res.data.refreshToken) saveRefreshStorage(res.data.refreshToken)
-    if (user.role.role_name) saveRoleStorage(user.role.role_name)
-    if (user.company.company_id) saveCompanyStorage(user.company.company_id)
+    if (user.role && user.role.role_name) saveRoleStorage(user.role.role_name)
+    if (user.company && user.company.company_id) saveCompanyStorage(user.company.company_id)
     
     return res.data
 }

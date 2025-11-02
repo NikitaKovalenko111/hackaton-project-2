@@ -20,13 +20,14 @@ export const useLogout = () => {
         mutationKey: ["logout"],
         mutationFn: () => logout(),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["auth"] })
+            queryClient.invalidateQueries({ queryKey: ['profile'] })
             socket?.disconnect()
             setSocket({socket: null})
             toast.success('Вы вышли из аккаунта!')
             push('/auth')
         },
         onError: (e: any) => {
+            debugger
             toast.error('Возникла ошибка!')
         }
     })

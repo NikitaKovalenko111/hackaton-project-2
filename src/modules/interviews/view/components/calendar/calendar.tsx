@@ -288,7 +288,7 @@ const CalendarInterview = () => {
 
     const handleEventClick = (info: EventClickArg) => {
         const clickedEvent = events.find(ev => String(ev.interview_id) === info.event.id)
-        debugger
+        
         if (clickedEvent) {
             setSelectedEvent(clickedEvent)
             setViewEventDialogOpen(true)
@@ -594,12 +594,12 @@ const CalendarInterview = () => {
                     <DialogContent className="animate-appear">
                         <DialogHeader>
                             <DialogTitle>
-                                Информация о собеседовнии
+                                Информация о собеседовании
                             </DialogTitle>
                         </DialogHeader>
                         <div>
                             <p>{getInterviewType(selectedEvent.interview_type)}</p>
-                            {/* <p>Собеседующий: {`${selectedEvent.interview_owner.employee_name} ${selectedEvent.interview_owner.employee_surname}`}</p> */}
+                            <p>Собеседующий: {`${selectedEvent.interview_owner.employee_name} ${selectedEvent.interview_owner.employee_surname}`}</p>
                             <p>Cобеседуемый: {`${selectedEvent.interview_subject.employee_name} ${selectedEvent.interview_subject.employee_surname}`}</p>
                             <p>Дата: {format(selectedEvent.interview_date, 'dd.MM.yyyy')}</p>
                             <p>Описание: {selectedEvent.interview_desc}</p>

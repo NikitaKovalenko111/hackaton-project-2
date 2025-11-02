@@ -1,11 +1,11 @@
 import http from "@/libs/http/http"
 import { AiPlanData, AiPlanDTO, Employee } from "../domain/profile.types"
 import { Request } from "@/libs/constants"
+import socket from "@/app/socket"
 const Cookies = require('js-cookie')
 
 export const getProfile = async (): Promise<Employee> => {
     const res = await http.get('employee/profile', {})
-    debugger
 
     return res.data
 }
@@ -21,6 +21,7 @@ export const logout = async () => {
         Cookies.remove('refreshToken')
         Cookies.remove('role')
         Cookies.remove('companyId')
+        socket?.disconnect()
     }
 
     return res.data

@@ -8,6 +8,8 @@ import { RoleProvider } from "@/libs/providers/ability-provider";
 import { Notifications } from "@/libs/view/notifications/notifications";
 import { Toaster } from "@/components/ui/sonner";
 import StoreProvider from "@/libs/providers/store-provider";
+import { RequestNotifications } from "@/libs/view/notifications/request-notifications";
+import { SocketProvider } from "@/libs/hooks/useSocket";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,8 +42,11 @@ export default function RootLayout({
         <StoreProvider>
           <QueryProvider>
             <RoleProvider>
-              {children}
-              <Notifications />
+              <SocketProvider>
+                {children}
+                <Notifications />
+                <RequestNotifications />
+              </SocketProvider>
             </RoleProvider>
           </QueryProvider>
         </StoreProvider>

@@ -9,6 +9,8 @@ import { CreateCompany } from "../create-form/create-company"
 import { useAuth } from "@/libs/providers/ability-provider"
 import { useRouter } from "next/navigation"
 import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
+import { useLogout } from "@/modules/profile/infrastructure/query/mutations"
+import { LogOut } from "lucide-react"
 
 const variantStyleInfo: { [key in GreetMode]: string } = {
     info: 'left-0',
@@ -22,7 +24,7 @@ const variantStyleCreate: { [key in GreetMode]: string } = {
 
 const variantStyleCard: { [key in GreetMode]: string } = {
     create: 'min-h-[320px]',
-    info: 'min-h-[230px]'
+    info: 'min-h-[250px]'
 }
 
 export const GreetCard = () => {
@@ -37,6 +39,7 @@ export const GreetCard = () => {
 
     const {companyId} = useAuth()
     const {data, refetch} = useGetProfile()
+    const {mutate} = useLogout()
 
     useEffect(() => {
         refetch()
@@ -56,19 +59,30 @@ export const GreetCard = () => {
             variantStyleCard[mode]
         )}>
             <CardHeader>
-                <CardTitle className="text-center text-xl">Данные о компании</CardTitle>
+                <CardTitle className="text-center text-xl">
+                    Данные о компании
+                </CardTitle>
             </CardHeader>
             <div className={clsx(
                 "flex flex-col gap-5 absolute top-25 pl-5 pr-5 transition-[left]",
                 variantStyleInfo[mode]
             )}>
                 <CardDescription className="text-center">Чтобы продолжить, вам необходимо состоять в компании, либо создать компанию</CardDescription>
-                <Button 
-                    className="w-full cursor-pointer"
-                    onClick={() => handleModeChange('create')}
-                >
-                    Создать компанию
-                </Button>
+                <div className="flex flex-col gap-2">
+                    <Button 
+                        className="w-full cursor-pointer"
+                        onClick={() => handleModeChange('create')}
+                    >
+                        Создать компанию
+                    </Button>
+                    <Button 
+                        className="w-full cursor-pointer"
+                        variant="destructive"
+                        onClick={() => mutate()}
+                    >
+                        Выйти
+                    </Button>
+                </div>
             </div>
             <div className={clsx(
                 "flex flex-col gap-5 absolute top-25 w-full transition-[left]",

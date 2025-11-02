@@ -4,11 +4,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ROLE_TRANSLATION } from "@/libs/constants";
+import { ROLE, ROLE_TRANSLATION } from "@/libs/constants";
 import { Employee } from "@/modules/profile/domain/profile.types";
 import { useLogout } from "@/modules/profile/infrastructure/query/mutations";
-import { Camera, Calendar, Mail, MapPin, Building2 } from "lucide-react";
+import { Camera, Calendar, Mail, MapPin, Building2, MessageCircle } from "lucide-react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+const Cookies = require('js-cookie')
 
 export const ProfileHeader = ({
     employee_email,
@@ -24,6 +26,11 @@ export const ProfileHeader = ({
 }: Employee) => {
     
     const {mutate} = useLogout()
+    // const [role, setRole] = useState<ROLE>('developer')
+
+    // useEffect(() => {
+    //     setRole(Cookies.get("role"))
+    // }, [])
 
      return (
         <Card>
@@ -49,6 +56,7 @@ export const ProfileHeader = ({
                         <div className="flex flex-col gap-2 md:flex-row md:items-center">
                             <h1 className="text-2xl font-bold">{`${employee_name} ${employee_surname}`}</h1>
                             <Badge variant="secondary">{ROLE_TRANSLATION[role.role_name]}</Badge>
+                            {/* <Badge variant="secondary">{ROLE_TRANSLATION[role]}</Badge> */}
                         </div>
                         {/* <p className="text-muted-foreground">Senior Product Designer</p> */}
                         <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">
@@ -60,6 +68,12 @@ export const ProfileHeader = ({
                                 <Building2 className="size-4" />
                                 {company.company_name}
                             </div>
+                            {telegram_id && (
+                                <div className="flex items-center gap-1">
+                                    <MessageCircle className="size-4" />
+                                    {telegram_id}
+                                </div>
+                            )}
                         </div>
                     </div>
                     <Button variant="default">Изменить профиль</Button>

@@ -1,5 +1,6 @@
 'use client'
 
+import socket from "@/app/socket"
 import { Request } from "@/libs/constants"
 import { useSocket } from "@/libs/hooks/useSocket"
 import { useEffect, useState } from "react"
@@ -8,13 +9,12 @@ import { toast } from "sonner"
 export const Notifications = () => {
 
     // const [requests, setRequests] = useState<Request[]>([])
-    const {socket} = useSocket()
+    // const {socket} = useSocket()
 
     useEffect(() => {
         if (!socket) return
 
         const handleNewRequest = (request: Request) => {
-            debugger
             // setRequests(prev => [...prev.slice(0, 9), request])
             toast("Запрос на повышение уровня!", {
                 description: <div>
@@ -32,12 +32,11 @@ export const Notifications = () => {
         }
 
         socket.on('newRequest', (request: Request) =>  {
-            debugger
             handleNewRequest(request)
         })
 
         return () => {
-            socket.off('newRequest', (request: Request) => {
+            socket!.off('newRequest', (request: Request) => {
                 handleNewRequest(request)
             })
         }
