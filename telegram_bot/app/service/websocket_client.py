@@ -13,9 +13,9 @@ class WebSocketClient:
         self.is_connected = False
         self.bot = Bot(token=BOT_TOKEN)
         self.telegram_id = telegram_id
-        self.sio.on('newRequest', self._new_request)
-        self.sio.on('canceledRequest', self._cancel_request)
-        self.sio.on('completedRequest', self._complete_request)
+        self.sio.on('newRequest', self._requests)
+        self.sio.on('canceledRequest', self._requests)
+        self.sio.on('completedRequest', self._requests)
         self.sio.on('newInterview', self._new_interview)
 
     async def connect(self,  employee_data: dict):
@@ -39,7 +39,7 @@ class WebSocketClient:
             self.is_connected = True
 
             print("✅ Успешно подключился к Socket.IO")
-            #await self._send_telegram_message("🔌 Подключен к системе уведомлений")
+
 
         except Exception as e:
             print(f"❌ Ошибка подключения к Socket.IO: {e}")
@@ -54,65 +54,41 @@ class WebSocketClient:
         except Exception as e:
             print(f"❌ Ошибка отправки сообщения в Telegram: {e}")
 
-    async def _new_request(self, data: dict):
-        """Обработка нового запроса"""
+    async def _requests(self, data: dict):
+        """Универсальный метод для обработки запросов"""
         print(data.get('request_date', 'N/A'))
-        """Формат времени"""
-        interview_dtime = data.get('request_date', 'N/A')[:-6].split(
-            "T")
+
+        # Формат времени
+        interview_dtime = data.get('request_date', 'N/A')[:-6].split("T")
         interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
         interview_dtime[0][1] = \
             ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
              "декабря"][int(interview_dtime[0][1]) - 1]
 
-        request_info = (
-            "❗️ Новый запрос "
-            f"№ {data.get('request_id', 'N/A')}\n"
-            f"📋Тип: {'повышение компетенции' if data.get('request_type') == 'upgrade' else data.get('request_type', 'N/A')}\n"
-            f"📊Статус: {data.get('request_status', 'N/A')}\n"
-            f"📅Дата: {interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
-            f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
-        )
-        await self._send_telegram_message(request_info)
+        skill_data = data.get('request_skill', {})
+        skill_name = "Не указан"
+        skill_level = "Не указан"
+        if isinstance(skill_data, dict):
+            skill_shape = skill_data.get('skill_shape', {})
+            if isinstance(skill_shape, dict):
+                skill_name = skill_shape.get('skill_name', 'Не указан')
+            skill_level = skill_data.get('skill_level', 'Не указан')
 
-    async def _cancel_request(self, data: dict):
-        """Сообщение об отмен запроса"""
-        print(data.get('request_date', 'N/A'))
-        """Формат времени"""
-        interview_dtime = data.get('request_date', 'N/A')[:-6].split(
-            "T")
-        interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
-        interview_dtime[0][1] = \
-            ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
-             "декабря"][int(interview_dtime[0][1]) - 1]
+        headers = {
+            'pending': f"❗️ Новый запрос № {data.get('request_id', 'N/A')}",
+            'canceled': f"❗️ Запрос № {data.get('request_id', 'N/A')} <b>отменен</b>",
+            'completed': f"❗️ Запрос № {data.get('request_id', 'N/A')} <b>одобрен</b>"
+        }
 
         request_info = (
-            f"❗️ Запрос № {data.get('request_id', 'N/A')} <b>отменен</b>\n"
+            f"{headers.get(data.get('request_status', 'N/A'), headers.get('pending'))}\n"
             f"📋Тип: {'повышение компетенции' if data.get('request_type') == 'upgrade' else data.get('request_type', 'N/A')}\n"
-            f"📊Статус: {data.get('request_status', 'N/A')}\n"
-            f"📅Дата: {interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
-            f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
-        )
-        await self._send_telegram_message(request_info)
-
-    async def _complete_request(self, data: dict):
-        """Сообщение, что запррс выполнен"""
-        print(data.get('request_date', 'N/A'))
-        """Формат времени"""
-        interview_dtime = data.get('request_date', 'N/A')[:-6].split(
-            "T")
-        interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
-        interview_dtime[0][1] = \
-            ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
-             "декабря"][int(interview_dtime[0][1]) - 1]
-
-        request_info = (
-            f"❗️ Запрос № {data.get('request_id', 'N/A')} <b>одобрен</b>\n"
-            f"📋Тип: {'повышение компетенции' if data.get('request_type') == 'upgrade' else data.get('request_type', 'N/A')}\n"
-            f"📊Статус: {data.get('request_status', 'N/A')}\n"
-            f"📅Дата: {interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
-            f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
-        )
+        f"🎯Навык: {skill_name}\n"
+        f"📊Уровень: {skill_level}\n"
+        f"📅Дата: {interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
+        f"👤Роль получателя: {data.get('request_role_receiver', 'N/A')}\n"
+        f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
+    )
         await self._send_telegram_message(request_info)
 
     async def _new_interview(self, data: dict):
@@ -188,13 +164,3 @@ class WebSocketManager:
 
 websocket_manager = WebSocketManager()
 
-# Для осовместимости из-за разных версий с register.py
-class LegacyWebSocketClient:
-    """Старый класс для обратной совместимости"""
-    async def connect(self, telegram_id: int, employee_data: dict):
-        await websocket_manager.connect_user(telegram_id, employee_data)
-
-    async def disconnect_user(self, telegram_id: int):
-        await websocket_manager.disconnect_user(telegram_id)
-
-websocket_client = LegacyWebSocketClient()

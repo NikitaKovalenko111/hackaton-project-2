@@ -9,7 +9,7 @@ import asyncio
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 from config import API_URL
-from app.service.websocket_client import websocket_client
+from app.service.websocket_client import websocket_manager
 API_URL += "employee/authorization/telegram"
 
 class AuthStates(StatesGroup):
@@ -29,6 +29,7 @@ async def send_to_server(user_data: dict, password: str) -> dict:
 
         print(f"📤 Отправка данных на сервер: {data}")
 
+
         async with aiohttp.ClientSession() as session:
             async with session.post(
                     API_URL,
@@ -43,7 +44,7 @@ async def send_to_server(user_data: dict, password: str) -> dict:
                     print("✅ Данные успешно получены от сервера")
                     print(response_data)
                     authorized_users[user_data['tg_id']] = response_data
-                    await websocket_client.connect(user_data['tg_id'], response_data)
+                    await websocket_manager.connect_user(user_data['tg_id'], response_data)
                     return {"success": True, "data": response_data}
                 else:
                     error_text = await response.text()
@@ -107,6 +108,7 @@ async def process_password(message: types.Message, state: FSMContext):
         f"🔑 Пароль: {'*' * len(message.text)}"
     )
     await message.answer(result_text)
+    await message.answer("🔌 Подключаюсь к системе уведомлений")
     result = await send_to_server(user_data, message.text)
 
     if result["success"] == True:
@@ -132,7 +134,7 @@ async def process_password(message: types.Message, state: FSMContext):
 async def cmd_logout(message: types.Message):
         tg_id = message.from_user.id
         if tg_id in authorized_users:
-            await websocket_client.disconnect_user(tg_id)
+            await websocket_manager.disconnect_user(tg_id)
             del authorized_users[tg_id]
             await message.answer("✅ Вы успешно вышли из системы. Для повторной авторизации используйте /start")
         else:
