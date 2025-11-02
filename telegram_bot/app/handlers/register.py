@@ -43,7 +43,7 @@ async def send_to_server(user_data: dict, password: str) -> dict:
                     print("✅ Данные успешно получены от сервера")
                     print(response_data)
                     authorized_users[user_data['tg_id']] = response_data
-                    asyncio.create_task(websocket_client.connect(user_data['tg_id'], response_data))
+                    await websocket_client.connect(user_data['tg_id'], response_data)
                     return {"success": True, "data": response_data}
                 else:
                     error_text = await response.text()
@@ -121,7 +121,7 @@ async def process_password(message: types.Message, state: FSMContext):
             response_text += f"📊 Статус: {employee_data.get('employee_status', 'N/A')}\n"
         if employee_data.get('company'):
             response_text += f"🏢 Компания: {employee_data['company'].get('company_name', 'N/A')}\n"
-        response_text += "🔌 Подключаюсь к системе уведомлений..."
+        response_text += "🔌Подключен к системе уведомлений"
         await message.answer(response_text)
 
     else:
