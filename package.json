@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "concurrently \"npm run --cwd ./server build\" \"npm run --cwd ./client build\""
+    "build": "concurrently \"cd ./client && npm run build\" \"cd ./server && npm run build\""
   },
   "repository": {
     "type": "git",
