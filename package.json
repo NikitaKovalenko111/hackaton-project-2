@@ -1,0 +1,20 @@
+{
+  "name": "hackaton-project-2",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "concurrently \"npm run --cwd ./server build\" \"npm run --cwd ./client build\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NikitaKovalenko111/hackaton-project-2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NikitaKovalenko111/hackaton-project-2/issues"
+  },
+  "homepage": "https://github.com/NikitaKovalenko111/hackaton-project-2#readme"
+}
