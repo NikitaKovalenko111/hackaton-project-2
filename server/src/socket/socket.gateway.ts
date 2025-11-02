@@ -188,6 +188,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           owner,
           clientType.TELEGRAM,
         )
+        const socketTg = await this.socketService.getSocketByEmployeeId(
+          owner,
+          clientType.TELEGRAM,
+        )
 
         if (!socket) {
           return requestData
@@ -195,6 +199,14 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         this.server
           .to(socket.client_id as string)
+          .emit('canceledRequest', requestData)
+
+        if (!socketTg) {
+          return requestData
+        }
+
+        this.server
+          .to(socketTg.client_id as string)
           .emit('canceledRequest', requestData)
       }
     } catch (error) {
