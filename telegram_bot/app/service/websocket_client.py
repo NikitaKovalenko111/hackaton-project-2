@@ -16,7 +16,7 @@ class WebSocketClient:
         self.sio.on('newRequest', self._new_request)
         self.sio.on('canceledRequest', self._cancel_request)
         self.sio.on('completedRequest', self._complete_request)
-        self.sio.on('completedRequest', self._complete_request)
+        self.sio.on('newInterview', self._new_interview)
 
     async def connect(self, telegram_id: int, employee_data: dict):
         """Подключение к Socket.IO серверу только для newRequest"""
@@ -88,6 +88,29 @@ class WebSocketClient:
             f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
         )
         await self._send_telegram_message(request_info)
+
+    async def _new_interview(self, data: dict):
+        """Сообщение о новом интервью"""
+        interview_dtime = data.get('interview_date', 'N/A').replace('.000Z', '').split(
+            "T")  
+        interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
+        interview_dtime[0][1] = \
+        ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
+         "декабря"][int(interview_dtime[0][1]) - 1]
+
+        interview_info = (
+            f"{ {'planned': '🎯 ПРИГЛАШЕНИЕ НА СОБЕСЕДОВАНИЕ', 'completed': '✅ СОБЕСЕДОВАНИЕ ЗАВЕРШЕНО', 'canceled': '❌ СОБЕСЕДОВАНИЕ ОТМЕНЕНО'}.get(data.get('interview_status', 'planned'), '🎯 ПРИГЛАШЕНИЕ НА СОБЕСЕДОВАНИЕ')}\n"
+            f"<b>👤 Кандидат:</b>\n"
+            f"{data.get('interview_subject', {}).get('employee_name')} {data.get('interview_subject', {}).get('employee_surname')}\n"
+            f"<b>📅 Дата и время:</b>\n"
+            f"{interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
+            f"<b>🔧 Тип собеседования:</b>\n"
+            f"{ {'tech': 'Техническое собеседование', 'soft': 'Собеседование на софт-скиллы', 'hr': 'HR-собеседование', 'case': 'Кейс-собеседование'}.get(data.get('interview_type', 'N/A'), 'Тип собеседования скрыт.')}\n"  
+            f"<b>👨‍💼 Собеседующий:</b>\n"
+            f"{data.get('interview_owner', {}).get('employee_name')} {data.get('interview_owner', {}).get('employee_surname')}\n"
+            f"<i>ID собеседования: #{data.get('interview_id', 'N/A')}</i>\n"
+        )
+        await self._send_telegram_message(interview_info)
 
     async def disconnect(self):
         """Отключение от Socket.IO"""
