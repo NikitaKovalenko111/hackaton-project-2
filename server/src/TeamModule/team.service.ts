@@ -1,90 +1,177 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Team } from './team.entity';
-import { CompanyService } from 'src/CompanyModule/company.service';
-import { EmployeeService } from 'src/EmployeeModule/employee.service';
-import { Employee } from 'src/EmployeeModule/employee.entity';
+import { HttpStatus, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
+import { Team } from './team.entity'
+import { CompanyService } from 'src/CompanyModule/company.service'
+import { EmployeeService } from 'src/EmployeeModule/employee.service'
+import { Employee } from 'src/EmployeeModule/employee.entity'
+import ApiError from 'src/apiError'
 
 @Injectable()
 export class TeamService {
-    constructor(
-        @InjectRepository(Team)
-        private teamRepository: Repository<Team>,
+  constructor(
+    @InjectRepository(Team)
+    private teamRepository: Repository<Team>,
 
-        @InjectRepository(Employee)
-        private employeeRepository: Repository<Employee>,
-    
-        private companyService: CompanyService,
-        private employeeService: EmployeeService
-    ) {}
+    @InjectRepository(Employee)
+    private employeeRepository: Repository<Employee>,
 
-    async addTeam(companyId: number, teamName: string, teamDesc: string | null, teamlead_id: number): Promise<Team> {
-        const company = await this.companyService.getCompanyInfo(companyId)
-        const teamlead = await this.employeeService.getEmployee(teamlead_id)
+    private companyService: CompanyService,
+    private employeeService: EmployeeService,
+  ) {}
 
-        const team = new Team({
-            team_name: teamName,
-            team_desc: teamDesc ? teamDesc : undefined,
-            teamlead: teamlead,
-            company: company
-        })
+  async removeTeam(teamId: number): Promise<Team> {
+    const team = await this.teamRepository.findOne({
+      where: {
+        team_id: teamId
+      }
+    })
 
-        const teamData = await this.teamRepository.save(team)
-
-        const teamleadData = await this.addEmployeeToTeam(teamData.team_id, teamData.teamlead.employee_id)
-
-        return teamData
+    if (!team) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Команда не найдена!')
     }
 
-    async addEmployeeToTeam(teamId: number, employeeId: number): Promise<Employee> {
-        const employee = await this.employeeService.getEmployee(employeeId)
-        const team = await this.teamRepository.findOne({
-            where: {
-                team_id: teamId
-            },
-            relations: {
-                employees: true
-            }
-        })
+    const employees = await this.employeeRepository.find({
+      where: {
+        team: team
+      }
+    })
 
-        if (!team) {
-            throw new Error('Команда не найдена!')
-        }
+    employees.forEach(el => {
+      el.team = null
+    })
 
-        employee.team = team
-        /*const history: Employee[] = []
-        
-        for (let i = 0; i < employee.team.employees.length; i++) {
-            const element = employee.team.employees[i]
+    await this.employeeRepository.save(employees)
+    const teamData = await this.teamRepository.remove(team)
+
+    return teamData
+  }
+
+  async addTeam(
+    companyId: number,
+    teamName: string,
+    teamDesc: string | null,
+    teamlead_id: number,
+  ): Promise<Team> {
+    try {
+      const company = await this.companyService.getCompanyInfo(companyId)
+      const teamlead = await this.employeeService.getEmployee(teamlead_id)
+
+      const team = new Team({
+        team_name: teamName,
+        team_desc: teamDesc ? teamDesc : undefined,
+        teamlead: teamlead,
+        company: company,
+      })
+
+      const teamData = await this.teamRepository.save(team)
+
+      const teamleadData = await this.addEmployeeToTeam(
+        teamData.team_id,
+        teamData.teamlead.employee_id,
+      )
+
+      return teamData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
+  async addEmployeeToTeam(
+    teamId: number,
+    employeeId: number,
+  ): Promise<Employee> {
+    try {
+      const employee = await this.employeeService.getEmployee(employeeId)
+      const team = await this.teamRepository.findOne({
+        where: {
+          team_id: teamId,
+        },
+        relations: {
+          employees: true,
+        },
+      })
+
+      if (!team) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Команда не найдена!')
+      }
+
+      employee.team = team
+      /*const history: Employee[] = []
             
-            if (element.employee_id != employee.employee_id) {
-                history.push(element)
+            for (let i = 0; i < employee.team.employees.length; i++) {
+                const element = employee.team.employees[i]
+                
+                if (element.employee_id != employee.employee_id) {
+                    history.push(element)
+                }
             }
-        }
-        employee.workedWith = history*/
+            employee.workedWith = history*/
 
-        const employeeData = await this.employeeRepository.save(employee)
+      const employeeData = await this.employeeRepository.save(employee)
 
-        return employeeData
+      return employeeData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
     }
+  }
 
-    async getTeam(teamId: number): Promise<Team> {
-        const team = await this.teamRepository.findOne({
-            where: {
-                team_id: teamId
-            },
-            relations: {
-                teamlead: true,
-                employees: true,
-                company: true
-            }
-        })
+  async getTeamEmployees(employeeId: number): Promise<Employee[]> {
+    try {
+      const employee = await this.employeeService.getEmployee(employeeId)
+      
+      if (employee.team == null) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+      }
 
-        if (!team) {
-            throw new Error('Команда не найдена!')
-        }
+      const employees = await this.employeeService.getEmployeesByTeam(employee.team.team_id)
 
-        return team
+      return employees
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
     }
+  }
+
+  async getTeam(employeeId: number): Promise<Team> {
+    try {
+      const employee = await this.employeeService.getEmployee(employeeId)
+
+      if (employee.team == null) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+      }
+
+      const team = await this.teamRepository.findOne({
+        where: {
+          team_id: employee.team.team_id,
+        },
+        relations: {
+          teamlead: true,
+          employees: {
+            role: true,
+          },
+          company: true,
+        },
+      })
+
+      if (!team) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Команда не найдена!')
+      }
+
+      return team
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
 }

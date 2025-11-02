@@ -1,21 +1,36 @@
-import { Employee } from 'src/EmployeeModule/employee.entity';
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Employee } from 'src/EmployeeModule/employee.entity'
+import { clientType } from 'src/types'
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm'
 
 @Entity()
 export class Socket {
-    @PrimaryGeneratedColumn()
-    socket_id: number
+  @PrimaryGeneratedColumn()
+  socket_id: number
 
-    @Column({
-        unique: true
-    })
-    client_id: string
+  @Column({
+    unique: true,
+    type: 'varchar',
+    length: 256
+  })
+  client_id: string
 
-    @OneToOne(() => Employee)
-    @JoinColumn({ name: "employee_id" })
-    employee: Employee
+  @Column({
+    type: 'enum',
+    enum: clientType
+  })
+  client_type: clientType
 
-    constructor(item: Partial<Socket>) {
-        Object.assign(this, item)
-    }
+  @ManyToOne(() => Employee, (employee) => employee.sockets)
+  @JoinColumn({ name: 'employee_id' })
+  employee: Employee
+
+  constructor(item: Partial<Socket>) {
+    Object.assign(this, item)
+  }
 }

@@ -1,34 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Company } from './company.entity';
-import { Repository } from 'typeorm';
-import { EmployeeService } from 'src/EmployeeModule/employee.service';
-import { employeePayloadDto } from 'src/EmployeeModule/employee.controller';
-import { SkillShape } from 'src/SkillModule/skillShape.entity';
-import { Employee } from 'src/EmployeeModule/employee.entity';
-import { RoleType } from 'src/types';
-import { Role } from 'src/EmployeeModule/role.entity';
-import { Review } from 'src/ReviewModule/review.entity';
+import { HttpStatus, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Company } from './company.entity'
+import { Like, Repository } from 'typeorm'
+import { EmployeeService } from 'src/EmployeeModule/employee.service'
+import { SkillShape } from 'src/SkillModule/skillShape.entity'
+import { Employee } from 'src/EmployeeModule/employee.entity'
+import { interviewStatusType, requestStatus, RoleType } from 'src/types'
+import { Role } from 'src/EmployeeModule/role.entity'
+import { Review } from 'src/ReviewModule/review.entity'
+import ApiError from 'src/apiError'
+import { Team } from 'src/TeamModule/team.entity'
 
 @Injectable()
 export class CompanyService {
-    constructor(
-        @InjectRepository(Company)
-        private companyRepository: Repository<Company>,
+  constructor(
+    @InjectRepository(Company)
+    private companyRepository: Repository<Company>,
 
-        @InjectRepository(Role)
-        private roleRepository: Repository<Role>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
 
-        @InjectRepository(Employee)
-        private employeeRepository: Repository<Employee>,
+    @InjectRepository(Employee)
+    private employeeRepository: Repository<Employee>,
 
-        @InjectRepository(Review)
-        private reviewRepository: Repository<Review>,
+    @InjectRepository(Review)
+    private reviewRepository: Repository<Review>,
 
-        private employeeService: EmployeeService
-    ) {}
+    private employeeService: EmployeeService,
+  ) {}
 
-    /*async giveRole(companyId: number, roleName: RoleType, employeeToGiveId: number): Promise<Role> {
+  /*async giveRole(companyId: number, roleName: RoleType, employeeToGiveId: number): Promise<Role> {
         const company = await this.companyRepository.findOne({
             where: {
                 company_id: companyId,
@@ -55,130 +56,268 @@ export class CompanyService {
         return roleData
     }*/
 
-    async addEmployee(companyId: number, employeeId: number, employeeRole: RoleType): Promise<Employee> {
-        const employee = await this.employeeRepository.findOne({
-            where: {
-                employee_id: employeeId
-            }
-        })
+  async addEmployee(
+    companyId: number,
+    employeeId: number,
+    employeeRole: RoleType,
+  ): Promise<Employee> {
+    try {
+      const employee = await this.employeeRepository.findOne({
+        where: {
+          employee_id: employeeId,
+        },
+      })
 
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: companyId
-            }
-        })
+      const company = await this.companyRepository.findOne({
+        where: {
+          company_id: companyId,
+        },
+      })
 
-        if (!employee) {
-            throw new Error('Пользователь не найден!')
-        }
+      if (!employee) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
+      }
 
-        if (!company) {
-            throw new Error('Компания не найдена!')
-        }
+      if (!company) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
+      }
 
-        employee.company = company
+      employee.company = company
 
-        const employeeData = await this.employeeRepository.save(employee)
+      const employeeData = await this.employeeRepository.save(employee)
 
-        const role = new Role({
-            role_name: employeeRole,
-            company: company,
-            employee: employeeData
-        })
+      const role = new Role({
+        role_name: employeeRole,
+        company: company,
+        employee: employeeData,
+      })
 
-        const roleData = await this.roleRepository.save(role)
+      const roleData = await this.roleRepository.save(role)
 
-        return employeeData
+      return employeeData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
+  async addEmployeeByEmail(
+    companyId: number,
+    employeeToAddEmail: string,
+    employeeRole: RoleType,
+  ) {
+    try {
+      const employee = await this.employeeRepository.findOne({
+        where: {
+          employee_email: employeeToAddEmail,
+        },
+      })
+
+      const company = await this.companyRepository.findOne({
+        where: {
+          company_id: companyId,
+        },
+      })
+
+      if (!employee) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
+      }
+
+      if (!company) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
+      }
+
+      employee.company = company
+
+      const employeeData = await this.employeeRepository.save(employee)
+
+      const role = new Role({
+        role_name: employeeRole,
+        company: company,
+        employee: employeeData,
+      })
+
+      const roleData = await this.roleRepository.save(role)
+
+      return employeeData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
+  async getCompanyInfo(companyId: number): Promise<Company> {
+    try {
+      const company = await this.companyRepository.findOne({
+        where: {
+          company_id: companyId,
+        },
+        relations: {
+          employees: true,
+          skills: true,
+          teams: true,
+          roles: true,
+        },
+      })
+
+      if (!company) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
+      }
+
+      return company
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
+  async getEmployees(company_id: number, name?: string): Promise<Employee[]> {
+    try {
+      const company = await this.companyRepository.findOne({
+        where: {
+          company_id: company_id,
+        },
+      })
+
+      if (!company) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
+      }
+
+      const employees = await this.employeeRepository.find({
+        where: {
+          company: company,
+          employee_name: Like(`%${name ? name : ''}%`),
+        },
+        relations: {
+          role: true,
+          team: {
+            teamlead: true,
+            employees: true,
+          },
+          skills: {
+            skill_shape: true,
+          },
+        },
+      })
+
+      return employees
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
+  async getAllTeams(companyId: number): Promise<Team[]> {
+    const company = await this.companyRepository.findOne({
+      where: {
+        company_id: companyId,
+      },
+      relations: {
+        teams: {
+          teamlead: true,
+          employees: true,
+        },
+      },
+    })
+
+    if (!company) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена')
     }
 
-    async getCompanyInfo(companyId: number): Promise<Company> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: companyId
+    const teams = company.teams
+
+    return teams
+  }
+
+  async removeEmployee(employeeId: number): Promise<Employee> {
+    const employee = await this.employeeService.getEmployee(employeeId)
+
+    employee.company = null
+    employee.team = null
+    employee.skills = []
+    employee.sendedRequests = employee.sendedRequests.filter(el => el.request_status != requestStatus.PENDING)
+    employee.plannedInterviews = employee.plannedInterviews.filter(el => el.interview_status != interviewStatusType.PLANNED)
+
+    const employeeData = await this.employeeRepository.save(employee)
+    const role = await this.roleRepository.delete({
+      employee: employee
+    })
+
+    return employeeData
+  }
+
+  async getSkills(companyId: number): Promise<SkillShape[]> {
+    try {
+      const company = await this.companyRepository.findOne({
+        where: {
+          company_id: companyId,
+        },
+        relations: {
+          skills: {
+            skills: {
+              skill_shape: true,
             },
-            relations: {
-                employees: true,
-                skills: true,
-                teams: true,
-                roles: true
-            }
-        })
+          },
+        },
+      })
 
-        if (!company) {
-            throw new Error("Такой компании не существует!")
-        }
+      if (!company) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
+      }
 
-        return company
+      return company.skills
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
     }
+  }
 
-    async getEmployees(company_id: number): Promise<employeePayloadDto[]> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: company_id
-            },
-            relations: {
-                employees: {
-                    role: true,
-                    skills: {
-                        skill_shape: true
-                    },
-                    team: {
-                        employees: true
-                    }
-                }
-            }
-        })
+  async createCompany(
+    company_name: string,
+    employee_id: number,
+  ): Promise<Company> {
+    try {
+      const company = new Company({
+        company_name: company_name,
+      })
 
-        if (!company) {
-            throw new Error('Такой компании не существует')
-        }    
+      const companyData = await this.companyRepository.save(company)
 
-        return company.employees
+      const employee = await this.employeeService.getEmployee(employee_id)
+      employee.company = companyData
+
+      const employeeData = await this.employeeRepository.save(employee)
+
+      const role = new Role({
+        employee: employeeData,
+        role_name: RoleType.ADMIN,
+        company: companyData,
+      })
+
+      const roleData = await this.roleRepository.save(role)
+
+      const review = new Review({
+        company: companyData,
+      })
+
+      const reviewData = await this.reviewRepository.save(review)
+
+      return companyData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
     }
-
-    async getSkills(companyId: number): Promise<SkillShape[]> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: companyId
-            },
-            relations: {
-                skills: true
-            }
-        })
-
-        if (!company) {
-            throw new Error('Такой компании не существует')
-        }    
-
-        return company.skills
-    }
-
-    async createCompany(company_name: string, employee_id: number): Promise<Company> {
-        const company = new Company({
-            company_name: company_name
-        })
-
-        const companyData = await this.companyRepository.save(company)
-
-        const employee = await this.employeeService.getEmployee(employee_id)
-        employee.company = companyData
-
-        const employeeData = await this.employeeRepository.save(employee)
-
-        const role = new Role({
-            employee: employeeData,
-            role_name: "admin",
-            company: companyData
-        })
-
-        const roleData = await this.roleRepository.save(role)
-
-        const review = new Review({
-            company: companyData
-        })
-
-        const reviewData = await this.reviewRepository.save(review)
-
-        return companyData
-    }
+  }
 }
