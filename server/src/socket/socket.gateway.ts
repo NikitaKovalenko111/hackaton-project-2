@@ -222,7 +222,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       if (requestData.request_owner) {
         const owner = await this.employeeService.getCleanEmployee(
-          requestData.request_receiver.employee_id,
+          requestData.request_owner.employee_id,
         )
         const socket = await this.socketService.getSocketByEmployeeId(owner)
         const socketTg = await this.socketService.getSocketByEmployeeId(owner, clientType.TELEGRAM)
