@@ -5,11 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ROLE, ROLE_TRANSLATION } from "@/libs/constants";
+import { SocketContext } from "@/libs/hooks/useSocket";
 import { Employee } from "@/modules/profile/domain/profile.types";
 import { useLogout } from "@/modules/profile/infrastructure/query/mutations";
 import { Camera, Calendar, Mail, MapPin, Building2, MessageCircle } from "lucide-react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 const Cookies = require('js-cookie')
 
 export const ProfileHeader = ({
@@ -25,7 +26,9 @@ export const ProfileHeader = ({
     company
 }: Employee) => {
     
-    const {mutate} = useLogout()
+    const {resetSocket} = useContext(SocketContext)
+
+    const {mutate} = useLogout({resetSocket})
     // const [role, setRole] = useState<ROLE>('developer')
 
     // useEffect(() => {

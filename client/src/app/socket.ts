@@ -26,6 +26,8 @@ if (token) {
             client_type: 'web',
         },
     reconnection: false})
+} else {
+    socket = null
 }
 
-export default socket
+// export default socket

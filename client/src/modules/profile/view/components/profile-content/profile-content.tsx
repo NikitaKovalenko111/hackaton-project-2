@@ -25,6 +25,8 @@ import { useAuth } from "@/libs/providers/ability-provider";
 import clsx from "clsx";
 import { ROLE } from "@/libs/constants";
 import { RequestsTab } from "../requests-tab/requests-tab";
+import { useGetProfile } from "@/modules/profile/infrastructure/query/queries";
+import { useEffect, useState } from "react";
 
 interface ProfileContentProps {
     id: number
@@ -55,7 +57,16 @@ export const ProfileContent = ({
     id
 }: ProfileContentProps) => {
 
-    const {role} = useAuth()
+    const {data, refetch} = useGetProfile()
+    const [role, setRole] = useState<ROLE>('developer')
+
+    useEffect(() => {
+        refetch()
+    }, [])
+
+    useEffect(() => {
+        if (data && data.role) setRole(data.role.role_name)
+    }, [data])
 
     return (
         <Tabs defaultValue="personal" className="space-y-6">
