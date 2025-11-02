@@ -104,7 +104,7 @@ async def process_password(message: types.Message, state: FSMContext):
         "✅ Полученные данные:\n\n"
         f"🆔 Telegram ID: {user_data['tg_id']}\n"
         f"📧 Email: {user_data['email']}\n"
-        f"🔑 Пароль: {message.text}"
+        f"🔑 Пароль: {'*' * len(message.text)}"
     )
     await message.answer(result_text)
     result = await send_to_server(user_data, message.text)

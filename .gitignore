@@ -1,5 +1,8 @@
 telegram_bot/config.py
 .idea
+<<<<<<< HEAD
+
+=======
 **/__pycache__
 .env
 node_modules
@@ -8,3 +11,4 @@ profilePhotos/*
 next-env.d.ts
 .next
 .vscode
+>>>>>>> 5f7ca1751a7b46ac6f723965b02161247988893a
