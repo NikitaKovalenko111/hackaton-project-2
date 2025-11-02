@@ -158,6 +158,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           receiver,
           clientType.TELEGRAM,
         )
+        const socket = await this.socketService.getSocketByEmployeeId(
+          receiver,
+        )
 
         if (!socketTg) {
           return requestData
@@ -165,6 +168,14 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         this.server
           .to(socketTg.client_id as string)
+          .emit('canceledRequest', requestData)
+
+        if (!socket) {
+          return requestData
+        }
+
+        this.server
+          .to(socket.client_id as string)
           .emit('canceledRequest', requestData)
       } else if (
         requestData.request_receiver != null &&
@@ -204,6 +215,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           requestData.request_receiver.employee_id,
         )
         const socket = await this.socketService.getSocketByEmployeeId(receiver)
+        const socketTg = await this.socketService.getSocketByEmployeeId(receiver, clientType.TELEGRAM)
 
         if (!socket) {
           return requestData
@@ -211,6 +223,15 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         this.server
           .to(socket.client_id as string)
+          .emit('completedRequest', requestData, (err, responses) => {
+          })
+
+        if (!socketTg) {
+          return requestData
+        }
+
+        this.server
+          .to(socketTg.client_id as string)
           .emit('completedRequest', requestData, (err, responses) => {
           })
       }
