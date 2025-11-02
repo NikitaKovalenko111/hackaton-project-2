@@ -225,6 +225,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const socket = await this.socketService.getSocketByEmployeeId(owner)
         const socketTg = await this.socketService.getSocketByEmployeeId(owner, clientType.TELEGRAM)
 
+        console.log(socket);
+        console.log(socketTg);     
+
         if (socket) {
           this.server
           .to(socket.client_id as string)
@@ -232,6 +235,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
 
         if (socketTg) {
+          console.log(111);
+          
           this.server
           .to(socketTg.client_id as string)
           .emit('completedRequest', requestData)
