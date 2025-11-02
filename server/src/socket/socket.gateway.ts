@@ -148,7 +148,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         await this.requestGatewayService.cancelRequest(request_id)
       
       if (
-        requestData.request_receiver != null &&
+        requestData.request_receiver &&
         employee_id == requestData.request_owner.employee_id
       ) {
         const receiver = await this.employeeService.getCleanEmployee(
@@ -176,7 +176,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
         return requestData
       } else if (
-        requestData.request_owner != null &&
+        requestData.request_owner &&
         employee_id == requestData.request_receiver.employee_id
       ) {
         const owner = await this.employeeService.getCleanEmployee(
@@ -220,7 +220,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       console.log(requestData);
 
-      if (requestData.request_owner != null) {
+      if (requestData.request_owner) {
         const owner = await this.employeeService.getCleanEmployee(
           requestData.request_receiver.employee_id,
         )
