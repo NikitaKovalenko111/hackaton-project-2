@@ -31,13 +31,28 @@ export const Notifications = () => {
             })
         }
 
+<<<<<<< Updated upstream
         socket.on('newRequest', (request: Request) =>  {
+=======
+        socket.on('newRequest', (request: Request, callback) =>  {
+>>>>>>> Stashed changes
             handleNewRequest(request)
+            callback({ status: "successful" })
+        })
+
+        socket.on('completedRequest', (request: Request, callback) =>  {
+            handleNewRequest(request)
+            callback({ status: "successful" })
         })
 
         return () => {
+<<<<<<< Updated upstream
             socket!.off('newRequest', (request: Request) => {
+=======
+            socket.off('newRequest', (request: Request, callback) => {
+>>>>>>> Stashed changes
                 handleNewRequest(request)
+                callback({ status: "successful" })
             })
         }
     }, [socket])
