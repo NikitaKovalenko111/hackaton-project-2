@@ -146,6 +146,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       const requestData =
         await this.requestGatewayService.cancelRequest(request_id)
+
+      console.log(requestData);
+      console.log(employee_id);
       
       if (
         requestData.request_receiver &&
@@ -179,6 +182,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         requestData.request_owner &&
         employee_id == requestData.request_receiver.employee_id
       ) {
+        console.log(111);
+
         const owner = await this.employeeService.getCleanEmployee(
           requestData.request_owner.employee_id,
         )
@@ -218,17 +223,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const requestData =
         await this.requestGatewayService.completeRequest(request_id)
 
-      console.log(requestData);
-
       if (requestData.request_owner) {
         const owner = await this.employeeService.getCleanEmployee(
           requestData.request_owner.employee_id,
         )
         const socket = await this.socketService.getSocketByEmployeeId(owner)
         const socketTg = await this.socketService.getSocketByEmployeeId(owner, clientType.TELEGRAM)
-
-        console.log(socket);
-        console.log(socketTg);     
 
         if (socket) {
           this.server
@@ -237,8 +237,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
 
         if (socketTg) {
-          console.log(111);
-          
           this.server
           .to(socketTg.client_id as string)
           .emit('completedRequest', requestData)
