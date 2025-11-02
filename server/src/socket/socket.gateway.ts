@@ -146,7 +146,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       const requestData =
         await this.requestGatewayService.cancelRequest(request_id)
-
+      
       if (
         requestData.request_receiver != null &&
         employee_id == requestData.request_owner.employee_id
@@ -162,23 +162,21 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           receiver,
         )
 
-        if (!socketTg) {
-          return requestData
-        }
-
-        this.server
-          .to(socketTg.client_id as string)
-          .emit('canceledRequest', requestData)
-
-        if (!socket) {
-          return requestData
-        }
-
-        this.server
+        if (socket) {
+          this.server
           .to(socket.client_id as string)
           .emit('canceledRequest', requestData)
+        }
+
+        if (socketTg) {
+          this.server
+          .to(socketTg.client_id as string)
+          .emit('canceledRequest', requestData)
+        }
+
+        return requestData
       } else if (
-        requestData.request_receiver != null &&
+        requestData.request_owner != null &&
         employee_id == requestData.request_receiver.employee_id
       ) {
         const owner = await this.employeeService.getCleanEmployee(
@@ -193,21 +191,19 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
           clientType.TELEGRAM,
         )
 
-        if (!socket) {
-          return requestData
-        }
-
-        this.server
+        if (socket) {
+          this.server
           .to(socket.client_id as string)
           .emit('canceledRequest', requestData)
-
-        if (!socketTg) {
-          return requestData
         }
 
-        this.server
+        if (socketTg) {
+          this.server
           .to(socketTg.client_id as string)
           .emit('canceledRequest', requestData)
+        }
+
+        return requestData
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
@@ -222,30 +218,26 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const requestData =
         await this.requestGatewayService.completeRequest(request_id)
 
-      if (requestData.request_receiver != null) {
-        const receiver = await this.employeeService.getCleanEmployee(
+      if (requestData.request_owner != null) {
+        const owner = await this.employeeService.getCleanEmployee(
           requestData.request_receiver.employee_id,
         )
-        const socket = await this.socketService.getSocketByEmployeeId(receiver)
-        const socketTg = await this.socketService.getSocketByEmployeeId(receiver, clientType.TELEGRAM)
+        const socket = await this.socketService.getSocketByEmployeeId(owner)
+        const socketTg = await this.socketService.getSocketByEmployeeId(owner, clientType.TELEGRAM)
 
-        if (!socket) {
-          return requestData
-        }
-
-        this.server
+        if (socket) {
+          this.server
           .to(socket.client_id as string)
-          .emit('completedRequest', requestData, (err, responses) => {
-          })
-
-        if (!socketTg) {
-          return requestData
+          .emit('completedRequest', requestData)
         }
 
-        this.server
+        if (socketTg) {
+          this.server
           .to(socketTg.client_id as string)
-          .emit('completedRequest', requestData, (err, responses) => {
-          })
+          .emit('completedRequest', requestData)
+        }
+
+        return requestData
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
