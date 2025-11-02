@@ -63,7 +63,7 @@ import { AIModule } from './AIModule/ai.module'
         Review,
         Statistics,
       ],
-      synchronize: true,
+      synchronize: false,
     }),
   ],
   controllers: [AppController],
