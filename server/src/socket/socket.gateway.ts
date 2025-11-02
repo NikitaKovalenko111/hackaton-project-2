@@ -38,15 +38,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   async handleConnection(client: Socket) {
-    try {
-      console.log(client.request.headers);
-      
+    try {  
       const accessToken = client.request.headers.authorization?.split(' ')[1]
       const client_type = client.request.headers.client_type as clientType
       const telegramId = client.request.headers.telegram_id as string
-
-      console.log(accessToken)
-      console.log(client_type);
 
       if (!client_type) {
         throw new HttpException('Не указан тип клиента!', HttpStatus.BAD_REQUEST)
@@ -204,18 +199,15 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const requestData =
         await this.requestGatewayService.completeRequest(request_id)
 
-      if (requestData.request_owner != null) {
-        const owner = await this.employeeService.getCleanEmployee(
-          requestData.request_owner.employee_id,
+      if (requestData.request_receiver != null) {
+        const receiver = await this.employeeService.getCleanEmployee(
+          requestData.request_receiver.employee_id,
         )
-        const socket = await this.socketService.getSocketByEmployeeId(owner)
+        const socket = await this.socketService.getSocketByEmployeeId(receiver)
 
         if (!socket) {
           return requestData
         }
-
-        console.log(socket.client_id)
-        console.log(this.server.sockets)
 
         this.server
           .to(socket.client_id as string)
