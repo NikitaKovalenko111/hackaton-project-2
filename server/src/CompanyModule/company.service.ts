@@ -150,7 +150,7 @@ export class CompanyService {
     }
   }
 
-  async getEmployees(company_id: number, name?: string): Promise<Employee[]> {
+  async getEmployees(company_id: number, name?: string, surname?: string, email?: string): Promise<Employee[]> {
     try {
       const employees = await this.employeeRepository.find({
         where: {
@@ -158,6 +158,8 @@ export class CompanyService {
             company_id: company_id
           },
           employee_name: Like(`%${name ? name : ''}%`),
+          employee_email: Like(`%${email ? email : ''}%`),
+          employee_surname: Like(`%${surname ? surname : ''}%`),
         },
         relations: {
           role: true,

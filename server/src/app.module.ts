@@ -74,8 +74,8 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
-        '/registration',
-        '/authorization'
+        '/employee/registration',
+        '/employee/authorization'
       )
       .forRoutes("*")
   }
