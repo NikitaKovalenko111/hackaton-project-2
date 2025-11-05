@@ -411,9 +411,6 @@ export class EmployeeService {
 
       const dbToken = await this.tokenService.findToken(refreshToken)
 
-      console.log(employeeData)
-      console.log(dbToken)
-
       if (!dbToken || !employeeData) {
         throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
       }

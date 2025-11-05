@@ -29,33 +29,6 @@ export class CompanyService {
     private employeeService: EmployeeService,
   ) {}
 
-  /*async giveRole(companyId: number, roleName: RoleType, employeeToGiveId: number): Promise<Role> {
-        const company = await this.companyRepository.findOne({
-            where: {
-                company_id: companyId,
-            }, 
-            relations: {
-                employees: true
-            }
-        })
-
-        if (!company) {
-            throw new Error('Компания не найдена')
-        }
-
-        const employeeData = company.employees.find(employee => employee.employee_id == employeeToGiveId)
-
-        const role = new Role({
-            role_name: roleName,
-            company: company,
-            employee: employeeData
-        })
-
-        const roleData = await this.roleRepository.save(role)
-
-        return roleData
-    }*/
-
   async addEmployee(
     companyId: number,
     employeeId: number,
@@ -179,19 +152,11 @@ export class CompanyService {
 
   async getEmployees(company_id: number, name?: string): Promise<Employee[]> {
     try {
-      const company = await this.companyRepository.findOne({
-        where: {
-          company_id: company_id,
-        },
-      })
-
-      if (!company) {
-        throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
-      }
-
       const employees = await this.employeeRepository.find({
         where: {
-          company: company,
+          company: {
+            company_id: company_id
+          },
           employee_name: Like(`%${name ? name : ''}%`),
         },
         relations: {

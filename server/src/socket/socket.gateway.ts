@@ -108,10 +108,10 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       if (requestData.request_receiver != null) {
         const socketWeb = await this.socketService.getSocketByEmployeeId(
-          requestData.request_receiver,
+          requestData.request_receiver.employee_id,
         )
         const socketTg = await this.socketService.getSocketByEmployeeId(
-          requestData.request_receiver,
+          requestData.request_receiver.employee_id,
           clientType.TELEGRAM,
         )
 
@@ -151,15 +151,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         requestData.request_receiver &&
         employee_id == requestData.request_owner.employee_id
       ) {
-        const receiver = await this.employeeService.getCleanEmployee(
-          requestData.request_receiver.employee_id,
-        )
         const socketTg = await this.socketService.getSocketByEmployeeId(
-          receiver,
+          requestData.request_receiver.employee_id,
           clientType.TELEGRAM,
         )
         const socket = await this.socketService.getSocketByEmployeeId(
-          receiver
+          requestData.request_receiver.employee_id
         )
 
         if (socket) {
@@ -179,15 +176,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         requestData.request_owner &&
         employee_id == requestData.request_receiver.employee_id
       ) {
-
-        const owner = await this.employeeService.getCleanEmployee(
-          requestData.request_owner.employee_id,
-        )
         const socket = await this.socketService.getSocketByEmployeeId(
-          owner
+          requestData.request_owner.employee_id
         )
         const socketTg = await this.socketService.getSocketByEmployeeId(
-          owner,
+          requestData.request_owner.employee_id,
           clientType.TELEGRAM,
         )
 
@@ -219,11 +212,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         await this.requestGatewayService.completeRequest(request_id)
 
       if (requestData.request_owner) {
-        const owner = await this.employeeService.getCleanEmployee(
-          requestData.request_owner.employee_id,
-        )
-        const socket = await this.socketService.getSocketByEmployeeId(owner)
-        const socketTg = await this.socketService.getSocketByEmployeeId(owner, clientType.TELEGRAM)
+        const socket = await this.socketService.getSocketByEmployeeId(requestData.request_owner.employee_id)
+        const socketTg = await this.socketService.getSocketByEmployeeId(requestData.request_owner.employee_id, clientType.TELEGRAM)
 
         if (socket) {
           this.server

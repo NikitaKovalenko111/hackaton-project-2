@@ -123,13 +123,9 @@ export class ReviewController {
   @Post('start')
   async startReview(
     @Body() startReviewBody: { review_id: number },
-  ): Promise<Review> {
+  ) {
     try {
-      const review = await this.reviewService.startReview(
-        startReviewBody.review_id,
-      )
-
-      return review
+      
     } catch (error) {
       throw new HttpException(error.message, error.status)
     }
