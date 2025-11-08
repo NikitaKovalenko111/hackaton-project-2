@@ -10,13 +10,19 @@ import {
 import { SkillService } from './skill.service'
 import { Skill } from './skill.entity'
 import { SkillShape } from './skillShape.entity'
-import type { updateSkillLevelBodyDto } from './skill.dto'
+import { updateSkillLevelBodyDto } from './skill.dto'
+import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam, ApiExtraModels } from '@nestjs/swagger';
 
+@ApiTags('Skill')
+@ApiExtraModels(Skill, SkillShape)
 @Controller('skill')
 export class SkillController {
   constructor(private readonly skillService: SkillService) {}
 
   @Patch('/level/update')
+  @ApiOperation({ summary: 'Обновить уровень навыка сотрудника' })
+  @ApiBody({ type: updateSkillLevelBodyDto })
+  @ApiResponse({ status: 200, description: 'Навык обновлён', type: Skill })
   async updateSkillLevel(
     @Body() updateSkillLevelBody: updateSkillLevelBodyDto,
   ): Promise<Skill> {
@@ -35,6 +41,9 @@ export class SkillController {
   }
 
   @Delete('/:id/delete')
+  @ApiOperation({ summary: 'Удалить навык сотрудника' })
+  @ApiParam({ name: 'id', example: 1, description: 'ID связи навыка' })
+  @ApiResponse({ status: 200, description: 'Навык успешно удалён', type: Skill })
   async deleteSkill(@Param('id') skillId: number): Promise<Skill> {
     try {
       const skill = await this.skillService.deleteSkill(skillId)
@@ -46,6 +55,9 @@ export class SkillController {
   }
 
   @Get('/skillShape/:id')
+  @ApiOperation({ summary: 'Получить форму навыка по ID' })
+  @ApiParam({ name: 'id', example: 1, description: 'ID формы навыка' })
+  @ApiResponse({ status: 200, description: 'Информация о форме навыка', type: SkillShape })
   async getSkillShapeById(
     @Param('id') skillShapeId: number,
   ): Promise<SkillShape> {

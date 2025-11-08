@@ -16,13 +16,21 @@ import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Review } from './review.entity'
 import { Answer } from './answer.entity'
 import { CompanyService } from 'src/CompanyModule/company.service'
-import type {
+import {
   addQuestionBodyDto,
   sendAnswersBodyDto,
   setReviewBodyDto,
 } from './review.dto'
 import { RoleType } from 'src/types'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+} from '@nestjs/swagger';
 
+@ApiTags('Review')
 @Controller('review')
 export class ReviewController {
   constructor(
@@ -32,7 +40,10 @@ export class ReviewController {
     private readonly socketGateway: SocketGateway,
   ) {}
 
-  @Post('/add/question')
+  @Post('add/question')
+  @ApiOperation({ summary: 'Добавить вопрос в ревью' })
+  @ApiBody({ type: addQuestionBodyDto })
+  @ApiResponse({ status: 201, type: Question })
   async addQuestion(
     @Body() addQuestionBody: addQuestionBodyDto,
     @Req() req: Request,
@@ -52,6 +63,9 @@ export class ReviewController {
   }
 
   @Post('/set')
+  @ApiOperation({ summary: 'Установить интервал ревью' })
+  @ApiBody({ type: setReviewBodyDto })
+  @ApiResponse({ status: 200, type: Review })
   async setReview(
     @Body() setReviewBody: setReviewBodyDto,
     @Req() req: Request,
@@ -70,7 +84,10 @@ export class ReviewController {
     }
   }
 
-  @Delete('/remove/question/:id')
+  @Delete('remove/question/:id')
+  @ApiOperation({ summary: 'Удалить вопрос из ревью' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, type: Question })
   async removeQuestion(@Param('id') questionId: number): Promise<Question> {
     try {
       const question = await this.reviewService.removeQuestion(questionId)
@@ -103,6 +120,9 @@ export class ReviewController {
   }
 
   @Post('/send/answers')
+  @ApiOperation({ summary: 'Отправить ответы на вопросы ревью' })
+  @ApiBody({ type: sendAnswersBodyDto })
+  @ApiResponse({ status: 200, type: [Answer] })
   async sendAnswers(
     @Body() sendAnswersBody: sendAnswersBodyDto,
   ): Promise<Answer[]> {
@@ -144,7 +164,10 @@ export class ReviewController {
     }
   }
 
-  @Post('/start')
+  @Post('start')
+  @ApiOperation({ summary: 'Начать процесс ревью' })
+  @ApiBody({ schema: { example: { review_id: 1 } } })
+  @ApiResponse({ status: 200, type: Review })
   async startReview(
     @Body() startReviewBody: { review_id: number },
   ): Promise<Review> {

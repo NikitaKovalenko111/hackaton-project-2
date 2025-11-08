@@ -43,6 +43,11 @@ export enum clientType {
   TELEGRAM = 'telegram'
 }
 
+export interface intervalI {
+  months: number[],
+  day: number
+}
+
 export class employeeDto {
   employee_id
   employee_name

@@ -4,13 +4,20 @@ import { Interview } from './interview.entity'
 import { SocketGateway } from 'src/socket/socket.gateway'
 import { SocketService } from 'src/socket/socket.service'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
-import type {
+import {
   addInterviewBodyDto,
   cancelInterviewBodyDto,
   finishInterviewBodyDto,
 } from './interview.dto'
 import { clientType } from 'src/types'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+} from '@nestjs/swagger';
 
+@ApiTags('Interview')
 @Controller('interview')
 export class InterviewController {
   constructor(
@@ -22,6 +29,9 @@ export class InterviewController {
   ) {}
 
   @Post('/add')
+  @ApiOperation({ summary: 'Создать новое интервью для сотрудника' })
+  @ApiBody({ type: addInterviewBodyDto })
+  @ApiResponse({ status: 201, type: Interview, description: 'Созданное интервью' })
   async addInterview(
     @Body() addInterviewBody: addInterviewBodyDto,
     @Req() req: Request,
@@ -74,6 +84,8 @@ export class InterviewController {
   }
 
   @Get('/get')
+  @ApiOperation({ summary: 'Получить список запланированных интервью текущего сотрудника' })
+  @ApiResponse({ status: 200, type: [Interview], description: 'Список интервью' })
   async getPlannedInterviews(@Req() req: Request): Promise<Interview[]> {
     try {
       const employeeId = (req as any).employee.employee_id
@@ -87,6 +99,9 @@ export class InterviewController {
   }
 
   @Post('/cancel')
+  @ApiOperation({ summary: 'Отменить интервью по ID' })
+  @ApiBody({ type: cancelInterviewBodyDto })
+  @ApiResponse({ status: 200, type: Interview, description: 'Отменённое интервью' })
   async cancelInterview(
     @Body() cancelInterviewBody: cancelInterviewBodyDto,
   ): Promise<Interview> {
@@ -103,6 +118,9 @@ export class InterviewController {
   }
 
   @Post('/finish')
+  @ApiOperation({ summary: 'Завершить интервью' })
+  @ApiBody({ type: finishInterviewBodyDto })
+  @ApiResponse({ status: 200, type: Interview, description: 'Завершённое интервью' })
   async finishInterview(
     @Body() finishInterviewBody: finishInterviewBodyDto,
   ): Promise<Interview> {

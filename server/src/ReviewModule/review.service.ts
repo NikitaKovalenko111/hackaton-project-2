@@ -7,10 +7,10 @@ import { Answer } from './answer.entity'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import { sendedAnswer } from './review.dto'
 import ApiError from 'src/apiError'
-import { reviewStatus } from 'src/types'
-import { TeamService } from 'src/TeamModule/team.service'
+import { intervalI, reviewStatus } from 'src/types'
 import { SocketGateway } from 'src/socket/socket.gateway'
 import { SchedulerRegistry } from '@nestjs/schedule'
+import { CronJob } from 'cron'
 
 @Injectable()
 export class ReviewService {
@@ -72,7 +72,7 @@ export class ReviewService {
     }
   }
 
-  async setReview(reviewId: number, reviewInterval: number): Promise<Review> {
+  async setReview(reviewId: number, reviewInterval: intervalI): Promise<Review> {
     try {
       const review = await this.reviewRepository.findOne({
         where: {
@@ -84,7 +84,25 @@ export class ReviewService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
       }
 
-      review.review_interval = reviewInterval
+      let months = ''
+
+      reviewInterval.months.forEach((m, i) => {
+        if (i != reviewInterval.months.length-1) {
+          months += `${m},`
+        } else {
+          months += `${m}`
+        }
+      })
+
+      const job = new CronJob(`0 0 ${reviewInterval.day} ${months} *`, async () => {
+        await this.startReview(review.review_id)
+      })
+
+      this.schedulerRegistry.addCronJob('startReviewJob', job)
+
+      job.start()
+
+      review.review_interval = `0 0 ${reviewInterval.day} ${months} *`
 
       const reviewData = await this.reviewRepository.save(review)
 
@@ -102,6 +120,9 @@ export class ReviewService {
       const review = await this.reviewRepository.findOne({
         where: {
           review_id: reviewId
+        },
+        relations: {
+          company: true
         }
       })
 
