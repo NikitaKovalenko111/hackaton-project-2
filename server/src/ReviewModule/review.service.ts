@@ -8,6 +8,9 @@ import { Employee } from 'src/EmployeeModule/employee.entity'
 import { sendedAnswer } from './review.dto'
 import ApiError from 'src/apiError'
 import { reviewStatus } from 'src/types'
+import { TeamService } from 'src/TeamModule/team.service'
+import { SocketGateway } from 'src/socket/socket.gateway'
+import { SchedulerRegistry } from '@nestjs/schedule'
 
 @Injectable()
 export class ReviewService {
@@ -20,6 +23,10 @@ export class ReviewService {
 
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>,
+
+    private schedulerRegistry: SchedulerRegistry,
+
+    private readonly socketGateway: SocketGateway
   ) {}
 
   async addQuestion(questionText: string, reviewId: number): Promise<Question> {
@@ -90,8 +97,33 @@ export class ReviewService {
     }
   }
 
-  async startReview(reviewId: number) {
-    
+  async startReview(reviewId: number): Promise<Review> {
+    try {
+      const review = await this.reviewRepository.findOne({
+        where: {
+          review_id: reviewId
+        }
+      })
+
+      if (!review) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
+      }
+
+      this.socketGateway.server.to(`company/${review.company.company_id}`).emit('startedReview', {
+        msg: 'review started!'
+      })
+
+      review.review_status = reviewStatus.ACTIVE
+
+      const reviewData = await this.reviewRepository.save(review)
+
+      return reviewData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
   }
 
   async endReview(review_id: number): Promise<Review> {
@@ -138,6 +170,41 @@ export class ReviewService {
         error.message ? error.message : error,
       )
     }
+  }
+
+  async scheduleTesting() {
+    console.log("Scheduled");
+  }
+
+  async getReviewByCompany(companyId: number): Promise<Review> {
+    const review = await this.reviewRepository.findOne({
+      where: {
+        company: {
+          company_id: companyId
+        }
+      },
+      relations: {
+        company: true
+      }
+    })
+
+    if (!review) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
+    }
+
+    return review
+  }
+
+  async getReviewQuestions(reviewId: number): Promise<Question[]> {
+    const questions = await this.questionRepository.find({
+      where: {
+        review: {
+          review_id: reviewId
+        }
+      }
+    })
+
+    return questions
   }
 
   async sendAnswers(

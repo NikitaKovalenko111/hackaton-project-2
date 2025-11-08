@@ -171,8 +171,6 @@ export class CompanyController {
     @Req() req: Request,
   ): Promise<employeeDto> {
     try {
-      const employeeId = (req as any).employee.employee_id
-
       const { company_id, employee_to_add_email, employee_role } =
         addEmployeeByEmailBody
 
@@ -196,8 +194,6 @@ export class CompanyController {
     @Req() req: Request,
   ): Promise<SkillShape> {
     try {
-      const employeeId = (req as any).employee.employee_id
-
       const { skill_name, skill_desc, company_id } = createSkillBody
 
       const skill = await this.skillService.createSkill(
@@ -218,8 +214,7 @@ export class CompanyController {
     @Req() req: Request,
   ): Promise<Skill> {
     try {
-      const employeeId = (req as any).employee.employee_id
-      const { skill_shape_id, company_id, employee_to_give_id, skill_level } =
+      const { skill_shape_id, employee_to_give_id, skill_level } =
         giveSkillBody
       const employeeToGive =
         await this.employeeService.getEmployee(employee_to_give_id)
@@ -242,7 +237,6 @@ export class CompanyController {
     @Req() req: Request,
   ): Promise<Skill[]> {
     try {
-      const employeeId = (req as any).employee.employee_id
       const { skill_shape_id, company_id, employees_to_give_id, skill_level } =
         giveSkillBody
       const employeesInCompany =

@@ -9,6 +9,7 @@ import { EmployeeModule } from 'src/EmployeeModule/employee.module'
 import { Question } from './question.entity'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import { Answer } from './answer.entity'
+import { ScheduleModule } from '@nestjs/schedule'
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { Answer } from './answer.entity'
     CompanyModule,
     EmployeeModule,
     TypeOrmModule.forFeature([Review, Question, Employee, Answer]),
+    ScheduleModule.forRoot()
   ],
   controllers: [ReviewController],
   providers: [ReviewService],

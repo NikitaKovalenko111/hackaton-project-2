@@ -47,6 +47,23 @@ export class TeamService {
     return teamData
   }
 
+  async getTeamsByCompany(companyId: number): Promise<Team[]> {
+    const teams = await this.teamRepository.find({
+      where: {
+        company: {
+          company_id: companyId
+        }
+      },
+      relations: {
+        employees: {
+          role: true
+        }
+      }
+    })
+
+    return teams
+  }
+
   async addTeam(
     companyId: number,
     teamName: string,

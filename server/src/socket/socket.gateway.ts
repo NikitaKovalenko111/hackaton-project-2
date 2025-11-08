@@ -8,12 +8,11 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
-import { clientType } from 'src/types'
+import { clientType, RoleType } from 'src/types'
 import { RequestService } from './request.service'
 import { TokenService } from 'src/EmployeeModule/token.service'
 import { SocketService } from './socket.service'
 import { HttpException, HttpStatus } from '@nestjs/common'
-import ApiError from 'src/apiError'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import type {
   cancelRequestDto,
@@ -68,6 +67,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         employee.employee_id,
         client_type,
       )
+
+      const employeeData = await this.employeeService.getEmployee(employee.employee_id)
+
+      if (employeeData.company) {
+        client.join(`company/${employeeData.company.company_id}`)
+      }
 
       return data
     } catch (error) {

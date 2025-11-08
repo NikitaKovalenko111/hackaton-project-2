@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -35,6 +36,9 @@ export class Answer {
     name: 'employee_answer_to_id',
   })
   employee_answer_to: Employee
+
+  @CreateDateColumn()
+  sendedAt: Date
 
   constructor(item: Partial<Answer>) {
     Object.assign(this, item)
