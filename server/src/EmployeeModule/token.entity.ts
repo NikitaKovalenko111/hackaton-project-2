@@ -11,7 +11,7 @@ export class Employee_token {
   @Column()
   employee_id: number
 
-
+  @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...', description: 'JWT Refresh Token' })
   @Column()
   token_data: string
 
