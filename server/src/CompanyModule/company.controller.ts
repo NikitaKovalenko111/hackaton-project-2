@@ -96,7 +96,7 @@ export class CompanyController {
   ): Promise<employeePayloadDto[]> {
     try {
       const employee = (req as any).employee
-      const { name } = query
+      const { name, surname, email } = query
 
       const employeeData = await this.employeeService.getEmployee(
         employee.employee_id,
@@ -109,6 +109,8 @@ export class CompanyController {
       const employees = await this.companyService.getEmployees(
         employeeData.company.company_id,
         name,
+        surname,
+        email
       )
 
       return employees
@@ -162,24 +164,6 @@ export class CompanyController {
       throw new HttpException(error.message, error.status)
     }
   }
-
-  /*@Post('/role/give')
-    async giveRole(@Body() giveRoleBody: giveRoleBodyDto, @Req() req: Request): Promise<Role> {
-        const employeeId = (req as any).employee.employee_id
-        const employee = await this.employeeService.getEmployee(employeeId)
-
-        const { company_id, employee_to_give_id, role_name } = giveRoleBody
-
-        const employeeRole = employee.roles.find(role => (role.role_name == 'admin' && role.company.company_id == company_id))
-
-        if (!employeeRole) {
-            throw new Error('У пользователя недостаточно прав!')
-        }
-
-        const roleData = await this.companyService.giveRole(company_id, role_name, employee_to_give_id)
-
-        return roleData
-    }*/
 
   @Post('/employee/add')
   @ApiOperation({ summary: 'Добавить сотрудника в компанию' })

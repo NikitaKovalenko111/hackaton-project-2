@@ -6,10 +6,6 @@ import { Question } from './question.entity'
 import { Answer } from './answer.entity'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import { sendedAnswer } from './review.dto'
-import { SocketGateway } from 'src/socket/socket.gateway'
-import { CompanyService } from 'src/CompanyModule/company.service'
-import { SocketService } from 'src/socket/socket.service'
-import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import ApiError from 'src/apiError'
 import { reviewStatus } from 'src/types'
 
@@ -24,11 +20,6 @@ export class ReviewService {
 
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>,
-
-    private readonly socketGateway: SocketGateway,
-    private readonly companyService: CompanyService,
-    private readonly socketService: SocketService,
-    private readonly employeeService: EmployeeService,
   ) {}
 
   async addQuestion(questionText: string, reviewId: number): Promise<Question> {
@@ -99,55 +90,8 @@ export class ReviewService {
     }
   }
 
-  async startReview(reviewId: number): Promise<Review> {
-    try {
-      const review = await this.reviewRepository.findOne({
-        where: {
-          review_id: reviewId,
-        },
-        relations: {
-          questions: true,
-          company: true,
-        },
-      })
-
-      if (!review) {
-        throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
-      }
-
-      review.review_status = reviewStatus.ACTIVE
-
-      const reviewData = await this.reviewRepository.save(review)
-
-      const companyEmployees = await this.companyService.getEmployees(
-        review.company.company_id,
-      )
-
-      companyEmployees.forEach(async (employee) => {
-        const workedWith = employee.team?.employees.filter(
-          (el) => el.employee_id != employee.employee_id,
-        )
-        const employeeClean = await this.employeeService.getCleanEmployee(
-          employee.employee_id,
-        )
-
-        const socket =
-          await this.socketService.getSocketByEmployeeId(employeeClean)
-
-        if (socket) {
-          this.socketGateway.server
-            .to(socket.client_id)
-            .emit('startedPerfomanceReview', workedWith)
-        }
-      })
-
-      return reviewData
-    } catch (error) {
-      throw new ApiError(
-        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
-        error.message ? error.message : error,
-      )
-    }
+  async startReview(reviewId: number) {
+    
   }
 
   async endReview(review_id: number): Promise<Review> {

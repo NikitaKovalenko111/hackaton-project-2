@@ -46,13 +46,11 @@ export class RequestService {
 
   async getReceivedRequests(employeeId: number): Promise<Request[]> {
     try {
-      const employee = await this.employeeService.getCleanEmployee(employeeId)
-
-      console.log(employee);
-
       const requests = await this.requestRepository.find({
         where: {
-          request_receiver: employee,
+          request_receiver: {
+            employee_id: employeeId
+          },
           request_status: requestStatus.PENDING
         },
         relations: {
@@ -74,11 +72,11 @@ export class RequestService {
 
   async getSendedRequests(employeeId: number): Promise<Request[]> {
     try {
-      const employee = await this.employeeService.getCleanEmployee(employeeId)
-
       const requests = await this.requestRepository.find({
         where: {
-          request_owner: employee,
+          request_owner: {
+            employee_id: employeeId
+          },
         },
         relations: {
           request_receiver: true,
@@ -95,32 +93,6 @@ export class RequestService {
         error.message ? error.message : error,
       )
     }
-  }
-
-  async removeSocket(socketId: string): Promise<string> {
-    const socket = await this.socketRepository.delete({
-      client_id: socketId,
-    })
-
-    if (socket.affected && socket.affected > 0) {
-      return 'deleted'
-    } else {
-      throw new Error('Сокет не найден или не удален!')
-    }
-  }
-
-  async getSocketByEmployeeId(employee: Employee): Promise<Socket | null> {
-    const socket = await this.socketRepository.findOne({
-      where: {
-        employee: employee,
-      },
-    })
-
-    if (!socket) {
-      return null
-    }
-
-    return socket
   }
 
   async sendRequest(
@@ -182,12 +154,12 @@ export class RequestService {
     })
 
     if (!request) {
-      throw new Error('Запрос не найден!')
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Запрос не найден!')
     }
 
     request.request_status = requestStatus.CANCELED
 
-    const requestData = await this.requestRepository.save(request)
+    await this.requestRepository.save(request)
 
     return request
   }
@@ -204,10 +176,10 @@ export class RequestService {
     })
 
     if (!request) {
-      throw new Error('Запрос не найден!')
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Запрос не найден!')
     }
 
-    const skill = await this.skillService.getSkillById(request?.request_skill.skill_connection_id)
+    const skill = await this.skillService.getSkillById(request.request_skill.skill_connection_id)
 
     const skillLevels = ['junior', 'junior+', 'middle', 'middle+', 'senior']
     const levelId = skillLevels.indexOf(request.request_skill.skill_level)
@@ -220,7 +192,7 @@ export class RequestService {
 
     request.request_status = requestStatus.COMPLETED
 
-    const requestData = await this.requestRepository.save(request)
+    await this.requestRepository.save(request)
 
     return request
   }

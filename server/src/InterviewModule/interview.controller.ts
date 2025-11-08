@@ -56,9 +56,9 @@ export class InterviewController {
       )
 
       const socketWeb =
-        await this.socketService.getSocketByEmployeeId(interviewSubjectData)
+        await this.socketService.getSocketByEmployeeId(interviewSubjectData.employee_id)
       const socketTg = await this.socketService.getSocketByEmployeeId(
-        interviewSubjectData,
+        interviewSubjectData.employee_id,
         clientType.TELEGRAM,
       )
 

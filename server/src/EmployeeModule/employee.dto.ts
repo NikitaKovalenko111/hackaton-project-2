@@ -3,7 +3,6 @@ import { Skill } from 'src/SkillModule/skill.entity'
 import { Role } from './role.entity'
 import { Company } from 'src/CompanyModule/company.entity'
 import { Team } from 'src/TeamModule/team.entity'
-import { Employee } from './employee.entity'
 
 export class registerEmployeeBodyDto {
   @ApiProperty({ example: 'Иван' })
@@ -17,6 +16,28 @@ export class registerEmployeeBodyDto {
 
   @ApiProperty({ example: 'securePassword123' })
   employee_password: string
+}
+
+
+  
+
+export class changeProfileDataBodyDto {
+  @ApiProperty({ example: 'Иван', required: false })
+  employee_name?: string
+
+  @ApiProperty({ example: 'Иванов', required: false })
+  employee_surname?: string
+
+  @ApiProperty({ example: 'ivan@example.com', required: false })
+  employee_email?: string
+}
+
+export class changePasswordBodyDto {
+  @ApiProperty({ example: 'NewStrongPassword123' })
+  new_password: string
+
+  @ApiProperty({ example: 'OldPassword456' })
+  old_password: string
 }
 
 export class employeePayloadDto {

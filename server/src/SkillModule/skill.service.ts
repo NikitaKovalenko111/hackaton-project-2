@@ -213,7 +213,7 @@ export class SkillService {
         throw new ApiError(HttpStatus.NOT_FOUND, "Компетенция не найдена!")
       }
 
-      const requests = await this.requestService.removeRequestsBySkillShape(skillShapeId)
+      await this.requestService.removeRequestsBySkillShape(skillShapeId)
 
       const skills = await this.skillRepository.find({
         where: {

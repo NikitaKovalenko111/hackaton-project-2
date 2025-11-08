@@ -74,44 +74,10 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes(
-        'employee/photo',
-        'employee/status',
-        'employee/profile',
-        'employee/profile/:id',
-        'company/employees',
-        'company/create',
-        'company/:companyId/teams',
-        'company/skill/create',
-        'company/skills',
-        'company/skill/give',
-        'company/info',
-        'company/employee/add',
-        'team/add',
-        'team/add/employee',
-        'team/info',
-        'interview/add',
-        'interview/finish',
-        'skill/level/update',
-        'skill/:id/delete',
-        'interview/get',
-        'interview/cancel',
-        'interview/finish',
-        'review/add/question',
-        'review/set',
-        'review/remove/question/:id',
-        'review/send/answers',
-        'review/start',
-        'company/skill/giveToMany',
-        'company/employee/addByEmail',
-        'statistics/generate',
-        'request/received/getAll',
-        'request/sended/getAll',
-        'ai/get/plan',
-        'team/employees',
-        'company/employee/remove/:id',
-        'team/remove/:id',
-        'company/skillShape/remove/:id'
+      .exclude(
+        '/employee/registration',
+        '/employee/authorization'
       )
+      .forRoutes("*")
   }
 }

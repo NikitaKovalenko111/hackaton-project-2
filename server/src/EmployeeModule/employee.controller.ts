@@ -30,6 +30,8 @@ import { employeeDto } from 'src/types'
 import {
   authEmployeeBodyDto,
   authEmployeeTgBodyDto,
+  changePasswordBodyDto,
+  changeProfileDataBodyDto,
   employeePayloadDto,
   registerEmployeeBodyDto,
   registerEmployeeReturnDto,
@@ -41,7 +43,8 @@ import { Team } from 'src/TeamModule/team.entity';
 import { Role } from './role.entity';
 import { EmployeeRegistrationDto, EmployeeAuthResponseDto, EmployeeLoginDto, EmployeeLoginResponseDto } from './employee.dto';
 
-@ApiTags('Employee')
+
+@ApiTags('employee')
 @ApiExtraModels(Employee, Company, Skill, Team, Role)
 @Controller('employee')
 export class EmployeeController {
@@ -74,6 +77,34 @@ export class EmployeeController {
     }
   }
 
+  @Patch('/profile')
+  async changeProfileData(@Req() req: Request, @Body() changeProfileDataBody: changeProfileDataBodyDto): Promise<Employee> {
+    try {
+      const employeeId = (req as any).employee.employee_id
+  
+      const employeeData = await this.employeeService.updateProfile(changeProfileDataBody, employeeId)
+  
+      return employeeData
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
+  @Patch('/change/password')
+  async changePassword(@Req() req: Request, @Body() changePasswordBody: changePasswordBodyDto): Promise<Employee> {
+    try {
+      const employeeId = (req as any).employee.employee_id
+  
+      const { new_password, old_password } = changePasswordBody
+  
+      const employeeData = await this.employeeService.changePassword(new_password, old_password, employeeId)
+  
+      return employeeData
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
   @Post('/photo')
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Загрузить фото профиля сотрудника' })
@@ -100,7 +131,7 @@ export class EmployeeController {
 
       return status
     } catch (error) {
-      throw new HttpException(error.status, error.message)
+      throw new HttpException(error.message, error.status)
     }
   }
 
