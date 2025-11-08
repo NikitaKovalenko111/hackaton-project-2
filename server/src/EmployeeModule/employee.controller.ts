@@ -12,23 +12,49 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiConsumes,
+  ApiParam,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiExtraModels,
+} from '@nestjs/swagger';
 import { EmployeeService } from './employee.service'
 import type { Request, Response } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { employeeDto } from 'src/types'
-import type {
+import {
   authEmployeeBodyDto,
   authEmployeeTgBodyDto,
   employeePayloadDto,
   registerEmployeeBodyDto,
   registerEmployeeReturnDto,
 } from './employee.dto'
+import { Employee } from './employee.entity';
+import { Company } from 'src/CompanyModule/company.entity';
+import { Skill } from 'src/SkillModule/skill.entity';
+import { Team } from 'src/TeamModule/team.entity';
+import { Role } from './role.entity';
+import { EmployeeRegistrationDto, EmployeeAuthResponseDto, EmployeeLoginDto, EmployeeLoginResponseDto } from './employee.dto';
 
+@ApiTags('Employee')
+@ApiExtraModels(Employee, Company, Skill, Team, Role)
 @Controller('employee')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Patch('/status')
+  @ApiOperation({ summary: 'Изменить статус сотрудника' })
+  @ApiBody({
+    schema: {
+      example: { status: 'В отпуске' },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Новый статус сотрудника', type: String })
   async setEmployeeStatus(
     @Req() req: Request,
     @Body()
@@ -50,6 +76,18 @@ export class EmployeeController {
 
   @Post('/photo')
   @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Загрузить фото профиля сотрудника' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary', description: 'Файл изображения профиля' },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Имя загруженного файла', type: String })
+  @UseInterceptors(FileInterceptor('file'))
   async uploadEmployeePhoto(
     @Req() req: Request,
     @UploadedFile() file: Express.Multer.File,
@@ -67,6 +105,15 @@ export class EmployeeController {
   }
 
   @Post('/registration')
+  @ApiOperation({ summary: 'Регистрация нового сотрудника' })
+  @ApiBody({
+    type: EmployeeRegistrationDto,
+    description: 'Данные для регистрации нового сотрудника',
+  })
+  @ApiCreatedResponse({
+    description: 'Успешная регистрация',
+    type: EmployeeAuthResponseDto,
+  })
   async registerEmployee(
     @Body() registerEmployeeBody: registerEmployeeBodyDto,
     @Res({ passthrough: true }) response: Response,
@@ -86,6 +133,15 @@ export class EmployeeController {
   }
 
   @Post('/authorization')
+  @ApiOperation({ summary: 'Авторизация по email и паролю' })
+  @ApiBody({
+    type: EmployeeLoginDto,
+    description: 'Авторизация по email и паролю',
+  })
+  @ApiOkResponse({
+    description: 'Авторизованный пользователь',
+    type: EmployeeLoginResponseDto,
+  })
   async authorizeEmployee(
     @Body() authEmployeeBody: authEmployeeBodyDto,
     @Res({ passthrough: true }) response: Response,
@@ -107,6 +163,9 @@ export class EmployeeController {
   }
 
   @Post('/authorization/telegram')
+   @ApiOperation({ summary: 'Авторизация сотрудника через Telegram' })
+  @ApiBody({ type: authEmployeeTgBodyDto })
+  @ApiResponse({ status: 200, type: employeePayloadDto, description: 'Авторизованный пользователь' })
   async authorizeEmployeeTg(
     @Body() authEmployeeTgBody: authEmployeeTgBodyDto,
     @Res({ passthrough: true }) response: Response,
@@ -122,6 +181,8 @@ export class EmployeeController {
   }
 
   @Post('/logout')
+  @ApiOperation({ summary: 'Выход из системы (удаление refresh токена)' })
+  @ApiResponse({ status: 200, description: 'Статус выхода', type: String })
   async logout(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
@@ -140,6 +201,8 @@ export class EmployeeController {
   }
 
   @Post('/refresh')
+  @ApiOperation({ summary: 'Обновить токены сотрудника' })
+  @ApiResponse({ status: 200, type: registerEmployeeReturnDto, description: 'Новые токены доступа' })
   async refresh(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
@@ -161,6 +224,8 @@ export class EmployeeController {
   }
 
   @Get('/profile')
+  @ApiOperation({ summary: 'Получить профиль текущего сотрудника' })
+  @ApiResponse({ status: 200, type: employeeDto, description: 'Профиль сотрудника' })
   async getProfile(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,
@@ -183,6 +248,9 @@ export class EmployeeController {
   }
 
   @Get('/profile/:id')
+  @ApiOperation({ summary: 'Получить профиль сотрудника по ID' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID сотрудника' })
+  @ApiResponse({ status: 200, type: employeeDto, description: 'Профиль сотрудника' })
   async getProfileById(
     @Req() request: Request,
     @Param('id') id: number,

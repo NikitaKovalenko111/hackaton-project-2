@@ -10,6 +10,17 @@ import {
   Query,
   Req,
 } from '@nestjs/common'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiQuery,
+  ApiParam,
+  ApiExtraModels,
+  ApiOkResponse,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { CompanyService } from './company.service'
 import { Company } from './company.entity'
 import { employeePayloadDto } from 'src/EmployeeModule/employee.dto'
@@ -19,8 +30,8 @@ import { SkillService } from 'src/SkillModule/skill.service'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { employeeDto } from 'src/types'
 import { Team } from 'src/TeamModule/team.entity'
-import type {
-  addEmployeeBodyDto,
+import {
+  addCompanyEmployeeBodyDto,
   addEmployeeByEmailBodyDto,
   createCompanyBodyDto,
   createSkillBodyDto,
@@ -28,7 +39,9 @@ import type {
   giveSkillToManyBodyDto,
 } from './company.dto'
 import { Employee } from 'src/EmployeeModule/employee.entity'
+import { CompanyEmployeeDto } from './company.dto';
 
+@ApiTags('Company')
 @Controller('company')
 export class CompanyController {
   constructor(
@@ -38,6 +51,9 @@ export class CompanyController {
   ) {}
 
   @Get('/info')
+  @ApiOperation({ summary: 'Получить информацию о компании текущего пользователя' })
+  @ApiResponse({ status: 200, type: Company, description: 'Информация о компании' })
+  @ApiResponse({ status: 400, description: 'Сотрудник не привязан к компании' })
   async getCompanyInfo(@Req() req: Request): Promise<Company> {
     try {
       const employee = (req as any).employee
@@ -53,6 +69,11 @@ export class CompanyController {
   }
 
   @Delete('/skillShape/remove/:id')
+  @ApiOperation({ summary: 'Удалить форму навыка по ID' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID формы навыка' })
+  @ApiResponse({ status: 200, type: SkillShape, description: 'Удалённая форма навыка' })
+  @ApiResponse({ status: 404, description: 'Форма навыка не найдена' })
+  @ApiResponse({ status: 403, description: 'Недостаточно прав' })
   async removeSkillShape(@Param('id') skillShapeId: number): Promise<SkillShape> {
     try {
       const skillShape = await this.skillService.deleteSkillShape(skillShapeId)
@@ -64,6 +85,11 @@ export class CompanyController {
   }
 
   @Get('/employees')
+  @ApiQuery({ name: 'name', required: false, description: 'Фильтр по имени/фамилии' })
+  @ApiOkResponse({
+    description: 'Список сотрудников компании',
+    type: [CompanyEmployeeDto],
+  })
   async getEmployees(
     @Req() req: Request,
     @Query() query: Record<string, any>,
@@ -92,6 +118,8 @@ export class CompanyController {
   }
 
   @Get('/skills')
+  @ApiOperation({ summary: 'Получить список форм навыков компании' })
+  @ApiResponse({ status: 200, type: [SkillShape], description: 'Список навыков компании' })
   async getCompanySkills(@Req() req: Request): Promise<SkillShape[]> {
     try {
       const employee = (req as any).employee
@@ -115,6 +143,9 @@ export class CompanyController {
   }
 
   @Post('/create')
+  @ApiOperation({ summary: 'Создать новую компанию' })
+  @ApiBody({ type: createCompanyBodyDto })
+  @ApiResponse({ status: 201, type: Company, description: 'Созданная компания' })
   async createCompany(
     @Body() createCompanyBody: createCompanyBodyDto,
     @Req() req: Request,
@@ -151,8 +182,11 @@ export class CompanyController {
     }*/
 
   @Post('/employee/add')
+  @ApiOperation({ summary: 'Добавить сотрудника в компанию' })
+  @ApiBody({ type: addCompanyEmployeeBodyDto })
+  @ApiResponse({ status: 200, type: employeeDto, description: 'Добавленный сотрудник' })
   async addEmployee(
-    @Body() addEmployeeBody: addEmployeeBodyDto,
+    @Body() addEmployeeBody: addCompanyEmployeeBodyDto,
     @Req() req: Request,
   ): Promise<employeeDto> {
     try {
@@ -175,6 +209,9 @@ export class CompanyController {
   }
 
   @Delete('/employee/remove/:id')
+  @ApiOperation({ summary: 'Удалить сотрудника из компании' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID сотрудника' })
+  @ApiResponse({ status: 200, type: Employee, description: 'Удалённый сотрудник' })
   async removeEmployee(@Param('id') employeeId: number, @Req() req: Request): Promise<Employee> {
     const employee = await this.companyService.removeEmployee(employeeId)
 
@@ -182,6 +219,9 @@ export class CompanyController {
   }
 
   @Post('/employee/addByEmail')
+  @ApiOperation({ summary: 'Добавить сотрудника по email' })
+  @ApiBody({ type: addEmployeeByEmailBodyDto })
+  @ApiResponse({ status: 200, type: employeeDto, description: 'Добавленный сотрудник' })
   async addEmployeeByEmail(
     @Body() addEmployeeByEmailBody: addEmployeeByEmailBodyDto,
     @Req() req: Request,
@@ -207,6 +247,9 @@ export class CompanyController {
   }
 
   @Post('/skill/create')
+  @ApiOperation({ summary: 'Создать новую форму навыка для компании' })
+  @ApiBody({ type: createSkillBodyDto })
+  @ApiResponse({ status: 201, type: SkillShape, description: 'Созданная форма навыка' })
   async createSkill(
     @Body() createSkillBody: createSkillBodyDto,
     @Req() req: Request,
@@ -229,6 +272,9 @@ export class CompanyController {
   }
 
   @Post('/skill/give')
+  @ApiOperation({ summary: 'Выдать навык сотруднику' })
+  @ApiBody({ type: giveSkillBodyDto })
+  @ApiResponse({ status: 200, type: Skill, description: 'Навык, выданный сотруднику' })
   async giveSkillToEmployee(
     @Body() giveSkillBody: giveSkillBodyDto,
     @Req() req: Request,
@@ -253,6 +299,9 @@ export class CompanyController {
   }
 
   @Post('/skill/giveToMany')
+  @ApiOperation({ summary: 'Выдать навык нескольким сотрудникам' })
+  @ApiBody({ type: giveSkillToManyBodyDto })
+  @ApiResponse({ status: 200, type: [Skill], description: 'Список выданных навыков' })
   async giveSkillToEmployees(
     @Body() giveSkillBody: giveSkillToManyBodyDto,
     @Req() req: Request,
@@ -280,6 +329,9 @@ export class CompanyController {
   }
 
   @Get('/:companyId/teams')
+  @ApiOperation({ summary: 'Получить все команды компании' })
+  @ApiParam({ name: 'companyId', type: Number, description: 'ID компании' })
+  @ApiResponse({ status: 200, type: [Team], description: 'Список команд' })
   async getAllCompanyTeams(
     @Param('companyId') companyId: number,
     @Req() req: Request,

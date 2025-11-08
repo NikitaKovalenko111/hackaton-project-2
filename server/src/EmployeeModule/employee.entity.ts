@@ -15,30 +15,36 @@ import { Request } from 'src/socket/request.entity'
 import { Interview } from 'src/InterviewModule/interview.entity'
 import { Answer } from 'src/ReviewModule/answer.entity'
 import { Socket } from 'src/socket/socket.entity'
+import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Employee {
+  @ApiProperty({ example: 1 })
   @PrimaryGeneratedColumn()
   employee_id: number
 
+  @ApiProperty({ example: 'Иван' })
   @Column({
     type: 'varchar',
     length: 64
   })
   employee_name: string
 
+  @ApiProperty({ example: 'Иванов' })
   @Column({
     type: 'varchar',
     length: 64
   })
   employee_surname: string
 
+  @ApiProperty({ example: 'ivan@example.com' })
   @Column({
     type: 'varchar',
     length: 128
   })
   employee_email: string
 
+  @ApiProperty({ example: 'В отпуске' })
   @Column({ 
     type: 'varchar',
     length: 256,
@@ -46,6 +52,7 @@ export class Employee {
   })
   employee_status: string
 
+  @ApiProperty({ example: 'photo.jpg' })
   @Column({
     type: 'varchar',
     length: 128,
@@ -53,6 +60,7 @@ export class Employee {
   })
   employee_photo: string
 
+  @ApiHideProperty()
   @Column({
     type: 'varchar',
     length: 64,
@@ -60,6 +68,7 @@ export class Employee {
   })
   employee_password: string
 
+  @ApiProperty({ example: 987654321, nullable: true })
   @Column({
     nullable: true,
     default: null,
@@ -67,6 +76,7 @@ export class Employee {
   })
   telegram_id: number | null
 
+  @ApiProperty({ type: () => Role, nullable: true })
   @OneToOne(() => Role, (role) => role.employee, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -74,12 +84,14 @@ export class Employee {
   })
   role: Role | null
 
+  @ApiHideProperty()
   @OneToMany(() => Skill, (skill) => skill.employee, {
     cascade: true,
     onDelete: 'CASCADE'
   })
   skills: Skill[]
 
+  @ApiHideProperty()
   @ManyToOne(() => Company, (company) => company.employees, {
     nullable: true,
     onDelete: 'CASCADE'
@@ -89,6 +101,7 @@ export class Employee {
   })
   company: Company | null
 
+  @ApiHideProperty()
   @ManyToOne(() => Team, (team) => team.employees, {
     nullable: true,
   })
@@ -97,36 +110,42 @@ export class Employee {
   })
   team: Team | null
 
+  @ApiHideProperty()
   @OneToMany(() => Request, (request) => request.request_owner, {
     cascade: true,
     onDelete: 'CASCADE'
   })
   sendedRequests: Request[]
 
+  @ApiHideProperty()
   @OneToMany(() => Request, (request) => request.request_receiver, {
     cascade: true,
     onDelete: 'CASCADE'
   })
   receivedRequests: Request[]
 
+  @ApiHideProperty()
   @OneToMany(() => Interview, (interview) => interview.interview_owner, {
     cascade: true,
     onDelete: 'CASCADE'
   })
   createdInterviews: Interview[]
 
+  @ApiHideProperty()
   @OneToMany(() => Interview, (interview) => interview.interview_subject, {
     cascade: true,
     onDelete: 'CASCADE'
   })
   plannedInterviews: Interview[]
 
+  @ApiHideProperty()
   @OneToMany(() => Answer, (answer) => answer.employee, {
     cascade: true,
     onDelete: 'CASCADE'
   })
   answers: Answer[]
 
+  @ApiHideProperty()
   @OneToMany(() => Answer, (answer) => answer.employee_answer_to, {
     cascade: true,
     onDelete: 'CASCADE'
