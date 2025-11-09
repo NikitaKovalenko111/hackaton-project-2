@@ -13,7 +13,7 @@ import { SkillService } from './skill.service'
 import { Skill } from './skill.entity'
 import { SkillShape } from './skillShape.entity'
 import { addSkillOrderBodyDto, updateSkillLevelBodyDto } from './skill.dto'
-import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam, ApiExtraModels } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam, ApiExtraModels, ApiQuery } from '@nestjs/swagger';
 import { SkillOrder } from './skillOrder.entity'
 import { skillLevel } from 'src/types'
 
@@ -75,6 +75,17 @@ export class SkillController {
   }
 
   @Post('/skillOrder/add')
+  @ApiOperation({
+    summary: 'Добавить задания (orders) для определённого уровня навыка',
+    description:
+      'Позволяет HR или администратору задать список критериев для конкретного уровня навыка в SkillShape.',
+  })
+  @ApiBody({ type: addSkillOrderBodyDto })
+  @ApiResponse({
+    status: 201,
+    type: [SkillOrder],
+    description: 'Созданные задания для формы навыка',
+  })
   async addSkillOrders(@Body() addSkillOrderBody: addSkillOrderBodyDto): Promise<SkillOrder[]> {
     try {
       const { skill_shape_id, skill_level, orders } = addSkillOrderBody
@@ -88,6 +99,27 @@ export class SkillController {
   }
 
   @Get('/skillOrder/get/:skillShapeId')
+  @ApiOperation({
+    summary: 'Получить задания для формы навыка',
+    description:
+      'Возвращает список всех заданий (orders) для указанного SkillShape. Можно фильтровать по уровню навыка.',
+  })
+  @ApiParam({
+    name: 'skillShapeId',
+    example: 3,
+    description: 'ID формы навыка (SkillShape)',
+  })
+  @ApiQuery({
+    name: 'skillLevel',
+    enum: skillLevel,
+    required: false,
+    description: 'Фильтр по уровню навыка (опционально)',
+  })
+  @ApiResponse({
+    status: 200,
+    type: [SkillOrder],
+    description: 'Список найденных заданий для формы навыка',
+  })
   async getSkillOrderByShape(@Param('skillShapeId') skillShapeId: number, @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
     try {
       const skillOrders = await this.skillService.getSkillOrdersByShape(skillShapeId, skillLevel)
