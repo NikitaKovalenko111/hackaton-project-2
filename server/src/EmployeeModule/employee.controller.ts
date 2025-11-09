@@ -78,6 +78,9 @@ export class EmployeeController {
   }
 
   @Patch('/profile')
+   @ApiOperation({ summary: 'Изменить данные профиля сотрудника' })
+  @ApiBody({ type: changeProfileDataBodyDto })
+  @ApiResponse({ status: 200, description: 'Обновлённый профиль сотрудника', type: Employee })
   async changeProfileData(@Req() req: Request, @Body() changeProfileDataBody: changeProfileDataBodyDto): Promise<Employee> {
     try {
       const employeeId = (req as any).employee.employee_id
@@ -91,6 +94,9 @@ export class EmployeeController {
   }
 
   @Patch('/change/password')
+  @ApiOperation({ summary: 'Изменить пароль сотрудника' })
+  @ApiBody({ type: changePasswordBodyDto })
+  @ApiResponse({ status: 200, description: 'Пароль успешно изменён', type: Employee })
   async changePassword(@Req() req: Request, @Body() changePasswordBody: changePasswordBodyDto): Promise<Employee> {
     try {
       const employeeId = (req as any).employee.employee_id
@@ -194,7 +200,7 @@ export class EmployeeController {
   }
 
   @Post('/authorization/telegram')
-   @ApiOperation({ summary: 'Авторизация сотрудника через Telegram' })
+  @ApiOperation({ summary: 'Авторизация сотрудника через Telegram' })
   @ApiBody({ type: authEmployeeTgBodyDto })
   @ApiResponse({ status: 200, type: employeePayloadDto, description: 'Авторизованный пользователь' })
   async authorizeEmployeeTg(
@@ -256,7 +262,7 @@ export class EmployeeController {
 
   @Get('/profile')
   @ApiOperation({ summary: 'Получить профиль текущего сотрудника' })
-  @ApiResponse({ status: 200, type: employeeDto, description: 'Профиль сотрудника' })
+  @ApiResponse({ status: 200, type: Employee, description: 'Профиль сотрудника' })
   async getProfile(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,

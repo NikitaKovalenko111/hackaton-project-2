@@ -3,7 +3,7 @@ import { RequestService } from './request.service'
 import { Request as RequestEntity } from './request.entity';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@ApiTags('Requests')
+@ApiTags('requests')
 @Controller('request')
 export class RequestController {
   constructor(private readonly requestService: RequestService) {}
