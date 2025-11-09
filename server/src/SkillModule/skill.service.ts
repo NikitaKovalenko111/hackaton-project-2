@@ -9,6 +9,8 @@ import { skillLevel } from 'src/types'
 import { employeePayloadDto } from 'src/EmployeeModule/employee.dto'
 import ApiError from 'src/apiError'
 import { RequestService } from 'src/socket/request.service'
+import { skillOrder } from './skill.dto'
+import { SkillOrder } from './skillOrder.entity'
 
 @Injectable()
 export class SkillService {
@@ -21,6 +23,9 @@ export class SkillService {
 
     @InjectRepository(Company)
     private companyRepository: Repository<Company>,
+
+    @InjectRepository(SkillOrder)
+    private skillOrderRepository: Repository<SkillOrder>,
 
     @Inject(forwardRef(() => RequestService))
     private readonly requestService: RequestService
@@ -91,6 +96,38 @@ export class SkillService {
         error.message ? error.message : error,
       )
     }
+  }
+
+  async getSkillOrdersByShape(skillShapeId: number, skillLevel?: skillLevel): Promise<SkillOrder[]> {
+    const skillOrders = await this.skillOrderRepository.find({
+      where: {
+        skill_shape: {
+          skill_shape_id: skillShapeId
+        },
+        skill_level: skillLevel
+      },
+      relations: {
+        skill_shape: true
+      }
+    })
+
+    return skillOrders
+  }
+
+  async getSkillOrdersByLevel(skillShapeId: number, skillLevel: skillLevel): Promise<SkillOrder[]> {
+    const skillOrders = await this.skillOrderRepository.find({
+      where: {
+        skill_shape: {
+          skill_shape_id: skillShapeId
+        },
+        skill_level: skillLevel
+      },
+      relations: {
+        skill_shape: true
+      }
+    })
+
+    return skillOrders
   }
 
   async getSkillById(skill_id: number): Promise<Skill> {
@@ -237,6 +274,30 @@ export class SkillService {
         error.message ? error.message : error,
       )
     }
+  }
+
+  async addSkillOrders(skillShapeId: number, skillLevel: skillLevel, orders: skillOrder[]): Promise<SkillOrder[]> {
+    const skillShape = await this.skillShapeRepository.findOne({
+      where: {
+        skill_shape_id: skillShapeId
+      }
+    })
+
+    if (!skillShape) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Компетенция не найдена!')
+    }
+
+    const ordersArray = orders.map(order => {
+      return new SkillOrder({
+        skill_level: skillLevel,
+        skill_shape: skillShape,
+        order_text: order.order_text
+      })
+    })
+
+    const ordersData = await this.skillOrderRepository.save(ordersArray)
+
+    return ordersData
   }
 
   async getSkillShapeById(skillShapeId: number): Promise<SkillShape> {

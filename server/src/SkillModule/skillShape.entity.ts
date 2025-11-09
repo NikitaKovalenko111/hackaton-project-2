@@ -9,6 +9,7 @@ import {
 } from 'typeorm'
 import { Skill } from './skill.entity'
 import { ApiProperty } from '@nestjs/swagger';
+import { SkillOrder } from './skillOrder.entity';
 
 @Entity()
 export class SkillShape {
@@ -28,6 +29,11 @@ export class SkillShape {
     cascade: true,
   })
   skills: Skill[]
+
+  @OneToMany(() => SkillOrder, skillOrder => skillOrder.skill_shape, {
+    cascade: true
+  })
+  skillOrders: SkillOrder[]
 
   @ApiProperty({ example: 'TypeScript' })
   @Column({

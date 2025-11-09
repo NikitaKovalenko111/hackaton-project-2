@@ -9,6 +9,7 @@ import { Employee } from 'src/EmployeeModule/employee.entity'
 import { Employee_token } from 'src/EmployeeModule/token.entity'
 import { EmployeeModule } from 'src/EmployeeModule/employee.module'
 import { SocketGatewayModule } from 'src/socket/socket.module'
+import { SkillOrder } from './skillOrder.entity'
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SocketGatewayModule } from 'src/socket/socket.module'
     TypeOrmModule.forFeature([
       Skill,
       SkillShape,
+      SkillOrder,
       Company,
       Employee,
       Employee_token,

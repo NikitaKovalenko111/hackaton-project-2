@@ -8,7 +8,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
-import { clientType, RoleType } from 'src/types'
+import { clientType } from 'src/types'
 import { RequestService } from './request.service'
 import { TokenService } from 'src/EmployeeModule/token.service'
 import { SocketService } from './socket.service'

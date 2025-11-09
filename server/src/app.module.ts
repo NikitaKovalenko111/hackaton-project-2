@@ -27,6 +27,7 @@ import { ReviewModule } from './ReviewModule/review.module'
 import { Statistics } from './StatisticsModule/statistics.entity'
 import { StatisticsModule } from './StatisticsModule/statistics.module'
 import { AIModule } from './AIModule/ai.module'
+import { SkillOrder } from './SkillModule/skillOrder.entity'
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { AIModule } from './AIModule/ai.module'
         Employee_token,
         Skill,
         SkillShape,
+        SkillOrder,
         Team,
         Role,
         Request,

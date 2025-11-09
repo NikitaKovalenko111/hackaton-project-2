@@ -6,12 +6,16 @@ import {
   HttpException,
   Param,
   Patch,
+  Post,
+  Query,
 } from '@nestjs/common'
 import { SkillService } from './skill.service'
 import { Skill } from './skill.entity'
 import { SkillShape } from './skillShape.entity'
-import { updateSkillLevelBodyDto } from './skill.dto'
+import { addSkillOrderBodyDto, updateSkillLevelBodyDto } from './skill.dto'
 import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam, ApiExtraModels } from '@nestjs/swagger';
+import { SkillOrder } from './skillOrder.entity'
+import { skillLevel } from 'src/types'
 
 @ApiTags('Skill')
 @ApiExtraModels(Skill, SkillShape)
@@ -65,6 +69,30 @@ export class SkillController {
       const skillShape = await this.skillService.getSkillShapeById(skillShapeId)
 
       return skillShape
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
+  @Post('/skillOrder/add')
+  async addSkillOrders(@Body() addSkillOrderBody: addSkillOrderBodyDto): Promise<SkillOrder[]> {
+    try {
+      const { skill_shape_id, skill_level, orders } = addSkillOrderBody
+
+      const skillOrders = await this.skillService.addSkillOrders(skill_shape_id, skill_level, orders)
+
+      return skillOrders
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
+  @Get('/skillOrder/get/:skillShapeId')
+  async getSkillOrderByShape(@Param('skillShapeId') skillShapeId: number, @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
+    try {
+      const skillOrders = await this.skillService.getSkillOrdersByShape(skillShapeId, skillLevel)
+
+      return skillOrders
     } catch (error) {
       throw new HttpException(error.message, error.status)
     }

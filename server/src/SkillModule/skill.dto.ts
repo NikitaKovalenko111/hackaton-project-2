@@ -8,3 +8,13 @@ export class updateSkillLevelBodyDto {
   @ApiProperty({ enum: skillLevel, example: skillLevel.MIDDLE, description: 'Новый уровень навыка' })
   skill_level: skillLevel
 }
+
+export class addSkillOrderBodyDto {
+  skill_shape_id: number
+  skill_level: skillLevel
+  orders: skillOrder[]
+}
+
+export class skillOrder {
+  order_text: string
+}
