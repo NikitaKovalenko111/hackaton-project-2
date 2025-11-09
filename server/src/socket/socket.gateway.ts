@@ -8,7 +8,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
-import { clientType } from 'src/types'
+import { clientType, RoleType } from 'src/types'
 import { RequestService } from './request.service'
 import { TokenService } from 'src/EmployeeModule/token.service'
 import { SocketService } from './socket.service'
@@ -22,7 +22,7 @@ import type {
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'http://192.168.0.102:3000',
     credentials: true,
   },
   pingInterval: 10000,

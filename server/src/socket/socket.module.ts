@@ -12,6 +12,7 @@ import { EmployeeModule } from 'src/EmployeeModule/employee.module'
 import { RequestController } from './request.controller'
 import { SkillModule } from 'src/SkillModule/skill.module'
 import { Skill } from 'src/SkillModule/skill.entity'
+import { SocketDocsController } from './socket-docs.controller';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { Skill } from 'src/SkillModule/skill.entity'
       Interview,
     ]),
   ],
-  controllers: [RequestController],
+  controllers: [RequestController, SocketDocsController],
   providers: [SocketGateway, RequestService, SocketService],
   exports: [SocketGateway, RequestService, SocketService],
 })
