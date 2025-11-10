@@ -42,9 +42,20 @@ export enum clientType {
   WEB = 'web',
   TELEGRAM = 'telegram'
 }
+import { ApiProperty } from '@nestjs/swagger'
 
-export interface intervalI {
-  months: number[],
+export class intervalI {
+  @ApiProperty({
+    example: [1, 3, 6, 9, 12],
+    description: 'Месяцы, в которые проводится ревью (номера месяцев: 1 = январь, 12 = декабрь)',
+    type: [Number],
+  })
+  months: number[]
+
+  @ApiProperty({
+    example: 15,
+    description: 'День месяца, в который проводится ревью (1–31)',
+  })
   day: number
 }
 
