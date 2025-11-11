@@ -1,19 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
-import type { intervalI } from 'src/types';
+import { intervalI } from 'src/types';
 
 export class addQuestionBodyDto {
   @ApiProperty({ example: 'Как оцениваете коммуникацию коллеги?' })
   question_text: string
 
-  @ApiProperty({ example: 5 })
+  @ApiProperty({
+    example: 1,
+    description: 'ID ревью',
+  })
   review_id: number
 }
 
 export class setReviewBodyDto {
-  @ApiProperty({ example: 1 })
+  @ApiProperty({
+    example: 1,
+    description: 'ID ревью, для которого устанавливается новый интервал',
+  })
   review_id: number
 
-  @ApiProperty({ example: 7, description: 'Интервал ревью в днях' })
+  @ApiProperty({
+    type: intervalI,
+    description: 'Интервал проведения ревью (список месяцев и день месяца)',
+  })
   review_interval: intervalI
 }
 

@@ -1,4 +1,5 @@
 import { Employee } from './EmployeeModule/employee.entity'
+import { ApiProperty } from '@nestjs/swagger'
 
 export enum RoleType {
   HR = 'hr',
@@ -54,8 +55,18 @@ export enum notificationStatusType {
   NOT_APPLIED = "not_applied"
 }
 
-export interface intervalI {
-  months: number[],
+export class intervalI {
+  @ApiProperty({
+    example: [1, 3, 6, 9, 12],
+    description: 'Месяцы, в которые проводится ревью (номера месяцев: 1 = январь, 12 = декабрь)',
+    type: [Number],
+  })
+  months: number[]
+
+  @ApiProperty({
+    example: 15,
+    description: 'День месяца, в который проводится ревью (1–31)',
+  })
   day: number
 }
 

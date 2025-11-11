@@ -14,18 +14,18 @@ import { ApiProperty } from '@nestjs/swagger'
 
 @Entity()
 export class Skill {
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: 1, description: 'ID навыка' })
   @PrimaryGeneratedColumn()
   skill_connection_id: number
 
-  @ApiProperty({ type: () => SkillShape })
+  @ApiProperty({ type: () => SkillShape, description: 'Шаблон навыка' })
   @ManyToOne(() => SkillShape, (skillShape) => skillShape.skills)
   @JoinColumn({ 
     name: 'skill_shape_id' 
   })
   skill_shape: SkillShape
 
-  @ApiProperty({ enum: skillLevel, example: skillLevel.MIDDLE })
+  @ApiProperty({ enum: skillLevel, example: skillLevel.MIDDLE, description: 'Текущий уровень навыка' })
   @Column({
     type: 'enum',
     enum: skillLevel
@@ -35,7 +35,7 @@ export class Skill {
   @OneToMany(() => Request, (request) => request.request_skill)
   requests: Request[]
   
-  @ApiProperty({ type: () => Employee })
+ @ApiProperty({ type: () => Employee, description: 'Сотрудник, которому принадлежит навык' })
   @ManyToOne(() => Employee, (employee) => employee.skills)
   @JoinColumn({ 
     name: 'employee_id' 
