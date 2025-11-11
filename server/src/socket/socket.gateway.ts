@@ -8,7 +8,7 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
-import { clientType } from 'src/types'
+import { clientType, notificationType } from 'src/types'
 import { RequestService } from './request.service'
 import { TokenService } from 'src/EmployeeModule/token.service'
 import { SocketService } from './socket.service'
@@ -20,9 +20,14 @@ import type {
   requestDto,
 } from './request-socket.dto'
 
+import dotenv from "dotenv"
+import { NotificationService } from 'src/NotificationModule/notification.service'
+
+dotenv.config()
+
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: process.env.FRONTEND_ORIGIN,
     credentials: true,
   },
   pingInterval: 10000,
@@ -34,6 +39,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly socketService: SocketService,
     private readonly tokenService: TokenService,
     private readonly employeeService: EmployeeService,
+    private readonly notificationService: NotificationService
   ) {}
 
   async handleConnection(client: Socket) {
@@ -112,31 +118,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       )
 
       if (requestData.request_receiver != null) {
-        const socketWeb = await this.socketService.getSocketByEmployeeId(
-          requestData.request_receiver.employee_id,
-        )
-        const socketTg = await this.socketService.getSocketByEmployeeId(
-          requestData.request_receiver.employee_id,
-          clientType.TELEGRAM,
-        )
+        const notification = await this.notificationService.sendNotification(requestData.request_receiver.employee_id, notificationType.NEW_REQUEST, requestData)
 
-        if (!socketWeb && !socketTg) {
-          return requestData
-        }
-
-        if (socketWeb) {
-          this.server
-            .to(socketWeb.client_id as string)
-            .emit('newRequest', requestData, (err, response) => {
-              console.log(err)
-
-              console.log(response)
-            })
-        }
-        if (socketTg) {
-          this.server
-            .to(socketTg.client_id as string)
-            .emit('newRequest', requestData)
+        return {
+          notification: notification,
+          data: requestData
         }
       }
     } catch (error) {
@@ -147,61 +133,31 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @SubscribeMessage('cancelRequest')
   async handleCancelRequest(@MessageBody() request: cancelRequestDto) {
     try {
-      const { request_id, employee_id } = request
+      const { request_id, employee_id, justification } = request
 
       const requestData =
-        await this.requestGatewayService.cancelRequest(request_id)
+        await this.requestGatewayService.cancelRequest(request_id, employee_id, justification)
       
       if (
         requestData.request_receiver &&
         employee_id == requestData.request_owner.employee_id
       ) {
-        const socketTg = await this.socketService.getSocketByEmployeeId(
-          requestData.request_receiver.employee_id,
-          clientType.TELEGRAM,
-        )
-        const socket = await this.socketService.getSocketByEmployeeId(
-          requestData.request_receiver.employee_id
-        )
+        const notification = await this.notificationService.sendNotification(requestData.request_receiver.employee_id, notificationType.CANCELED_REQUEST, requestData)
 
-        if (socket) {
-          this.server
-          .to(socket.client_id as string)
-          .emit('canceledRequest', requestData)
+        return {
+          notification: notification,
+          data: requestData
         }
-
-        if (socketTg) {
-          this.server
-          .to(socketTg.client_id as string)
-          .emit('canceledRequest', requestData)
-        }
-
-        return requestData
       } else if (
         requestData.request_owner &&
         employee_id == requestData.request_receiver.employee_id
       ) {
-        const socket = await this.socketService.getSocketByEmployeeId(
-          requestData.request_owner.employee_id
-        )
-        const socketTg = await this.socketService.getSocketByEmployeeId(
-          requestData.request_owner.employee_id,
-          clientType.TELEGRAM,
-        )
+        const notification = await this.notificationService.sendNotification(requestData.request_owner.employee_id, notificationType.CANCELED_REQUEST, requestData)
 
-        if (socket) {
-          this.server
-          .to(socket.client_id as string)
-          .emit('canceledRequest', requestData)
+        return {
+          notification: notification,
+          data: requestData
         }
-
-        if (socketTg) {
-          this.server
-          .to(socketTg.client_id as string)
-          .emit('canceledRequest', requestData)
-        }
-
-        return requestData
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
@@ -217,22 +173,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         await this.requestGatewayService.completeRequest(request_id)
 
       if (requestData.request_owner) {
-        const socket = await this.socketService.getSocketByEmployeeId(requestData.request_owner.employee_id)
-        const socketTg = await this.socketService.getSocketByEmployeeId(requestData.request_owner.employee_id, clientType.TELEGRAM)
+        const notification = await this.notificationService.sendNotification(requestData.request_owner.employee_id, notificationType.COMPLETED_REQUEST, requestData)
 
-        if (socket) {
-          this.server
-          .to(socket.client_id as string)
-          .emit('completedRequest', requestData)
+        return {
+          notification: notification,
+          data: requestData
         }
-
-        if (socketTg) {
-          this.server
-          .to(socketTg.client_id as string)
-          .emit('completedRequest', requestData)
-        }
-
-        return requestData
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)

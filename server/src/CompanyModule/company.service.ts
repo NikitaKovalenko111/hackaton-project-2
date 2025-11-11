@@ -20,8 +20,14 @@ export class CompanyService {
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
 
+    @InjectRepository(SkillShape)
+    private skillShapeRepository: Repository<SkillShape>,
+
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
+
+    @InjectRepository(Team)
+    private teamRepository: Repository<Team>,
 
     @InjectRepository(Review)
     private reviewRepository: Repository<Review>,
@@ -182,24 +188,23 @@ export class CompanyService {
     }
   }
 
-  async getAllTeams(companyId: number): Promise<Team[]> {
-    const company = await this.companyRepository.findOne({
+  async getAllTeams(companyId: number, teamName: string = "", teamleadName: string = "", teamleadSurname: string = ""): Promise<Team[]> {
+    const teams = await this.teamRepository.find({
       where: {
-        company_id: companyId,
+        company: {
+          company_id: companyId,
+        },
+        team_name: Like(`%${teamName}%`),
+        teamlead: {
+          employee_name: Like(`%${teamleadName}%`),
+          employee_surname: Like(`%${teamleadSurname}%`)
+        }
       },
       relations: {
-        teams: {
-          teamlead: true,
-          employees: true,
-        },
+        company: true,
+        teamlead: true
       },
     })
-
-    if (!company) {
-      throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена')
-    }
-
-    const teams = company.teams
 
     return teams
   }
@@ -221,26 +226,21 @@ export class CompanyService {
     return employeeData
   }
 
-  async getSkills(companyId: number): Promise<SkillShape[]> {
+  async getSkillShapesByCompany(companyId: number, skillName: string = ""): Promise<SkillShape[]> {
     try {
-      const company = await this.companyRepository.findOne({
+      const skillShapes = await this.skillShapeRepository.find({
         where: {
-          company_id: companyId,
+          company: {
+            company_id: companyId
+          },
+          skill_name: Like(`%${skillName}%`)
         },
         relations: {
-          skills: {
-            skills: {
-              skill_shape: true,
-            },
-          },
-        },
+          company: true
+        }
       })
 
-      if (!company) {
-        throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
-      }
-
-      return company.skills
+      return skillShapes
     } catch (error) {
       throw new ApiError(
         error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,

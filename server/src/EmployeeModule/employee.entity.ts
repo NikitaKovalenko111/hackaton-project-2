@@ -16,6 +16,7 @@ import { Interview } from 'src/InterviewModule/interview.entity'
 import { Answer } from 'src/ReviewModule/answer.entity'
 import { Socket } from 'src/socket/socket.entity'
 import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
+import { Notification } from 'src/NotificationModule/notification.entity'
 
 @Entity()
 export class Employee {
@@ -87,7 +88,7 @@ export class Employee {
   @ApiHideProperty()
   @OneToMany(() => Skill, (skill) => skill.employee, {
     cascade: true,
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   skills: Skill[]
 
@@ -127,7 +128,8 @@ export class Employee {
   @ApiHideProperty()
   @OneToMany(() => Interview, (interview) => interview.interview_owner, {
     cascade: true,
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
+    
   })
   createdInterviews: Interview[]
 
@@ -157,6 +159,11 @@ export class Employee {
     onDelete: 'CASCADE'
   })
   sockets: Socket[]
+
+  @OneToMany(() => Notification, notification => notification.receiver, {
+    cascade: true
+  })
+  notifications: Notification[]
 
   constructor(item: Partial<Employee>) {
     Object.assign(this, item)

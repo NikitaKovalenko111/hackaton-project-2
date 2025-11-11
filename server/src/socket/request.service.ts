@@ -5,7 +5,6 @@ import { Repository } from 'typeorm'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { requestStatus, requestType, RoleType, skillLevel } from 'src/types'
 import { Request } from './request.entity'
-import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
 import { SkillService } from 'src/SkillModule/skill.service'
 import { Skill } from 'src/SkillModule/skill.entity'
@@ -31,7 +30,7 @@ export class RequestService {
     const employee = await this.employeeService.getEmployee(employeeId)
 
     if (!employee) {
-      throw new Error('Пользователь не найден!')
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
     }
 
     const socket = new Socket({
@@ -142,7 +141,7 @@ export class RequestService {
     return requestsData
   }
 
-  async cancelRequest(requestId: number): Promise<Request> {
+  async cancelRequest(requestId: number, employeeId: number, justification?: string): Promise<Request> {
     const request = await this.requestRepository.findOne({
       where: {
         request_id: requestId,
@@ -155,6 +154,12 @@ export class RequestService {
 
     if (!request) {
       throw new ApiError(HttpStatus.NOT_FOUND, 'Запрос не найден!')
+    }
+
+    const role = await this.employeeService.getEmployeeRoleById(employeeId)
+
+    if (role.role_name == 'teamlead' && justification) {
+      request.justification = justification
     }
 
     request.request_status = requestStatus.CANCELED

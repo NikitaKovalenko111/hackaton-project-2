@@ -42,6 +42,17 @@ export enum clientType {
   WEB = 'web',
   TELEGRAM = 'telegram'
 }
+export enum notificationType {
+  NEW_REQUEST = 'newRequest',
+  COMPLETED_REQUEST = 'completedRequest',
+  NEW_INTERVIEW = 'newInterview',
+  CANCELED_REQUEST = 'canceledRequest',
+  INTERVIEW_CANCELLED = 'canceledInterview'
+}
+export enum notificationStatusType {
+  APPLIED = "applied",
+  NOT_APPLIED = "not_applied"
+}
 
 export interface intervalI {
   months: number[],

@@ -28,19 +28,22 @@ import { Statistics } from './StatisticsModule/statistics.entity'
 import { StatisticsModule } from './StatisticsModule/statistics.module'
 import { AIModule } from './AIModule/ai.module'
 import { SkillOrder } from './SkillModule/skillOrder.entity'
+import { NotificationModule } from './NotificationModule/notification.module'
+import { Notification } from './NotificationModule/notification.entity'
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     CompanyModule,
     EmployeeModule,
     InterviewModule,
     TeamModule,
     SkillModule,
+    NotificationModule,
     SocketGatewayModule,
     ReviewModule,
     StatisticsModule,
     AIModule,
-    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -59,6 +62,7 @@ import { SkillOrder } from './SkillModule/skillOrder.entity'
         SkillOrder,
         Team,
         Role,
+        Notification,
         Request,
         Socket,
         Question,

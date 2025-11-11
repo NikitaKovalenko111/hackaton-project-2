@@ -24,6 +24,12 @@ export class Request {
   })
   request_type: requestType
 
+  @Column({
+    type: 'text',
+    nullable: true
+  })
+  justification: string
+
   @ApiProperty({ enum: requestStatus, default: 'pending', description: 'Статус запроса' })
   @Column({ 
     default: 'pending',

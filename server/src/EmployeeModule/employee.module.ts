@@ -10,6 +10,7 @@ import { Request } from 'express'
 import { diskStorage } from 'multer'
 import path from 'path'
 import { Skill } from 'src/SkillModule/skill.entity'
+import { Role } from './role.entity'
 
 @Module({
   imports: [
@@ -30,7 +31,12 @@ import { Skill } from 'src/SkillModule/skill.entity'
         },
       }),
     }),
-    TypeOrmModule.forFeature([Employee, Employee_token, Skill]),
+    TypeOrmModule.forFeature([
+      Employee, 
+      Employee_token, 
+      Skill,
+      Role
+    ]),
   ],
   controllers: [EmployeeController],
   providers: [EmployeeService, TokenService],

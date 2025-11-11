@@ -1,8 +1,9 @@
-import { ApiProperty, ApiExtraModels  } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Skill } from 'src/SkillModule/skill.entity'
 import { Role } from './role.entity'
 import { Company } from 'src/CompanyModule/company.entity'
 import { Team } from 'src/TeamModule/team.entity'
+import { Employee } from './employee.entity';
 
 export class registerEmployeeBodyDto {
   @ApiProperty({ example: 'Иван' })
@@ -67,6 +68,10 @@ export class employeePayloadDto {
 
   @ApiProperty({ type: Team, required: false, description: 'Команда сотрудника' })
   team?: Team | null
+
+  constructor(item: Partial<Employee>) {
+    Object.assign(this, item)
+  }
 }
 
 export class authEmployeeBodyDto {

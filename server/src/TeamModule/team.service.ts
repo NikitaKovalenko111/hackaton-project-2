@@ -117,16 +117,6 @@ export class TeamService {
       }
 
       employee.team = team
-      /*const history: Employee[] = []
-            
-            for (let i = 0; i < employee.team.employees.length; i++) {
-                const element = employee.team.employees[i]
-                
-                if (element.employee_id != employee.employee_id) {
-                    history.push(element)
-                }
-            }
-            employee.workedWith = history*/
 
       const employeeData = await this.employeeRepository.save(employee)
 

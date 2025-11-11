@@ -6,7 +6,6 @@ import { interviewStatusType, interviewType, RoleType } from 'src/types'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
-import { CompanyService } from 'src/CompanyModule/company.service'
 import { Role } from 'src/EmployeeModule/role.entity'
 
 @Injectable()
@@ -19,7 +18,6 @@ export class InterviewService {
     private roleRepository: Repository<Role>,
 
     private employeeService: EmployeeService,
-    private companyService: CompanyService,
   ) {}
 
   async addInterview(

@@ -12,16 +12,20 @@ import { EmployeeModule } from 'src/EmployeeModule/employee.module'
 import { RequestController } from './request.controller'
 import { SkillModule } from 'src/SkillModule/skill.module'
 import { Skill } from 'src/SkillModule/skill.entity'
+import { NotificationModule } from 'src/NotificationModule/notification.module'
+import { Notification } from 'src/NotificationModule/notification.entity'
 
 @Module({
   imports: [
     EmployeeModule,
+    forwardRef(() => NotificationModule),
     forwardRef(() => SkillModule),
     TypeOrmModule.forFeature([
       Request,
       Socket,
       Employee,
       Skill,
+      Notification,
       Employee_token,
       Interview,
     ]),

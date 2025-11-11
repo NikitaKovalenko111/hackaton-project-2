@@ -17,9 +17,7 @@ import {
   ApiResponse,
   ApiQuery,
   ApiParam,
-  ApiExtraModels,
   ApiOkResponse,
-  getSchemaPath,
 } from '@nestjs/swagger';
 import { CompanyService } from './company.service'
 import { Company } from './company.entity'
@@ -122,7 +120,7 @@ export class CompanyController {
   @Get('/skills')
   @ApiOperation({ summary: 'Получить список форм навыков компании' })
   @ApiResponse({ status: 200, type: [SkillShape], description: 'Список навыков компании' })
-  async getCompanySkills(@Req() req: Request): Promise<SkillShape[]> {
+  async getCompanySkills(@Req() req: Request, @Query('name') skillName: string): Promise<SkillShape[]> {
     try {
       const employee = (req as any).employee
 
@@ -134,8 +132,9 @@ export class CompanyController {
         throw new HttpException('Сотрудник не в компании!', HttpStatus.NOT_ACCEPTABLE)
       }
 
-      const skills = await this.companyService.getSkills(
+      const skills = await this.companyService.getSkillShapesByCompany(
         employeeData.company.company_id,
+        skillName
       )
 
       return skills
@@ -312,10 +311,13 @@ export class CompanyController {
   @ApiResponse({ status: 200, type: [Team], description: 'Список команд' })
   async getAllCompanyTeams(
     @Param('companyId') companyId: number,
+    @Query('name') teamName: string,
+    @Query('teamleadSurname') teamleadSurname: string,
+    @Query('teamleadName') teamleadName: string,
     @Req() req: Request,
   ): Promise<Team[]> {
     try {
-      const teams = await this.companyService.getAllTeams(companyId)
+      const teams = await this.companyService.getAllTeams(companyId, teamName, teamleadName, teamleadSurname)
 
       return teams
     } catch (error) {
