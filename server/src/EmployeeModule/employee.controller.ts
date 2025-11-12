@@ -9,6 +9,7 @@ import {
   Post,
   Req,
   Res,
+  StreamableFile,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common'
@@ -42,6 +43,8 @@ import { Skill } from 'src/SkillModule/skill.entity';
 import { Team } from 'src/TeamModule/team.entity';
 import { Role } from './role.entity';
 import { EmployeeRegistrationDto, EmployeeAuthResponseDto, EmployeeLoginDto, EmployeeLoginResponseDto } from './employee.dto';
+import { join } from 'path';
+import { createReadStream } from 'fs';
 
 
 @ApiTags('employee')
@@ -93,6 +96,25 @@ export class EmployeeController {
     }
   }
 
+  @Get('/profile/photo')
+  async getProfilePhoto(@Req() req: Request): Promise<StreamableFile> {
+    try {
+      const employeeId = (req as any).employee.employee_id
+
+      const employee = await this.employeeService.getCleanEmployee(employeeId)
+
+      const imagePath = join(process.cwd(), '../profilePhotos', `${employee.employee_photo}`)
+
+      const file = createReadStream(imagePath)
+
+      return new StreamableFile(file, {
+        "type": `image/${employee.employee_photo.split(".")[1]}`
+      })
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
   @Patch('/change/password')
   @ApiOperation({ summary: 'Изменить пароль сотрудника' })
   @ApiBody({ type: changePasswordBodyDto })
@@ -112,7 +134,6 @@ export class EmployeeController {
   }
 
   @Post('/photo')
-  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Загрузить фото профиля сотрудника' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({

@@ -204,6 +204,7 @@ export class EmployeeService {
     try {
       const filename =
         String(employee_id) + '.' + String(file.mimetype.split('/')[1])
+      
       const employee = await this.employeeRepository.findOne({
         where: {
           employee_id: employee_id,
