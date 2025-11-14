@@ -48,6 +48,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       const client_type = client.request.headers.client_type as clientType
       const telegramId = client.request.headers.telegram_id as string
 
+      console.log(client_type);
+
       if (!client_type) {
         throw new HttpException('Не указан тип клиента!', HttpStatus.BAD_REQUEST)
       }
