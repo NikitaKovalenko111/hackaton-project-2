@@ -23,6 +23,8 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiExtraModels,
+  ApiProduces,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { EmployeeService } from './employee.service'
 import type { Request, Response } from 'express'
@@ -81,7 +83,7 @@ export class EmployeeController {
   }
 
   @Patch('/profile')
-   @ApiOperation({ summary: 'Изменить данные профиля сотрудника' })
+  @ApiOperation({ summary: 'Изменить данные профиля сотрудника' })
   @ApiBody({ type: changeProfileDataBodyDto })
   @ApiResponse({ status: 200, description: 'Обновлённый профиль сотрудника', type: Employee })
   async changeProfileData(@Req() req: Request, @Body() changeProfileDataBody: changeProfileDataBodyDto): Promise<Employee> {
@@ -97,6 +99,22 @@ export class EmployeeController {
   }
 
   @Get('/profile/photo')
+  @ApiOperation({ summary: 'Получить фото профиля текущего сотрудника' })
+  @ApiProduces('image/*')
+  @ApiResponse({
+    status: 200,
+    description: 'Фото профиля в бинарном формате',
+    content: {
+      'image/*': {
+        schema: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'Фото не найдено' })
+  @ApiBearerAuth()
   async getProfilePhoto(@Req() req: Request): Promise<StreamableFile> {
     try {
       const employeeId = (req as any).employee.employee_id

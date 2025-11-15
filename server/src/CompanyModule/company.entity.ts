@@ -20,7 +20,11 @@ export class Company {
   })
   company_name: string
 
-  @ApiProperty({ example: 'logo.png', nullable: true })
+  @ApiProperty({
+    example: 'logo.png',
+    nullable: true,
+    description: 'Логотип компании (имя файла)',
+  })
   @Column({ 
     type: 'varchar',
     length: 128,
@@ -28,13 +32,19 @@ export class Company {
   })
   company_logo: string
 
-  @ApiProperty({ type: () => [Employee] })
+  @ApiProperty({
+    type: () => [Employee],
+    description: 'Сотрудники компании',
+  })
   @OneToMany((type) => Employee, (employee) => employee.company, {
     cascade: true,
   })
   employees: Employee[]
 
-  @ApiProperty({ type: () => [Role] })
+  @ApiProperty({
+    type: () => [Role],
+    description: 'Роли, доступные в компании',
+  })
   @OneToMany((type) => Role, (role) => role.company, {
     cascade: true,
   })
@@ -46,7 +56,10 @@ export class Company {
   })
   skills: SkillShape[]
 
-  @ApiProperty({ type: () => [Team] })
+  @ApiProperty({
+    type: () => [Team],
+    description: 'Команды компании',
+  })
   @OneToMany((type) => Team, (team) => team.company, {
     cascade: true,
   })

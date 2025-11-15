@@ -6,16 +6,16 @@ import { Team } from 'src/TeamModule/team.entity'
 import { Employee } from './employee.entity';
 
 export class registerEmployeeBodyDto {
-  @ApiProperty({ example: 'Иван' })
+  @ApiProperty({ example: 'Иван', description: 'Имя сотрудника' })
   employee_name: string
 
-  @ApiProperty({ example: 'Иванов' })
+  @ApiProperty({ example: 'Иванов', description: 'Фамилия сотрудника' })
   employee_surname: string
 
-  @ApiProperty({ example: 'ivan@example.com' })
+  @ApiProperty({ example: 'ivan@example.com', description: 'Email сотрудника' })
   employee_email: string
 
-  @ApiProperty({ example: 'securePassword123' })
+  @ApiProperty({ example: 'StrongPassword123', description: 'Пароль сотрудника' })
   employee_password: string
 }
 

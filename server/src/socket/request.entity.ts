@@ -24,6 +24,11 @@ export class Request {
   })
   request_type: requestType
 
+  @ApiProperty({
+    example: "Недостаточно оснований для одобрения запроса",
+    description: "Обоснование или причина, указанная при обработке запроса",
+    required: false,
+  })
   @Column({
     type: 'text',
     nullable: true
