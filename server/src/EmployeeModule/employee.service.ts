@@ -244,7 +244,7 @@ export class EmployeeService {
       })
 
       if (candidate) {
-        throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь с таким email уже существует!')
       }
 
       const hashPassword = await bcrypt.hash(password, 3)
