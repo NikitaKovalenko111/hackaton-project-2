@@ -260,7 +260,15 @@ export class EmployeeService {
 
       const employeeData = new employeePayloadDto(employeeCurrent)
 
-      const tokens = this.tokenService.generateTokens(employeeData)
+
+      const tokens = this.tokenService.generateTokens({
+        employee_id: employeeData.employee_id,
+        employee_email: employeeData.employee_email,
+        employee_name: employeeData.employee_name,
+        employee_photo: employeeData.employee_photo,
+        employee_status: employeeData.employee_status,
+        employee_surname: employeeData.employee_surname
+      })
 
       await this.tokenService.saveToken(
         employeeData.employee_id,
