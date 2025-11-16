@@ -45,6 +45,17 @@ export class SkillService {
       if (!company) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
       }
+
+      const skillDb = await this.skillShapeRepository.findOne({
+        where: {
+          skill_name: skillName
+        }
+      })
+
+      if (skillDb) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, "Компетенция с таким названием уже существует!")
+      }
+
       const skill = new SkillShape({
         skill_name: skillName,
         skill_desc: skillDesc,
