@@ -19,6 +19,11 @@ export class cancelRequestDto {
   @ApiProperty({ example: 3, description: 'ID сотрудника, отменяющего запрос' })
   employee_id: number
 
+  @ApiProperty({
+    example: "Недостаточно компетенций",
+    description: "Обоснование действия",
+    required: false,
+})
   justification?: string
 }
 

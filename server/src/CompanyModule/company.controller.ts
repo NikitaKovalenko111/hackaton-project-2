@@ -18,6 +18,9 @@ import {
   ApiQuery,
   ApiParam,
   ApiOkResponse,
+  ApiBearerAuth,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { CompanyService } from './company.service'
 import { Company } from './company.entity'
@@ -39,6 +42,7 @@ import {
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import { CompanyEmployeeDto } from './company.dto';
 
+@ApiBearerAuth()
 @ApiTags('Company')
 @Controller('company')
 export class CompanyController {
@@ -84,6 +88,8 @@ export class CompanyController {
 
   @Get('/employees')
   @ApiQuery({ name: 'name', required: false, description: 'Фильтр по имени/фамилии' })
+  @ApiQuery({ name: 'surname', required: false, description: 'Фильтр по фамилии' })
+  @ApiQuery({ name: 'email', required: false, description: 'Фильтр по email' })
   @ApiOkResponse({
     description: 'Список сотрудников компании',
     type: [CompanyEmployeeDto],
@@ -119,7 +125,17 @@ export class CompanyController {
 
   @Get('/skills')
   @ApiOperation({ summary: 'Получить список форм навыков компании' })
-  @ApiResponse({ status: 200, type: [SkillShape], description: 'Список навыков компании' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    type: String,
+    description: 'Фильтр по названию навыка'
+  })
+  @ApiResponse({
+    status: 200,
+    type: [SkillShape],
+    description: 'Список навыков компании'
+  })
   async getCompanySkills(@Req() req: Request, @Query('name') skillName: string): Promise<SkillShape[]> {
     try {
       const employee = (req as any).employee
@@ -144,9 +160,10 @@ export class CompanyController {
   }
 
   @Post('/create')
-  @ApiOperation({ summary: 'Создать новую компанию' })
+  @ApiOperation({ summary: 'Создание новой компании' })
   @ApiBody({ type: createCompanyBodyDto })
-  @ApiResponse({ status: 201, type: Company, description: 'Созданная компания' })
+  @ApiResponse({ status: 201, description: 'Компания успешно создана' })
+  @ApiResponse({ status: 403, description: 'Нет прав для создания компании' })
   async createCompany(
     @Body() createCompanyBody: createCompanyBodyDto,
     @Req() req: Request,
@@ -307,8 +324,16 @@ export class CompanyController {
 
   @Get('/:companyId/teams')
   @ApiOperation({ summary: 'Получить все команды компании' })
+
+  @ApiQuery({ name: 'name', required: false, description: 'Название команды' })
+
+  @ApiQuery({ name: 'teamleadName', required: false, description: 'Имя тимлида' })
+  @ApiQuery({ name: 'teamleadSurname', required: false, description: 'Фамилия тимлида' })
   @ApiParam({ name: 'companyId', type: Number, description: 'ID компании' })
   @ApiResponse({ status: 200, type: [Team], description: 'Список команд' })
+
+  @ApiBadRequestResponse({ description: 'Некорректные параметры запроса' })
+  @ApiNotFoundResponse({ description: 'Компания не найдена' })
   async getAllCompanyTeams(
     @Param('companyId') companyId: number,
     @Query('name') teamName: string,

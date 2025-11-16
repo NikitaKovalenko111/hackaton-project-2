@@ -154,12 +154,14 @@ export class Employee {
   })
   answersOn: Answer[]
 
+  @ApiHideProperty()
   @OneToMany(() => Socket, (socket) => socket.employee, {
     cascade: true,
     onDelete: 'CASCADE'
   })
   sockets: Socket[]
 
+  @ApiHideProperty()
   @OneToMany(() => Notification, notification => notification.receiver, {
     cascade: true
   })
