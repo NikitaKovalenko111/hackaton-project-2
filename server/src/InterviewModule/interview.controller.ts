@@ -16,6 +16,9 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBody,
+  ApiOkResponse,
+  ApiBadRequestResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { NotificationService } from 'src/NotificationModule/notification.service'
 
@@ -28,6 +31,14 @@ export class InterviewController {
     private readonly employeeService: EmployeeService,
   ) {}
 
+  @ApiOperation({ summary: 'Создать интервью по email сотрудника' })
+  @ApiBody({ type: addInterviewByEmailBodyDto })
+  @ApiOkResponse({
+  description: 'Интервью успешно создано',
+  type: Interview,
+})
+  @ApiBadRequestResponse({ description: 'Некорректные данные запроса' })
+  @ApiNotFoundResponse({ description: 'Сотрудник с указанным email не найден' })
   @Post('/add/byEmail')
   async addInterviewByEmail(
     @Body() addInterviewByEmailBody: addInterviewByEmailBodyDto,
