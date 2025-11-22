@@ -5,10 +5,12 @@ import { NotificationService } from "./notification.service";
 import { Notification } from "./notification.entity";
 import { SocketGatewayModule } from "src/socket/socket.module";
 import { EmployeeModule } from "src/EmployeeModule/employee.module";
+import { InterviewModule } from "src/InterviewModule/interview.module";
 
 @Module({
   imports: [
     EmployeeModule,
+    InterviewModule,
     forwardRef(() => SocketGatewayModule),
     TypeOrmModule.forFeature([
       Notification,

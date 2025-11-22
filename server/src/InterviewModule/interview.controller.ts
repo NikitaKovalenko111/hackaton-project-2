@@ -6,27 +6,59 @@ import { SocketService } from 'src/socket/socket.service'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import {
   addInterviewBodyDto,
+  addInterviewByEmailBodyDto,
   cancelInterviewBodyDto,
   finishInterviewBodyDto,
 } from './interview.dto'
-import { clientType } from 'src/types'
+import { notificationType } from 'src/types'
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBody,
 } from '@nestjs/swagger';
+import { NotificationService } from 'src/NotificationModule/notification.service'
 
 @ApiTags('Interview')
 @Controller('interview')
 export class InterviewController {
   constructor(
-    private readonly socketGateway: SocketGateway,
-
     private readonly interviewService: InterviewService,
-    private readonly socketService: SocketService,
+    private readonly notificationService: NotificationService,
     private readonly employeeService: EmployeeService,
   ) {}
+
+  @Post('/add/byEmail')
+  async addInterviewByEmail(
+    @Body() addInterviewByEmailBody: addInterviewByEmailBodyDto,
+    @Req() req: Request,
+  ) {
+    try {
+      const employeeId = (req as any).employee.employee_id
+      const {
+        interview_subject,
+        interview_date,
+        interview_type,
+        interview_desc,
+      } = addInterviewByEmailBody
+      const interviewSubjectData =
+        await this.employeeService.getEmployeeByEmail(interview_subject)
+
+      const interviewData = await this.interviewService.addInterview(
+        interviewSubjectData,
+        interview_date,
+        interview_type,
+        interview_desc,
+        employeeId,
+      )
+
+      await this.notificationService.sendNotification(interviewData.interview_subject.employee_id, notificationType.NEW_INTERVIEW, interviewData, interviewData.interview_id)
+
+      return interviewData
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
 
   @Post('/add')
   @ApiOperation({ summary: 'Создать новое интервью для сотрудника' })
@@ -55,27 +87,7 @@ export class InterviewController {
         employeeId,
       )
 
-      const socketWeb =
-        await this.socketService.getSocketByEmployeeId(interviewSubjectData.employee_id)
-      const socketTg = await this.socketService.getSocketByEmployeeId(
-        interviewSubjectData.employee_id,
-        clientType.TELEGRAM,
-      )
-
-      if (!socketWeb && !socketTg) {
-        return interviewData
-      }
-
-      if (socketWeb) {
-        this.socketGateway.server
-          .to(socketWeb.client_id)
-          .emit('newInterview', interviewData)
-      }
-      if (socketTg) {
-        this.socketGateway.server
-          .to(socketTg.client_id)
-          .emit('newInterview', interviewData)
-      }
+      await this.notificationService.sendNotification(interviewData.interview_subject.employee_id, notificationType.NEW_INTERVIEW, interviewData, interviewData.interview_id)
 
       return interviewData
     } catch (error) {

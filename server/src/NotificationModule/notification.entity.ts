@@ -22,6 +22,11 @@ export class Notification {@ApiProperty({ example: 12, description: "ID увед
   })
   receiver: Employee
 
+  @Column({
+    type: 'int'
+  })
+  object_id: number
+
   @ApiProperty({ example: "2024-12-02 14:32:00", description: "Дата создания" })
   @CreateDateColumn({
     type: 'timestamp'

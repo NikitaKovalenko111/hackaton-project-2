@@ -7,6 +7,9 @@ import { clientType, notificationStatusType, notificationType } from "src/types"
 import { EmployeeService } from "src/EmployeeModule/employee.service";
 import { SocketService } from "src/socket/socket.service";
 import { SocketGateway } from "src/socket/socket.gateway";
+import { InterviewService } from "src/InterviewModule/interview.service";
+import { RequestService } from "src/socket/request.service";
+import { notificationDataDto } from "./notification.dto";
 
 @Injectable()
 export class NotificationService {
@@ -15,6 +18,8 @@ export class NotificationService {
     private notificationRepository: Repository<Notification>,
 
     private readonly employeeService: EmployeeService,
+    private readonly interviewService: InterviewService,
+    private readonly requestService: RequestService,
 
     @Inject(forwardRef(() => SocketService))
     private readonly socketService: SocketService,
@@ -23,9 +28,9 @@ export class NotificationService {
     private readonly socketGateway: SocketGateway
   ) {}
 
-  async getNotAppliedNotifications(employeeId: number): Promise<Notification[]> {
+  async getNotAppliedNotifications(employeeId: number): Promise<notificationDataDto[]> {
     try {
-      const notifications = await this.notificationRepository.find({
+      const notificationsData = await this.notificationRepository.find({
         where: {
           receiver: {
             employee_id: employeeId
@@ -36,6 +41,29 @@ export class NotificationService {
           receiver: true
         }
       })
+
+      const notifications: Array<notificationDataDto> = []
+
+      for (const el of notificationsData) {
+        if (el.notification_type == notificationType.INTERVIEW_CANCELLED 
+          || el.notification_type == notificationType.NEW_INTERVIEW) {
+          const object = await this.interviewService.getInterviewById(el.object_id)
+
+          notifications.push({
+            notification: el,
+            object: object
+          })
+        } else if (el.notification_type == notificationType.CANCELED_REQUEST 
+          || el.notification_type == notificationType.COMPLETED_REQUEST 
+          || el.notification_type == notificationType.NEW_REQUEST) {
+          const object = await this.requestService.getRequestById(el.object_id)
+
+          notifications.push({
+            notification: el,
+            object: object
+          })
+        }
+      }
 
       return notifications
     } catch (error) {
@@ -145,13 +173,14 @@ export class NotificationService {
     }
   }
 
-  async sendNotification(employeeId: number, notificationType: notificationType, data: any): Promise<Notification> {
+  async sendNotification(employeeId: number, notificationType: notificationType, data: any, objectId: number): Promise<Notification> {
     try {
       const employee = await this.employeeService.getEmployeeById(employeeId)
 
       const newNotification = new Notification({
         receiver: employee,
         notification_type: notificationType,
+        object_id: objectId
       })
 
       const notificationData = await this.notificationRepository.save(newNotification)

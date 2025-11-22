@@ -1,13 +1,12 @@
 import { Body, Controller, Get, HttpException, Post, Req } from "@nestjs/common";
 import { NotificationService } from "./notification.service";
 import { Notification } from "./notification.entity";
-import { applyNotificationBodyDto } from "./notification.dto";
+import { applyNotificationBodyDto, notificationDataDto } from "./notification.dto";
 import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
   ApiOkResponse,
-  ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiBody,
 } from "@nestjs/swagger";
@@ -23,7 +22,7 @@ export class NotificationController {
   @Get("/get/notApplied")
   @ApiOperation({ summary: "Получить все неприменённые уведомления" })
   @ApiOkResponse({ type: [Notification], description: "Список уведомлений" })
-  async getNotAppliedNotifications(@Req() request: Request): Promise<Notification[]> {
+  async getNotAppliedNotifications(@Req() request: Request): Promise<notificationDataDto[]> {
     try {
       const employeeId = (request as any).employee.employee_id
   

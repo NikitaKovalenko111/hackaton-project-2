@@ -111,6 +111,27 @@ export class EmployeeService {
     }
   }
 
+  async getEmployeeByEmail(email: string) {
+    try {
+      const employee = await this.employeeRepository.findOne({
+        where: {
+          employee_email: email
+        }
+      })
+
+      if (!employee) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь с таким Email не найден!')
+      }
+
+      return employee
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
   async getEmployee(employeeId: number) {
     try {
       const employee = await this.employeeRepository.findOne({

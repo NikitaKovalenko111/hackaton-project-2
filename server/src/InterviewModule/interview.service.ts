@@ -20,6 +20,27 @@ export class InterviewService {
     private employeeService: EmployeeService,
   ) {}
 
+  async getInterviewById(id: number): Promise<Interview> {
+    try { 
+      const interview = await this.interviewRepository.findOne({
+        where: {
+          interview_id: id
+        }
+      })
+  
+      if (!interview) {
+        throw new ApiError(HttpStatus.NOT_FOUND, "Собеседование не найдено!")
+      }
+
+      return interview
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
   async addInterview(
     interviewSubject: Employee,
     interviewDate: Date,

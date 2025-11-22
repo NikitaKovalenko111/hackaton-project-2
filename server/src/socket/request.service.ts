@@ -26,6 +26,27 @@ export class RequestService {
     private skillService: SkillService,
   ) {}
 
+  async getRequestById(id: number): Promise<Request> {
+    try {
+      const request = await this.requestRepository.findOne({
+        where: {
+          request_id: id
+        }
+      })
+  
+      if (!request) {
+        throw new ApiError(HttpStatus.NOT_FOUND, "Заявка не найдена!")
+      }
+  
+      return request
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
   async saveSocket(socketId: string, employeeId: number): Promise<Socket> {
     const employee = await this.employeeService.getEmployee(employeeId)
 
