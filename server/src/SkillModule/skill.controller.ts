@@ -120,9 +120,41 @@ export class SkillController {
     type: [SkillOrder],
     description: 'Список найденных заданий для формы навыка',
   })
-  async getSkillOrderByShape(@Param('skillShapeName') skillShapeName: string[], @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrderByShape(@Param('skillShapeName') skillShapeName: string, @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
     try {
       const skillOrders = await this.skillService.getSkillOrdersByShape(skillShapeName, skillLevel)
+
+      return skillOrders
+    } catch (error) {
+      throw new HttpException(error.message, error.status)
+    }
+  }
+
+  @Get('/skillOrder/get')
+  @ApiOperation({
+    summary: 'Получить задания для формы навыка',
+    description:
+      'Возвращает список всех заданий (orders) для указанного SkillShape. Можно фильтровать по уровню навыка.',
+  })
+  @ApiQuery({
+    name: 'skillLevel',
+    enum: skillLevel,
+    required: false,
+    description: 'Фильтр по уровню навыка (опционально)',
+  })
+  @ApiQuery({
+    name: 'skillShapeName',
+    required: true,
+    description: 'Фильтр по названию (опционально)',
+  })
+  @ApiResponse({
+    status: 200,
+    type: [SkillOrder],
+    description: 'Список найденных заданий для формы навыка',
+  })
+  async getSkillOrderByShapeNames(@Query('skillShapeName') skillShapeName: string[], @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
+    try {
+      const skillOrders = await this.skillService.getSkillOrdersByShapeNames(skillShapeName, skillLevel)
 
       return skillOrders
     } catch (error) {
