@@ -98,16 +98,16 @@ export class SkillController {
     }
   }
 
-  @Get('/skillOrder/get/:skillShapeId')
+  @Get('/skillOrder/get/:skillShapeName')
   @ApiOperation({
     summary: 'Получить задания для формы навыка',
     description:
       'Возвращает список всех заданий (orders) для указанного SkillShape. Можно фильтровать по уровню навыка.',
   })
   @ApiParam({
-    name: 'skillShapeId',
+    name: 'skillShapeName',
     example: 3,
-    description: 'ID формы навыка (SkillShape)',
+    description: 'Name формы навыка (SkillShape)',
   })
   @ApiQuery({
     name: 'skillLevel',
