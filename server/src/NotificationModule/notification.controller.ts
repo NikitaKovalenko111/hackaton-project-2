@@ -21,7 +21,7 @@ export class NotificationController {
 
   @Get("/get/notApplied")
   @ApiOperation({ summary: "Получить все неприменённые уведомления" })
-  @ApiOkResponse({ type: [Notification], description: "Список уведомлений" })
+  @ApiOkResponse({ type: [notificationDataDto], description: "Список уведомлений" })
   async getNotAppliedNotifications(@Req() request: Request): Promise<notificationDataDto[]> {
     try {
       const employeeId = (request as any).employee.employee_id

@@ -22,6 +22,10 @@ export class Notification {@ApiProperty({ example: 12, description: "ID увед
   })
   receiver: Employee
 
+  @ApiProperty({
+    example: 12,
+    description: 'ID объекта, связанного с уведомлением',
+  })
   @Column({
     type: 'int'
   })
