@@ -120,9 +120,9 @@ export class SkillController {
     type: [SkillOrder],
     description: 'Список найденных заданий для формы навыка',
   })
-  async getSkillOrderByShape(@Param('skillShapeId') skillShapeId: number, @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrderByShape(@Param('skillShapeName') skillShapeName: string, @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
     try {
-      const skillOrders = await this.skillService.getSkillOrdersByShape(skillShapeId, skillLevel)
+      const skillOrders = await this.skillService.getSkillOrdersByShape(skillShapeName, skillLevel)
 
       return skillOrders
     } catch (error) {

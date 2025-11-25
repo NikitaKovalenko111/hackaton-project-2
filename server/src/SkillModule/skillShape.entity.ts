@@ -29,7 +29,7 @@ export class SkillShape {
   })
   skills: Skill[]
 
-@ApiProperty({ type: () => [SkillOrder], description: 'Порядок развития навыка по уровням' })
+  @ApiProperty({ type: () => [SkillOrder], description: 'Порядок развития навыка по уровням' })
   @OneToMany(() => SkillOrder, skillOrder => skillOrder.skill_shape, {
     cascade: true
   })
@@ -38,7 +38,8 @@ export class SkillShape {
   @ApiProperty({ example: 'TypeScript', description: 'Название навыка' })
   @Column({
     type: 'varchar',
-    length: '96'
+    length: '96',
+    unique: true
   })
   skill_name: string
 

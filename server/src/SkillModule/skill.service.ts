@@ -109,11 +109,11 @@ export class SkillService {
     }
   }
 
-  async getSkillOrdersByShape(skillShapeId: number, skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrdersByShape(skillShapeName: string, skillLevel?: skillLevel): Promise<SkillOrder[]> {
     const skillOrders = await this.skillOrderRepository.find({
       where: {
         skill_shape: {
-          skill_shape_id: skillShapeId
+          skill_name: skillShapeName
         },
         skill_level: skillLevel
       },
