@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import { SkillShape } from './skillShape.entity'
-import { Repository } from 'typeorm'
+import { In, Repository } from 'typeorm'
 import { Skill } from './skill.entity'
 import { Company } from 'src/CompanyModule/company.entity'
 import { skillLevel } from 'src/types'
@@ -109,11 +109,11 @@ export class SkillService {
     }
   }
 
-  async getSkillOrdersByShape(skillShapeName: string, skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrdersByShape(skillShapeName: string[], skillLevel?: skillLevel): Promise<SkillOrder[]> {
     const skillOrders = await this.skillOrderRepository.find({
       where: {
         skill_shape: {
-          skill_name: skillShapeName
+          skill_name: In(skillShapeName)
         },
         skill_level: skillLevel
       },
