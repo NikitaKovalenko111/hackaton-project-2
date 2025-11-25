@@ -11,7 +11,7 @@ export class AIController {
   @Post('/get/plan')
   async getUpgradePlan(@Body() getUpgradePlanBody: getUpgradePlanBodyDto): Promise<aiResponse> {
     const { skill_shape_id, skill_level } = getUpgradePlanBody
-    
+
     const response = await this.aiService.getPlan(skill_shape_id, skill_level)
 
     return response
