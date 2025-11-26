@@ -8,6 +8,8 @@ import {
   Patch,
   Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common'
 import { SkillService } from './skill.service'
 import { Skill } from './skill.entity'
@@ -131,6 +133,7 @@ export class SkillController {
   }
 
   @Get('/skillOrder/get')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @ApiOperation({
     summary: 'Получить задания для формы навыка',
     description:
