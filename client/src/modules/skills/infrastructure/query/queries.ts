@@ -21,7 +21,7 @@ export const useGetSkill = (id: number) => {
 export const useGetSkillOrders = (skillNames: string[]) => {
 
     return useQuery({
-        queryKey: ['skill_orders'],
+        queryKey: ['skill-orders'],
         queryFn: () => getSkillOrders(skillNames),
         enabled: false
     })

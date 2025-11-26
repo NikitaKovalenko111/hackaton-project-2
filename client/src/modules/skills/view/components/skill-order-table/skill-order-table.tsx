@@ -36,6 +36,7 @@ import { ConfirmDeletionOfTeam } from "../../ui/confirm-delete/confirm-delete";
 import { Option } from "@/components/ui/multi-select";
 import { useGetCompanySkills } from "@/modules/skills/infrastructure/query/queries";
 import MultipleSelectWithPlaceholderDemo from "../../ui/select-skill/select-skill";
+import { CreateOrder } from "../create-order/create-order";
 const Cookies = require("js-cookie")
 
 
@@ -52,6 +53,7 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
     const [openCreateDialog, setOpenCreateDialog] = React.useState<boolean>(false)
     const [skillId, setSkillId] = React.useState<number>(0)
     const [openConfirmDelete, setOpenConfirmDelete] = React.useState<boolean>(false)
+    const [skills, setSkills] = React.useState<{skill_shape_id: number, skill_name: string}[]>([])
 
     
     const handleOpenConfirmDeleteDialog = (employeeId: number) => {
@@ -76,6 +78,10 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
     const [categories, setCategories] = React.useState<Option[] | null>(null)
     const {data: skillsData, refetch, isSuccess} = useGetCompanySkills(false)
 
+    React.useEffect(() => {
+        console.log(openCreateDialog)
+    }, [openCreateDialog])
+
     React.useEffect(() => {}, [categories])
 
     React.useEffect(() => {
@@ -87,7 +93,13 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
                 value: skillData.skill_name
             })) as Option[]
 
+            const skillsNeeded = skillsData.map((skillData) => ({
+                skill_shape_id: skillData.skill_shape_id,
+                skill_name: skillData.skill_name
+            }))
+
             setCategories(newSkills)
+            setSkills(skillsNeeded)
         }
         
     }, [isSuccess])
@@ -278,10 +290,14 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
                     </div>
                 </div>
                 {/* <CreateSkill handleCloseDialog={handleCloseCreateDialog} companyId={companyId!} /> */}
+                {openCreateDialog && <CreateOrder skills={skills} handleCloseDialog={handleCloseCreateDialog} companyId={companyId || -1} />}
             </Dialog>
             <Dialog open={openConfirmDelete} onOpenChange={handleCloseConfirmDeleteDialog}>
                 {openConfirmDelete && <ConfirmDeletionOfTeam handleClose={handleCloseConfirmDeleteDialog} skillId={skillId} />}
             </Dialog>
+            {/* <Dialog open={openConfirmDelete} onOpenChange={handleCloseConfirmDeleteDialog}>
+                {openConfirmDelete && <CreateOrder handleCloseDialog={handleCloseCreateDialog} companyId={companyId || -1} />}
+            </Dialog> */}
         </div>
     );
 }

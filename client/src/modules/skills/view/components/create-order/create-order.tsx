@@ -5,10 +5,12 @@ import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHead
 import { Field, FieldError, FieldLabel, FieldSet } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { CreateSkillDTO, Orders } from "@/modules/skills/domain/skills.types"
-import { useCreateSkill } from "@/modules/skills/infrastructure/query/mutations"
+import { CreateSkillDTO, Orders, SkillLevel } from "@/modules/skills/domain/skills.types"
+import { useCreateSkill, useCreateSkillOrder } from "@/modules/skills/infrastructure/query/mutations"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { MinusIcon, PlusIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import z from "zod"
@@ -19,35 +21,95 @@ import z from "zod"
 //     company_id: z.number()
 // })
 
-export const CreateSkill = ({
+interface Skill {
+    skill_shape_id: number
+    skill_name: string
+}
+
+export const CreateOrder = ({
     companyId,
-    handleCloseDialog
+    handleCloseDialog,
+    skills
 }: {
     companyId: number,
-    handleCloseDialog: () => void
+    handleCloseDialog: () => void,
+    skills: Skill[]
 }) => {
 
+    const {mutate} = useCreateSkillOrder()
+
+    const [skillId, setSkillId] = useState<number | null>(null)
+    const [level, setLevel] = useState<SkillLevel | ''>('')
     const [countOrders, setCountOrders] = useState<number>(1)
     const [orders, setOrders] = useState<Orders[]>([{
         order_text: ''
     }])
+    const [orderTexts, setOrderTexts] = useState<string[]>([])
+    const [isOrdersEmpty, setIsOrdersEmpty] = useState<boolean>(false)
 
-    const getOrders = () => {
-        for (let i = 0; i < countOrders; i++) {
+    const handleAddCount = () => {
+        setCountOrders(prev => prev + 1)
+        setOrders(prev => [...prev, {order_text: ''}])
+        setOrderTexts(prev => [...prev, ''])
+    }
+
+    const handleMinusCount = () => {
+        setCountOrders(prev => prev == 1 ? prev : prev - 1)
+        setOrders(prev => prev.slice(0, countOrders))
+        setOrderTexts(prev => prev.slice(0, countOrders))
+    }
+
+    const handleLevelChange = (val: SkillLevel) => {
+        setLevel(val)
+    }
+
+    // useEffect(() => {
+    //     console.log(orders)
+    // }, [])
+
+    // useEffect(() => {
+    //     for (let i = 0; i < countOrders; i++) {
+    //         if (!orders[i].order_text) {
+                
+    //             setIsOrdersEmpty(true)
+    //             return
+    //         }
+    //     }
+    //     setIsOrdersEmpty(false)
+    // }, [orderTexts])
+
+    const handleOrdersTextChange = (i: number, text: string) => {
+        setOrders(prev => prev.map((item, id) => id == i ? {
+            order_text: text
+        } : item))
+        setOrderTexts(prev => prev.map((val, id) => id == i ? text : val))
+    }
+
+    const onSubmit = () => {
+        mutate({
+            orders,
+            skill_level: level as SkillLevel,
+            skill_shape_id: skillId as number
+        })
+    }
+
+    const getOrders = (countOrders: number) => {
+            const arr = new Array(countOrders).fill(0)
             return (
-                <div>
-                    <FieldLabel htmlFor={`order_${i+1}`}>Критерий</FieldLabel>
-                    <Textarea 
-                        placeholder="Введите описание критерия"
-                        autoComplete="off"
-                        value={orders[i].order_text}
-                        onChange={(e) => setOrders(prev => prev.map((item, id) => id == i ? {
-                            order_text: e.target.value
-                        } : item))}
-                    />
-                </div>
+                <>
+                    {arr.map((item, i) => (
+                        <div key={i} className="mb-2">
+                            <FieldLabel htmlFor={`order_${i+1}`}>Критерий</FieldLabel>
+                            <Textarea 
+                                placeholder="Введите описание критерия"
+                                autoComplete="off"
+                                value={orders[i].order_text}
+                                onChange={(e) => handleOrdersTextChange(i, e.target.value)}
+                            />
+                        </div>
+                    ))}
+                </>
             )
-        }
     }
 
     // const {
@@ -90,51 +152,78 @@ export const CreateSkill = ({
             </DialogHeader>
             <FieldSet className="grid gap-4">
                 <form id="create-order" >
-                    {getOrders()}
-                    {/* <Controller 
-                        name="skill_name"
-                        control={control}
-                        render={({field, fieldState}) => (
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="name">Название</FieldLabel>
-                            <Input
-                                {...field}
-                                id="name"
-                                type="name"
-                                placeholder="Введите название"
-                                aria-invalid={fieldState.invalid}
-                                autoComplete="off"
-                                value={field.value}
-                            />
-                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
-                        )}
-                    />
-                    <Controller 
-                        name="skill_desc"
-                        control={control}
-                        render={({field, fieldState}) => (
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="desc">Описание</FieldLabel>
-                            <Textarea
-                                {...field}
-                                id="desc"
-                                placeholder="Введите описание"
-                                aria-invalid={fieldState.invalid}
-                                autoComplete="off"
-                                value={field.value}
-                            />
-                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
-                        )}
-                    /> */}
+                    <div className="mb-2">
+                        <Select
+                            onValueChange={(val) => setSkillId(Number(val))}
+                        >
+                            <Label>Компетенция</Label>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Компетенция" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Компетенция</SelectLabel>
+                                    {skills.map((skill, id) => (
+                                        <SelectItem key={id} value={String(skill.skill_shape_id)}>{skill.skill_name}</SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="mb-2">
+                        <Select
+                            onValueChange={(val) => handleLevelChange(val as SkillLevel)}
+                        >
+                            <Label>Уровень</Label>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Уровень" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Уровень компетенции</SelectLabel>
+                                    <SelectItem value="junior">Junior</SelectItem>
+                                    <SelectItem value="junior+">Junior+</SelectItem>
+                                    <SelectItem value="middle">Middle</SelectItem>
+                                    <SelectItem value="middle+">Middle+</SelectItem>
+                                    <SelectItem value="senior">Senior</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    {getOrders(countOrders)}
                 </form>
             </FieldSet>
-            <DialogFooter>
+            <DialogFooter className="relative">
+                <div className="absolute left-0 flex gap-2">
+                    <Button 
+                        variant='outline' 
+                        size='icon'
+                        onClick={() => handleMinusCount()}
+                    >
+                        <MinusIcon />
+                    </Button>
+                    <Button 
+                        variant='outline' 
+                        size='icon'
+                        onClick={() => handleAddCount()}
+                    >
+                        <PlusIcon />
+                    </Button>
+                </div>
                 <DialogClose asChild>
                     <Button variant="outline">Отмена</Button>
                 </DialogClose>
-                <Button type="submit" form="create-skill">Добавить</Button>
+                <Button 
+                    onClick={() => {
+                        onSubmit()
+                        handleCloseDialog()
+                    }} 
+                    disabled={isOrdersEmpty || !level} 
+                    type="submit" 
+                    form="create-skill"
+                >
+                    Добавить
+                </Button>
             </DialogFooter>
         </DialogContent>
     )
