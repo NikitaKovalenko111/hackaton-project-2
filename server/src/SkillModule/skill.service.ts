@@ -304,27 +304,45 @@ export class SkillService {
   }
 
   async addSkillOrders(skillShapeId: number, skillLevel: skillLevel, orders: skillOrder[]): Promise<SkillOrder[]> {
-    const skillShape = await this.skillShapeRepository.findOne({
-      where: {
-        skill_shape_id: skillShapeId
-      }
-    })
-
-    if (!skillShape) {
-      throw new ApiError(HttpStatus.NOT_FOUND, 'Компетенция не найдена!')
-    }
-
-    const ordersArray = orders.map(order => {
-      return new SkillOrder({
-        skill_level: skillLevel,
-        skill_shape: skillShape,
-        order_text: order.order_text
+    try {
+      const skillShape = await this.skillShapeRepository.findOne({
+        where: {
+          skill_shape_id: skillShapeId
+        }
       })
-    })
-
-    const ordersData = await this.skillOrderRepository.save(ordersArray)
-
-    return ordersData
+  
+      if (!skillShape) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Компетенция не найдена!')
+      }
+  
+      const skillOrderDb = await this.getSkillOrdersByShape(skillShape.skill_name, skillLevel)
+      const texts = skillOrderDb.map(el => el.order_text)
+  
+      for (let i = 0; i < orders.length; i++) {
+        const element = orders[i];
+        
+        if (texts.includes(element.order_text)) {
+          throw new ApiError(HttpStatus.BAD_REQUEST, "Такой навык уже существует!")
+        }
+      }
+  
+      const ordersArray = orders.map(order => {
+        return new SkillOrder({
+          skill_level: skillLevel,
+          skill_shape: skillShape,
+          order_text: order.order_text
+        })
+      })
+  
+      const ordersData = await this.skillOrderRepository.save(ordersArray)
+  
+      return ordersData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
   }
 
   async getSkillShapeById(skillShapeId: number): Promise<SkillShape> {
