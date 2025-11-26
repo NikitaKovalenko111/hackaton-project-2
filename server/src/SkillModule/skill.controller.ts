@@ -133,7 +133,6 @@ export class SkillController {
   }
 
   @Get('/skillOrder/get')
-  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @ApiOperation({
     summary: 'Получить задания для формы навыка',
     description:
@@ -155,9 +154,15 @@ export class SkillController {
     type: [SkillOrder],
     description: 'Список найденных заданий для формы навыка',
   })
-  async getSkillOrderByShapeNames(@Query('skillShapeName') skillShapeName: string[], @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrderByShapeNames(@Query('skillShapeName') skillShapeName: string[] | string, @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
     try {
-      const skillOrders = await this.skillService.getSkillOrdersByShapeNames(skillShapeName, skillLevel)
+      let names = skillShapeName as string[]
+
+      if (typeof skillShapeName == typeof "") {
+        names = [skillShapeName as string]
+      }
+
+      const skillOrders = await this.skillService.getSkillOrdersByShapeNames(names, skillLevel)
 
       return skillOrders
     } catch (error) {
