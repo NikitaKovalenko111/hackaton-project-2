@@ -2,12 +2,11 @@
 
 import { Button } from "@/components/ui/button"
 import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useDeleteEmployee } from "@/modules/employees/infrastructure/query/mutations"
-import { useDeleteTeam } from "@/modules/teams/infrastructure/query/mutations"
+import { useRemoveSkillFromCompany } from "@/modules/skills/infrastructure/query/mutations"
 
 export const ConfirmDeletionOfTeam = ({skillId, handleClose}: {skillId: number, handleClose: () => void}) => {
 
-    const {mutate} = useDeleteEmployee()
+    const {mutate} = useRemoveSkillFromCompany()
 
     return (
         <DialogContent className="animate-appear">
