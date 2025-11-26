@@ -1,131 +1,158 @@
-# Проект: Платформа оценки и развития компетенций сотрудников
+Assessment of Professional Competence (APC)
+Краткий питч:
+APC — прототип веб-платформы + Telegram-бот, созданный для хакатона. Помогает HR и тимлидам быстро и объективно оценивать компетенции сотрудников, выявлять пробелы в навыках и формировать команды под проектные задачи.
+Оглавление
+1.	Описание
+2.	Проблема и решение
+3.	Ключевые функции
+4.	Как это работает (E2E)
+5.	Типы компетенций и тестов
+6.	ИИ-модуль (планы)
+7.	Уникальность проекта
+8.	Описание интерфейсов (текст)
+9.	Технологический стек
+10.	Локальный запуск (для разработчика)
+11.	Переменные окружения (.env)
+12.	Команды проекта (корень)
+13.	Troubleshooting
+14.	Команда и контакты
+15.	Roadmap
 
-## 1. Описание проекта
+1. Описание
+APC — единая платформа для учёта, оценки и развития профессиональных компетенций внутри компании. Интеграция с Telegram-ботом даёт мгновенные уведомления и упрощает коммуникацию.
 
-Платформа помогает компаниям быстро и эффективно выявлять профессиональные компетенции сотрудников, отслеживать их рост и формировать команды под задачи. Система объединяет:
+2. Проблема и решение
+Проблемы:
+•	Отсутствует единая система учёта компетенций;
+•	Ручная обработка заявок и сбор обратной связи отнимают много времени;
+•	Трудно объективно оценивать soft skills и быстро подбирать команду.
+Решение:
+APC объединяет регистрацию компании, peer-review, тестирование, процесс повышения квалификации и уведомления в одном инструменте. ИИ-модуль даёт краткие сводки по повторяющимся паттернам ревью.
 
-* управление структурой компании;
-* автоматизированное ревью сотрудников;
-* анализ soft и hard skills;
-* процесс повышения квалификации;
-* рекомендации от ИИ и удобную отчетность для руководства.
+3. Ключевые функции
+•	Регистрация компании, структура отделов и команд.
+•	Управление компетенциями (hard/soft) и уровнями владения.
+•	Заявки на повышение: фильтровочный тест → тимлид → испытание → обновление компетенции.
+•	Peer-review по расписанию (вопросы настраивает компания).
+•	История тестов и собеседований.
+•	Telegram-бот: уведомления, напоминания, быстрый доступ к статусам.
+•	ИИ-сводки и рекомендации (планы).
 
-## 2. Для кого проект
+4. Как это работает (E2E)
+1.	HR регистрирует компанию, создаёт отделы/команды и добавляет сотрудников.
+2.	Компания настраивает список компетенций и уровни (например: Java — junior/middle/senior).
+3.	Сотрудник подаёт заявку на повышение — проходит фильтровочный тест.
+4.	При успехе заявка уходит тимлиду — тимлид назначает испытание (собес/кейс/практика).
+5.	По успеху компетенция обновляется в профиле сотрудника.
+6.	В заданные интервалы запускается peer-review — коллеги оценивают друг друга.
+7.	ИИ агрегирует паттерны из ревью и даёт краткую сводку для HR/тимлида.
+8.	Telegram-бот оповещает участника на каждом важном шаге.
 
-* HR‑отделы — для контроля компетенций и формирования команд.
-* Тимлиды — для оценки сотрудников и повышения их уровня.
-* Сотрудники — для прохождения ревью и прокачки своих навыков.
-* Руководство — для стратегического анализа компетенций внутри компании.
+5. Типы компетенций и тестов
+Компетенции:
+•	Hard skills: языки, фреймворки, базы данных, DevOps.
+•	Soft skills: коммуникация, ответственность, управление временем и т.д.
+•	Уровни владения задаются для каждой компетенции отдельно.
+Типы заданий:
+•	Автоматические технические тесты.
+•	Кейс-задачи.
+•	Интервью (tech / soft / HR).
+•	Peer-review анкеты.
+•	Практические задания с оценкой тимлида.
 
-## 3. Основные возможности
+6. ИИ-модуль (планы)
+ИИ агрегирует текстовые ответы ревью и выделяет повторяющиеся паттерны (например, «часто отмечают грубость» → вывод: низкие коммуникативные навыки). ИИ даёт рекомендации, но не заменяет человеческую проверку — всегда сохраняются оригинальные ответы.
 
-### 3.1 Регистрация и структура компании
+7. Уникальность проекта
+•	Объединяет peer-review + тестирование + процесс повышения в одной системе.
+•	Уведомления в Telegram — привычный канал для сотрудников.
+•	Гибкая настройка вопросов и регламентов под культуру компании.
+•	ИИ-поддержка для быстрой аналитики.
+•	Лёгкая масштабируемость и локализация.
 
-HR создаёт компанию, делит её на отделы и команды, назначает тимлидов и добавляет сотрудников.
+8. Описание интерфейсов (кратко, текст)
+•	Профиль сотрудника: компетенции, уровень владения, история повышения, ИИ-сводка.
+•	Дашборд HR: сводные метрики, список заявок, фильтры по навыкам.
+•	Интерфейс тимлида: кандидаты на повышение, назначение испытаний, просмотр ревью.
+•	Telegram-бот: карточки уведомлений, команды для проверки статуса, напоминания.
 
-### 3.2 Повышение квалификации
+9. Технологический стек
+•	Frontend: React, Next.js, TypeScript
+•	Backend: NestJS, Node.js, TypeScript, Socket.io
+•	DB: PostgreSQL
+•	Bot: Telegraf (Telegram)
+•	Утилита для запуска в корне: concurrently
 
-1. Сотрудник подает заявку.
-2. Проходит фильтровочный тест.
-3. Тимлид проводит испытание: интервью, практическое задание и др.
-4. После успешного прохождения в систему добавляются компетенции сотрудника.
+10. Локальный запуск (для любого разработчика)
+Требования
+•	Node.js v18+ (рекомендуется)
+•	npm (в комплекте с Node)
+•	PostgreSQL (локально или внешняя база)
+•	Git
+Пошагово (корень репозитория)
+1.	Клонируйте репозиторий:
+git clone <repository-url>
+cd <project-folder>
+2.	Установите зависимости:
+npm install         # установит зависимости в корне (concurrently и пр.)
+npm run install     # установит зависимости в ./server и ./client
+3.	Создайте и заполните .env-файлы (см. раздел 11).
+4.	Сбилдите проект:
+npm run build
+5.	Запустите в production-режиме:
+npm run start:prod
+Для разработки (dev):
+npm run start:dev
+Это запустит одновременно backend (dev) и frontend (dev).
 
-### 3.3 Ревью
+11. Переменные окружения (.env)
+Backend (server/.env)
+DB_HOST=<Database host>
+DB_PORT=<Database port>
+DB_USERNAME=<Database username>
+DB_PASSWORD=<Database password>
+DB_NAME=<Database name>
 
-Компания выбирает период проведения ревью. Сотрудники оценивают коллег, с которыми работали.
+JWT_ACCESS_SECRET=<JWT secret key for access token>
+JWT_REFRESH_SECRET=<JWT secret key for refresh token>
 
-Результатом являются:
+GIGACHAT_AUTHORIZATION_KEY=<Auth key for gigachat>
+FRONTEND_ORIGIN=<Frontend origin>
+Помести этот файл в server/.env.
+Frontend (client/.env.local)
+NEXT_PUBLIC_BACKEND_API=<backend origin url>     # например: http://localhost:4000/api
+NEXT_PUBLIC_SOCKET_URL=<backend socket origin url> # например: ws://localhost:4000
+Помести этот файл в client/.env.local.
 
-* Soft skills оценки
-* Hard skills оценки (если компания создало такие вопросы)
+12. Команды (корневые скрипты)
+(имена команд соответствуют тому, что дал Никита)
+•	npm run install — установить зависимости в client и server.
+•	npm run build — собрать клиент и сервер.
+•	npm run build:client / npm run build:server — собрать отдельно.
+•	npm run start:prod — запустить backend в prod и frontend в start.
+•	npm run start:dev — запустить backend dev + frontend dev.
+•	npm run test — запустить тесты (сервер).
+•	npm run format:server — форматирование кода сервера.
 
-### 3.4 Поиск компетенций
+13. Troubleshooting (частые проблемы)
+•	DB connection refused — проверьте значения DB_* в server/.env и доступность PostgreSQL.
+•	Port already in use — убедитесь, что порты backend/frontend свободны.
+•	Missing env var — приложение аварийно завершается с сообщением; проверьте наличие всех переменных.
+•	Frontend не видит API — проверьте NEXT_PUBLIC_BACKEND_API и CORS (FRONTEND_ORIGIN в backend).
+•	WebSocket не подключается — проверьте NEXT_PUBLIC_SOCKET_URL и настройку Socket.io в backend.
+•	Для детальной диагностики запускайте сервисы по отдельности:
+o	cd server && npm run start:dev
+o	cd client && npm run dev
 
-При необходимости собрать команду под проект, руководство открывает карточки сотрудников и видит:
+14. Команда
+•	Идель — Frontend
+•	Никита — Backend
+•	Самир — Системный аналитик
+•	Радмир — Telegram-бот, Python
+•	Аскар — Python разработчик
+•	Денис — Аналитика данных
 
-* релевантные hard skills;
-* показатели soft skills;
-* историю повышения квалификации;
-* уровень владения языками (junior/middle/senior — как уровень языка, а не сотрудника).
-
-### 3.5 Роль ИИ
-
-ИИ анализирует ревью и дополняет выводы человеческой оценки:
-
-* выявляет повторяющиеся социальные паттерны (например: «часто отмечают грубость»);
-* аккуратно формулирует вероятные слабые места (например: «возможно, не всегда соблюдает сроки»);
-* предлагает рекомендации по распределению сотрудников: кому лучше одиночные задачи, кому командные.
-
-ИИ не заменяет ревью, а обобщает статистику, чтобы экономить время руководства.
-
-## 4. Сценарий использования (кейс)
-
-### Кейс: «Оценка профессиональных компетенций сотрудника»
-
-1. Сотрудник подает заявку на повышение.
-2. Проходит фильтровочный тест.
-3. Тимлид проводит мини‑собеседование.
-4. Вносятся новые компетенции (языки, технологии, уровень владения).
-5. В конце месяца проходит ревью.
-6. ИИ обобщает результаты.
-7. Руководство формирует команду под проект на основе компетенций.
-
-## 5. Преимущества
-
-* Быстрое выявление сильных и слабых сторон компании.
-* Экономия времени HR и тимлидов.
-* Прозрачная система оценки.
-* Минимизация человеческих ошибок при ревью.
-* Подбор команд за минуты.
-* Возможность улучшать внутренние процессы обучения.
-
-## 6. Техническая информация
-
-*(Здесь будут схемы архитектуры — заглушка)*
-
-## 7. Дополнительные возможности
-
-* локализация на различные языки;
-* среда для собеседований;
-* встроенные чаты;
-* система апелляций результатов ревью.
-
--------------------------------------------------------------------------------
-
-# Project: A platform for evaluating and developing employee competencies
-## 1. Project Description
-The platform helps companies to quickly and effectively identify the professional competencies of employees, track their growth and form teams for tasks. The system combines:
-* management of the company structure;
-* automated employee review;
-* soft and hard skills analysis;
-* The professional development process;
-* Recommendations from AI and convenient reporting for management.
-## 2. Who is the project for?
-* HR departments ‑ for competence control and team building.
-* Team leaders — to evaluate employees and raise their level.
-* Employees — to complete the review and upgrade their skills.
-* Management — for strategic analysis of competencies within the company.
-## 3. Main features
-### 3.1 Registration and company structure
-HR creates a company, divides it into departments and teams, appoints team leaders and adds employees.
-### 3.2 Professional development
-1. An employee submits an application.
-2. Passes the filtration test.
-3. The team leader conducts a test: an interview, a practical assignment, etc.
-4. After successful completion, the employee's competencies are added to the system.
-### 3.3 Review
-The company chooses the review period. Employees evaluate the colleagues they have worked with.
-The results are:
-* Soft skills assessments
-* Hard skills assessments (if the company has created such questions)
-### 3.4 Competence Search
-If necessary, assemble a team for the project, the management opens the employee cards and sees:
-* relevant hard skills;
-* soft skills indicators;
-* the history of professional development;
-* Language proficiency level (junior/middle/senior — as the language level, not the employee's).
-### 3.5 The role of AI
-AI analyzes the review and complements the conclusions of the human assessment:
-* identifies recurring social patterns (for example: "rudeness is often noted");
-* accurately articulates possible weaknesses (for example: "he may not always meet deadlines");
-* offers recommendations on the allocation of employees: who is better off with single tasks,
+15. Roadmap
+•	MVP: регистрация, управление компетенциями, заявки, тесты, ревью, Telegram-уведомления.
+•	Ближайшее: ИИ-анализ ревью, отчёты и дашборды.
+•	Дальше: локализация, внутренняя среда для собеседований, интерактивные комнаты, расширенная аналитика.
