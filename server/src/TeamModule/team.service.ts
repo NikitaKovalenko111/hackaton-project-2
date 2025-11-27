@@ -47,6 +47,23 @@ export class TeamService {
     return teamData
   }
 
+  async getTeamsByCompany(companyId: number): Promise<Team[]> {
+    const teams = await this.teamRepository.find({
+      where: {
+        company: {
+          company_id: companyId
+        }
+      },
+      relations: {
+        employees: {
+          role: true
+        }
+      }
+    })
+
+    return teams
+  }
+
   async addTeam(
     companyId: number,
     teamName: string,
@@ -100,16 +117,6 @@ export class TeamService {
       }
 
       employee.team = team
-      /*const history: Employee[] = []
-            
-            for (let i = 0; i < employee.team.employees.length; i++) {
-                const element = employee.team.employees[i]
-                
-                if (element.employee_id != employee.employee_id) {
-                    history.push(element)
-                }
-            }
-            employee.workedWith = history*/
 
       const employeeData = await this.employeeRepository.save(employee)
 

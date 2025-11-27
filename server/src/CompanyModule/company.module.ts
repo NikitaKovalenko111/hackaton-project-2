@@ -11,6 +11,7 @@ import { Role } from 'src/EmployeeModule/role.entity'
 import { EmployeeModule } from 'src/EmployeeModule/employee.module'
 import { SkillModule } from 'src/SkillModule/skill.module'
 import { Review } from 'src/ReviewModule/review.entity'
+import { Team } from 'src/TeamModule/team.entity'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { Review } from 'src/ReviewModule/review.entity'
       Employee_token,
       Skill,
       SkillShape,
+      Team,
       Role,
       Review,
     ]),
