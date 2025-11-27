@@ -73,7 +73,7 @@ export const AddTeam = ({
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-                <form id="create-skill" onSubmit={handleSubmit(onSubmit)}>
+                <form id="create-skill" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
                     <Controller 
                         name="team_name"
                         control={control}

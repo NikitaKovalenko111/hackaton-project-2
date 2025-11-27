@@ -35,8 +35,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     // }
 
     useEffect(() => {
-        const token = Cookies.get("accessToken", {domain: "176.119.147.135"})
-        debugger
+        const token = Cookies.get("accessToken", {domain: process.env.DOMAIN})
+        
         if (!token) {
         
             if (socket) {

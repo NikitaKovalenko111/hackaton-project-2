@@ -11,7 +11,9 @@ export const useGetProfile = () => {
         queryFn: () => getProfile(),
         // retry: 2,
         // retryOnMount: true,
-        enabled: !!token
+        enabled: !!token,
+        staleTime: 0,
+        gcTime: 0
     })
 }
 
