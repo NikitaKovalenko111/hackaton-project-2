@@ -10,10 +10,11 @@ import { AuthLoginDTO, LoginFormProps } from "@/modules/auth/domain/auth.type";
 import { useLogin } from "@/modules/auth/infrastructure/query/mutations";
 import clsx from "clsx";
 import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form"
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
+import { SocketContext } from "@/libs/hooks/useSocket";
 
 const zodSchema = z.object({
     employee_email: z.email({message: "Некорректный Email"}).min(2, {message: 'Email обязателен'}),
@@ -40,7 +41,9 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
         }
     })
 
-    const {mutate} = useLogin()
+    const {regSocket} = useContext(SocketContext)
+
+    const {mutate} = useLogin({regSocket})
 
     const onSubmit: SubmitHandler<AuthLoginDTO> = (data) => {
         mutate(data)

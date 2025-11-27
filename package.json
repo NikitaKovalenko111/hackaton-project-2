@@ -1,0 +1,26 @@
+{
+  "name": "hackaton-project-2",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "concurrently \"cd ./server && npm run test\"",
+    "format:server": "concurrently \"cd ./server && npm run format\"",
+    "build": "concurrently \"cd ./client && npm run build\" \"cd ./server && npm run build\"",
+    "install": "concurrently \"cd ./server && npm install\" \"cd ./client && npm install\"",
+    "build:server": "concurrently \"cd ./server && npm run build\"",
+    "build:client": "concurrently \"cd ./client && npm run build\"",
+    "start:prod": "concurrently \"cd ./server && npm run start:prod\" \"cd ./client && npm run start\"",
+    "start:dev": "concurrently \"cd ./server && npm run start:dev\" \"cd ./client && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NikitaKovalenko111/hackaton-project-2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NikitaKovalenko111/hackaton-project-2/issues"
+  },
+  "homepage": "https://github.com/NikitaKovalenko111/hackaton-project-2#readme"
+}

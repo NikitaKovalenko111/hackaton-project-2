@@ -8,21 +8,23 @@ import { useActions } from "@/libs/hooks/useActions"
 import { useReduxSocket } from "@/libs/hooks/useReduxSocket"
 import { AiPlanData, AiPlanDTO } from "../../domain/profile.types"
 
-export const useLogout = () => {
+export const useLogout = ({resetSocket}: {resetSocket: () => void}) => {
     const queryClient = useQueryClient()
 
     const {push} = useRouter()
 
-    const {setSocket} = useActions()
-    const {socket} = useReduxSocket()
+    // const {setSocket} = useActions()
+    // const {socket} = useReduxSocket()
+
 
     return useMutation({
         mutationKey: ["logout"],
         mutationFn: () => logout(),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['profile'] })
-            socket?.disconnect()
-            setSocket({socket: null})
+            // socket?.disconnect()
+            // setSocket({socket: null})
+            resetSocket()
             toast.success('Вы вышли из аккаунта!')
             push('/auth')
         },

@@ -118,7 +118,6 @@ http.interceptors.response.use(
         return res
     },
     async (err) => {
-        debugger
         const accessToken = Cookies.get("accessToken")
         const refreshToken = Cookies.get("refreshToken")
 

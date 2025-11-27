@@ -4,76 +4,82 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { io, Socket } from 'socket.io-client';
 import { useActions } from './useActions';
 import { useReduxSocket } from './useReduxSocket';
-import socket from '@/app/socket';
+// import socket from '@/app/socket';
 const Cookies = require("js-cookie")
 
-const SocketContext = createContext<Socket | null>(null)
+export const SocketContext = createContext<{socket: Socket | null, resetSocket: () => void, regSocket: () => void}>({
+    socket: null,
+    resetSocket: () => {},
+    regSocket: () => {}
+})
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
+
+    const [socket, setSocket] = useState<Socket | null>(null)
+    const [log, setLog] = useState<boolean>(false)
+
+    const resetSocket = () => {
+        if (socket) socket.disconnect()
+        setSocket(null)
+        setLog(prev => !prev)
+    }
+
+    const regSocket = () => {
+        setLog(prev => !prev)
+    }
+
+    // const connectSocket = () => {
+    //     if (!socket) {
+    //         const sk = 
+    //     }
+    // }
+
+    useEffect(() => {
+        const token = Cookies.get("accessToken", {domain: process.env.DOMAIN})
+        
+        if (!token) {
+        
+            if (socket) {
+                socket.disconnect()
+                setSocket(null)
+            }
+            return
+        } else {
+            const sk = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
+                withCredentials: true,
+                extraHeaders: {
+                    authorization: `Bearer ${token}`,
+                    client_type: 'web',
+                },
+                reconnection: false}
+            )
+            setSocket(sk)
+        }
+
+        socket?.on("connect", () => { 
+            console.log("Socket ID: ", socket.id)
+        })
+
+        return () => {
+            socket?.off("connect", () => {
+                console.log("Socket ID: ", socket.id)
+            })
+            socket?.disconnect()
+            setSocket(null)
+        }
+
+    }, [log])
+
     return (
-        <SocketContext.Provider value={socket}>
+        <SocketContext.Provider value={{socket, resetSocket, regSocket}}>
             {children}
         </SocketContext.Provider>
     )
 }
 
 export const useSocket = () => {
-    // const [socket, setSocket] = useState<Socket | null>(null);
 
-    const socketInstance = useContext(SocketContext)
-
-    // const reduxSocket = useReduxSocket()
-    // const {setSocket: setReduxSocket} = useActions()
-
-    // useEffect(() => {
-    // const token = Cookies.get("accessToken")
-    // if (!token) {
-    //     console.log(reduxSocket)
-    //     if (socket || reduxSocket.socket) {
-    //         if (socket) socket.disconnect()
-    //         setReduxSocket({socket: null})
-    //     }
-
-    //     return 
-    // }
-
-    // if (reduxSocket.socket) return
-
-    // const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
-    //     withCredentials: true,
-    //     extraHeaders: {
-    //         authorization: `Bearer ${token}`,
-    //         client_type: 'web',
-
-    //     },
-    //     autoConnect: true,
-    //     reconnection: true,
-    //     reconnectionAttempts: 5,
-    //     reconnectionDelay: 1000
-    // });
-
-    // newSocket.on('connect', () => {
-    //     console.log('Socket connected, ID:', newSocket.id, 'Reconnected:', newSocket.connected);
-    // });
-
-    // newSocket.on('error', (error) => {
-    //         console.error('Socket error:', error);
-    //     });
-
-    // const originalEmit = newSocket.emit.bind(newSocket);
-    //     newSocket.emit = (event: string, ...args: any[]) => {
-    //         console.log('📤 Emitting event:', event, 'with data:', args);
-    //         return originalEmit(event, ...args);
-    //     };
-
-    // setReduxSocket({socket: newSocket})
-    // setSocket(newSocket)
-
-    // return () => {
-    //     newSocket.disconnect();
-    //     setSocket(null)
-    //     setReduxSocket({socket: null})
-    // }}, []);
+    const {socket: socketInstance} = useContext(SocketContext)
 
     useEffect(() => {
     if (!socketInstance) return;
@@ -85,6 +91,7 @@ export const useSocket = () => {
             // let sk: Socket = socketInstance as Socket
             // sk.disconnect()
             socketInstance.disconnect()
+            
         };
         return;
     }
@@ -93,24 +100,7 @@ export const useSocket = () => {
         console.log('Socket connected, ID:', socketInstance.id);
     });
 
-    // newSocket.on('error', (error) => {
-    //     console.error('Socket error:', error);
-    // });
-
-    // const originalEmit = socke.emit.bind(newSocket);
-    // newSocket.emit = (event: string, ...args: any[]) => {
-    //     console.log('📤 Emitting event:', event, 'with data:', args);
-    //     return originalEmit(event, ...args);
-    // };
-
-    // setReduxSocket({ socket: newSocket });
-    // setSocket(newSocket);
-
     return () => {
-        // console.log('Cleaning up socket');
-        // newSocket.disconnect();
-        // setSocket(null);
-        // setReduxSocket({ socket: null });
         socketInstance.off('connect', () => {
             console.log('Socket connected, ID:', socketInstance.id);
         })
@@ -150,7 +140,7 @@ export const useSocket = () => {
     }
 
     return {
-        socket,
+        // socket,
         handleSendRequest,
         acceptRequest,
         cancelRequest

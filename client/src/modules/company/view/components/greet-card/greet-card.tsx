@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { GreetMode } from "@/modules/company/domain/company.type"
 import clsx from "clsx"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { CreateCompany } from "../create-form/create-company"
 import { useAuth } from "@/libs/providers/ability-provider"
 import { useRouter } from "next/navigation"
 import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
 import { useLogout } from "@/modules/profile/infrastructure/query/mutations"
 import { LogOut } from "lucide-react"
+import { SocketContext } from "@/libs/hooks/useSocket"
 
 const variantStyleInfo: { [key in GreetMode]: string } = {
     info: 'left-0',
@@ -39,7 +40,9 @@ export const GreetCard = () => {
 
     const {companyId} = useAuth()
     const {data, refetch} = useGetProfile()
-    const {mutate} = useLogout()
+
+    const {resetSocket} = useContext(SocketContext)
+    const {mutate} = useLogout({resetSocket})
 
     useEffect(() => {
         refetch()

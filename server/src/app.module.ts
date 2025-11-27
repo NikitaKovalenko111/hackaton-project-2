@@ -70,7 +70,7 @@ import { Notification } from './NotificationModule/notification.entity'
         Review,
         Statistics,
       ],
-      synchronize: true,
+      synchronize: false,
     }),
   ],
   controllers: [AppController],
