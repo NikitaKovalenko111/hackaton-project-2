@@ -201,10 +201,7 @@ export class NotificationService {
         this.socketGateway.server
           .to(socketWeb.client_id as string)
           .emit(notificationType,
-            {
-              notification: notificationData,
-              data: data
-            }
+            data
           )
       }
       if (socketTg) {
