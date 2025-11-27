@@ -122,10 +122,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (requestData.request_receiver != null) {
         const notification = await this.notificationService.sendNotification(requestData.request_receiver.employee_id, notificationType.NEW_REQUEST, requestData, requestData.request_id)
 
-        return {
-          notification: notification,
-          data: requestData
-        }
+        return requestData
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
@@ -156,10 +153,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       ) {
         const notification = await this.notificationService.sendNotification(requestData.request_owner.employee_id, notificationType.CANCELED_REQUEST, requestData, requestData.request_id)
 
-        return {
-          notification: notification,
-          data: requestData
-        }
+        return requestData
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
@@ -177,10 +171,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       if (requestData.request_owner) {
         const notification = await this.notificationService.sendNotification(requestData.request_owner.employee_id, notificationType.COMPLETED_REQUEST, requestData, requestData.request_id)
 
-        return {
-          notification: notification,
-          data: requestData
-        }
+        return requestData
       }
     } catch (error) {
       throw new HttpException(error.message, error.status)
