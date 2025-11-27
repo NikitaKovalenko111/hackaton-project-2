@@ -6,6 +6,8 @@ import { CompanyService } from 'src/CompanyModule/company.service'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
+import { RoleType } from 'src/types'
+import { Role } from 'src/EmployeeModule/role.entity'
 
 @Injectable()
 export class TeamService {
@@ -15,6 +17,9 @@ export class TeamService {
 
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
+
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
 
     private companyService: CompanyService,
     private employeeService: EmployeeService,
@@ -73,6 +78,7 @@ export class TeamService {
     try {
       const company = await this.companyService.getCompanyInfo(companyId)
       const teamlead = await this.employeeService.getEmployee(teamlead_id)
+      const role = await this.employeeService.getEmployeeRoleById(teamlead_id)
 
       const team = new Team({
         team_name: teamName,
@@ -87,6 +93,9 @@ export class TeamService {
         teamData.team_id,
         teamData.teamlead.employee_id,
       )
+
+      role.role_name = RoleType.TEAMLEAD
+      await this.roleRepository.save(role)
 
       return teamData
     } catch (error) {
