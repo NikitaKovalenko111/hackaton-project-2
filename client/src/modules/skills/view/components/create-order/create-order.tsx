@@ -99,7 +99,7 @@ export const CreateOrder = ({
                 <>
                     {arr.map((item, i) => (
                         <div key={i} className="mb-2">
-                            <FieldLabel htmlFor={`order_${i+1}`}>Критерий</FieldLabel>
+                            <FieldLabel className="mb-2" htmlFor={`order_${i+1}`}>Критерий</FieldLabel>
                             <Textarea 
                                 placeholder="Введите описание критерия"
                                 autoComplete="off"
@@ -152,11 +152,11 @@ export const CreateOrder = ({
             </DialogHeader>
             <FieldSet className="grid gap-4">
                 <form id="create-order" >
-                    <div className="mb-2">
+                    <div className="mb-4">
                         <Select
                             onValueChange={(val) => setSkillId(Number(val))}
                         >
-                            <Label>Компетенция</Label>
+                            <Label className="mb-2">Компетенция</Label>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Компетенция" />
                             </SelectTrigger>
@@ -170,11 +170,11 @@ export const CreateOrder = ({
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="mb-2">
+                    <div className="mb-4">
                         <Select
                             onValueChange={(val) => handleLevelChange(val as SkillLevel)}
                         >
-                            <Label>Уровень</Label>
+                            <Label className="mb-2">Уровень</Label>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Уровень" />
                             </SelectTrigger>
