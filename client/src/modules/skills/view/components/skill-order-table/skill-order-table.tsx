@@ -13,7 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Trash, UserPen } from "lucide-react";
+import { ArrowUpDown, ChevronDown, Info, MoreHorizontal, Trash, UserPen } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -37,6 +37,7 @@ import { Option } from "@/components/ui/multi-select";
 import { useGetCompanySkills } from "@/modules/skills/infrastructure/query/queries";
 import MultipleSelectWithPlaceholderDemo from "../../ui/select-skill/select-skill";
 import { CreateOrder } from "../create-order/create-order";
+import { OrderInfo } from "../order-info/order-info";
 const Cookies = require("js-cookie")
 
 
@@ -54,8 +55,20 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
     const [skillId, setSkillId] = React.useState<number>(0)
     const [openConfirmDelete, setOpenConfirmDelete] = React.useState<boolean>(false)
     const [skills, setSkills] = React.useState<{skill_shape_id: number, skill_name: string}[]>([])
-
     
+    const [openInfoDialog, setOpenInfoDialog] = React.useState<boolean>(false)
+    const [orderData, setOrderData] = React.useState<SkillOrderGet | null>(null)
+    
+    const handleCloseInfoDialog = () => {
+        setOpenInfoDialog(false)
+        setOrderData(null)
+    }
+
+    const handleOpenInfoDialog = (data: SkillOrderGet) => {
+        setOpenInfoDialog(true)
+        setOrderData(data)
+    }
+
     const handleOpenConfirmDeleteDialog = (employeeId: number) => {
         setSkillId(employeeId)
         setOpenConfirmDelete(true)
@@ -148,22 +161,23 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
             },
             cell: ({ row }) => <div className="text-center">{row.getValue("skill_level")}</div>,
         },
-        // {
-        //     accessorKey: "actions",
-        //     header: () => <div className="text-center">Действия</div>,
-        //     cell: ({ row }) => {
+        {
+            accessorKey: "actions",
+            header: () => <div className="text-center">Действия</div>,
+            cell: ({ row }) => {
 
-        //     return (
-        //         <div className="flex gap-2 justify-center">
-        //             <UserPen className="w-4 h-4 cursor-pointer" onClick={() => push(`skills-settings/${row.original.skill_shape_id}`)} />
-        //             <Trash 
-        //                 className="w-4 h-4 cursor-pointer"
-        //                 onClick={() => handleOpenConfirmDeleteDialog(row.original.skill_shape_id)}
-        //             />
-        //         </div>
-        //     );
-        //     },
-        // },
+            return (
+                <div className="flex gap-2 justify-center">
+                    <Info 
+                        className="w-4 h-4 cursor-pointer" 
+                        onClick={() => {
+                            handleOpenInfoDialog(row.original)
+                        }} 
+                    />
+                </div>
+            );
+            },
+        },
     ];
 
     const table = useReactTable({
@@ -294,6 +308,9 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
             </Dialog>
             <Dialog open={openConfirmDelete} onOpenChange={handleCloseConfirmDeleteDialog}>
                 {openConfirmDelete && <ConfirmDeletionOfTeam handleClose={handleCloseConfirmDeleteDialog} skillId={skillId} />}
+            </Dialog>
+            <Dialog open={openInfoDialog} onOpenChange={handleCloseInfoDialog} >
+                {openInfoDialog && <OrderInfo data={orderData || null} handleClose={handleCloseInfoDialog} />}
             </Dialog>
             {/* <Dialog open={openConfirmDelete} onOpenChange={handleCloseConfirmDeleteDialog}>
                 {openConfirmDelete && <CreateOrder handleCloseDialog={handleCloseCreateDialog} companyId={companyId || -1} />}
