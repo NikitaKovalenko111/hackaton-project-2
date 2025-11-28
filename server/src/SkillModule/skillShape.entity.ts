@@ -39,7 +39,6 @@ export class SkillShape {
   @Column({
     type: 'varchar',
     length: '96',
-    unique: true
   })
   skill_name: string
 

@@ -115,32 +115,42 @@ export class SkillService {
     }
   }
 
-  async getSkillOrdersByShape(skillShapeName: string, skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrdersByShape(skillShapeName: string, companyId: number, skillLevel?: skillLevel): Promise<SkillOrder[]> {
     const skillOrders = await this.skillOrderRepository.find({
       where: {
         skill_shape: {
-          skill_name: skillShapeName
+          skill_name: skillShapeName,
+          company: {
+            company_id: companyId
+          }
         },
         skill_level: skillLevel
       },
       relations: {
-        skill_shape: true
+        skill_shape: {
+          company: true
+        }
       }
     })
 
     return skillOrders
   }
 
-  async getSkillOrdersByShapeNames(skillShapeName: string[], skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrdersByShapeNames(skillShapeName: string[], companyId: number, skillLevel?: skillLevel): Promise<SkillOrder[]> {
     const skillOrders = await this.skillOrderRepository.find({
       where: {
         skill_shape: {
-          skill_name: In(skillShapeName)
+          skill_name: In(skillShapeName),
+          company: {
+            company_id: companyId
+          }
         },
         skill_level: skillLevel
       },
       relations: {
-        skill_shape: true
+        skill_shape: {
+          company: true
+        }
       }
     })
 
@@ -309,7 +319,7 @@ export class SkillService {
     }
   }
 
-  async addSkillOrders(skillShapeId: number, skillLevel: skillLevel, orders: skillOrder[]): Promise<SkillOrder[]> {
+  async addSkillOrders(skillShapeId: number, skillLevel: skillLevel, orders: skillOrder[], companyId: number): Promise<SkillOrder[]> {
     try {
       const skillShape = await this.skillShapeRepository.findOne({
         where: {
@@ -321,7 +331,7 @@ export class SkillService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Компетенция не найдена!')
       }
   
-      const skillOrderDb = await this.getSkillOrdersByShape(skillShape.skill_name, skillLevel)
+      const skillOrderDb = await this.getSkillOrdersByShape(skillShape.skill_name, companyId, skillLevel)
       const texts = skillOrderDb.map(el => el.order_text)
   
       for (let i = 0; i < orders.length; i++) {
