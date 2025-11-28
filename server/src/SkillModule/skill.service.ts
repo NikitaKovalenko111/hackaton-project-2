@@ -48,7 +48,13 @@ export class SkillService {
 
       const skillDb = await this.skillShapeRepository.findOne({
         where: {
-          skill_name: skillName
+          skill_name: skillName,
+          company: {
+            company_id: companyId
+          }
+        },
+        relations: {
+          company: true
         }
       })
 
