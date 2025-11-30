@@ -6,12 +6,31 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ROLE, ROLE_TRANSLATION } from "@/libs/constants";
 import { SocketContext } from "@/libs/hooks/useSocket";
-import { Employee } from "@/modules/profile/domain/profile.types";
+import { CompanyData } from "@/modules/company/domain/company.type";
+import { Employee, Role } from "@/modules/profile/domain/profile.types";
 import { useLogout } from "@/modules/profile/infrastructure/query/mutations";
+import { Skill } from "@/modules/skills/domain/skills.types";
+import { Team } from "@/modules/teams/domain/teams.type";
 import { Camera, Calendar, Mail, MapPin, Building2, MessageCircle } from "lucide-react";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 const Cookies = require('js-cookie')
+
+type PropsType = {
+    employee_id: number;
+    employee_name: string;
+    employee_surname: string;
+    employee_email: string;
+    employee_status: string;
+    employee_photo: string;
+    employee_password: string;
+    telegram_id: number
+    role: Role
+    team: Team
+    skills: Skill[]
+    company: CompanyData
+    isCurrentEmployee: boolean
+}
 
 export const ProfileHeader = ({
     employee_email,
@@ -22,9 +41,10 @@ export const ProfileHeader = ({
     employee_status,
     employee_surname,
     telegram_id,
+    isCurrentEmployee,
     role,
     company
-}: Employee) => {
+}: PropsType) => {
     
     const {resetSocket} = useContext(SocketContext)
 
@@ -47,13 +67,16 @@ export const ProfileHeader = ({
                             />
                             <AvatarFallback className="text-2xl">{`${employee_name[0]}${employee_surname[0]}`}</AvatarFallback>
                         </Avatar>
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full"
-                        >
-                            <Camera />
-                        </Button>
+                        {
+                            isCurrentEmployee &&
+                            <Button
+                                size="icon"
+                                variant="outline"
+                                className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full"
+                            >
+                                <Camera />
+                            </Button>
+                        }
                     </div>
                     <div className="flex-1 space-y-2">
                         <div className="flex flex-col gap-2 md:flex-row md:items-center">
@@ -79,10 +102,15 @@ export const ProfileHeader = ({
                             )}
                         </div>
                     </div>
-                    <Button variant="default">Изменить профиль</Button>
-                    <Button onClick={() => {
-                        mutate()
-                    }} variant="destructive">Выйти</Button>
+                    {
+                        isCurrentEmployee &&
+                        <>
+                            <Button variant="default">Изменить профиль</Button>
+                            <Button onClick={() => {
+                                mutate()
+                            }} variant="destructive">Выйти</Button>
+                        </>
+                    }
                 </div>
             </CardContent>
         </Card>

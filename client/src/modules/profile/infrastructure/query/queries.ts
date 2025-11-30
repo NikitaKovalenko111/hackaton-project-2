@@ -8,7 +8,7 @@ export const useGetProfile = () => {
 
     return useQuery({
         queryKey: ['profile', token],
-        queryFn: () => getProfile(),
+        queryFn: () => getProfile(0, true),
         // retry: 2,
         // retryOnMount: true,
         enabled: !!token,

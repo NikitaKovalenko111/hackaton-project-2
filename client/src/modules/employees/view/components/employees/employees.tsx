@@ -6,14 +6,30 @@ import { useGetCompanyEmployees } from "@/modules/employees/infrastructure/query
 import { EmployeeTable } from "@/modules/employees/domain/employees.type"
 import ProtectedRoute from "@/libs/protected-route"
 import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
+import { Input } from "@/components/ui/input"
+import { Select } from "@/components/ui/select"
 
 export const Employees = () => {
 
     const [employees, setEmployees] = useState<EmployeeTable[]>([])
+    const [surnameSearch, setSurnameSearch] = useState<string>("")
+    const [nameSearch, setNameSearch] = useState<string>("")
 
-    const {data, isFetching} = useGetCompanyEmployees()
+    const {data, isFetching} = useGetCompanyEmployees(surnameSearch, nameSearch)
 
     const {data: profileData, refetch} = useGetProfile()
+
+    const onChangeSurname = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        
+        setSurnameSearch(value)
+    }
+
+    const onChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        
+        setNameSearch(value)
+    }
 
     useEffect(() => {
         refetch()
@@ -33,6 +49,10 @@ export const Employees = () => {
     return (
         <div className="mx-auto animate-appear max-w-6xl space-y-6 px-4 py-10">
             <ProtectedRoute allowedRoles={['admin']}>
+                <div className="flex gap-4">
+                    <Input value={surnameSearch} onChange={onChangeSurname} placeholder="Фамилия сотрудника"></Input>
+                    <Input value={nameSearch} onChange={onChangeName} placeholder="Имя сотрудника"></Input>
+                </div>
                 <EmployeesTable isFetching={isFetching} data={employees} />
             </ProtectedRoute>
         </div>

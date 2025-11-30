@@ -4,8 +4,15 @@ import { Request } from "@/libs/constants"
 // import socket from "@/app/socket"
 const Cookies = require('js-cookie')
 
-export const getProfile = async (): Promise<Employee> => {
-    const res = await http.get('employee/profile', {})
+export const getProfile = async (id: number, isCurrentEmployee: boolean): Promise<Employee> => {
+    let res = null
+    
+    if (isCurrentEmployee) {
+        res = await http.get(`employee/profile`, {})
+        console.log(isCurrentEmployee);
+    } else {
+        res = await http.get(`employee/profile/${id}`, {})
+    }
 
     return res.data
 }

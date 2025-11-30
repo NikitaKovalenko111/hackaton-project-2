@@ -3,11 +3,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { getTeamInfo, getTeams } from "../teams-api"
 
-export const useGetTeams = (companyId: number) => {
+export const useGetTeams = (companyId: number, teamName: string = "", teamleadSurname: string = "") => {
 
     return useQuery({
-        queryKey: ['teams'],
-        queryFn: () => getTeams(companyId)
+        queryKey: ['teams', teamName, teamleadSurname],
+        queryFn: () => getTeams(companyId, teamName, teamleadSurname)
     })
 }
 

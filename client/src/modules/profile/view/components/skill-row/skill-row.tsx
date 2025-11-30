@@ -13,11 +13,13 @@ import ProtectedRoute from "@/libs/protected-route";
 export const SkillRow = ({
     skill,
     employeeId,
-    handleSendRequest
+    handleSendRequest,
+    isCurrentEmployee
 }: {
     skill: Skill,
     employeeId: number,
-    handleSendRequest: (requestType: "upgrade", employeeId: number, skill_id: number) => void
+    handleSendRequest: (requestType: "upgrade", employeeId: number, skill_id: number) => void,
+    isCurrentEmployee: boolean
 }) => {
 
     const [aiData, setAiData] = useState<AiPlanData | null>(null)
@@ -56,6 +58,8 @@ export const SkillRow = ({
                 {SkillLevelBadge(skill.skill_level)}
             </div>
             <div className="flex gap-2">
+            {
+            isCurrentEmployee &&
             <Button
                 variant="secondary"
                 disabled={isPending}
@@ -72,6 +76,7 @@ export const SkillRow = ({
             >
                 AI-План
             </Button>
+            }
             <ProtectedRoute allowedRoles={['developer', 'hr', 'moderator']}>
                 <Button
                     onClick={() => sendRequest(employeeId, skill.skill_connection_id)}

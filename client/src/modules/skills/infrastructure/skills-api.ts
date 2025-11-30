@@ -1,8 +1,8 @@
 import http from "@/libs/http/http";
 import { CreateSkillDTO, GiveSkillDTO, SkillOrderDTO, SkillOrderGet, SkillShape } from "../domain/skills.types";
 
-export const getAllSkills = async (): Promise<SkillShape[]> => {
-    const res = await http.get('company/skills', {})
+export const getAllSkills = async (name: string): Promise<SkillShape[]> => {
+    const res = await http.get(`company/skills?name=${name}`, {})
 
     return res.data
 }

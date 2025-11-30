@@ -8,7 +8,7 @@ import { ROLE_TRANSLATION } from "@/libs/constants"
 import { roleBadge } from "@/modules/employees/view/ui/role-badge"
 import { Team } from "@/modules/teams/domain/teams.type"
 
-export const TeamTab = ({id, team}: {id: number, team: Team}) => {
+export const TeamTab = ({id, team, isCurrentEmployee}: {id: number, team: Team, isCurrentEmployee: boolean}) => {
 
     return (
         <TabsContent value="team" className="space-y-6">
@@ -16,9 +16,12 @@ export const TeamTab = ({id, team}: {id: number, team: Team}) => {
                 <Card>
                     <CardHeader>
                         <CardTitle>Информация о команде {team.team_name}</CardTitle>
+                        {
+                        isCurrentEmployee &&
                         <CardDescription>
                         Здесь вы можете увидеть информацию о своей команде
                         </CardDescription>
+                        }
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <p className="text-xl font-medium">Руководитель команды: {`${team.teamlead.employee_name} ${team.teamlead.employee_surname}`}</p>
@@ -50,9 +53,15 @@ export const TeamTab = ({id, team}: {id: number, team: Team}) => {
             ) : (
                 <Card>
                     <CardHeader>
-                        <CardTitle>
-                            Вы не состоите в команде
-                        </CardTitle>
+                        {
+                            isCurrentEmployee ?
+                            <CardTitle>
+                                Вы не состоите в команде
+                            </CardTitle> :
+                            <CardTitle>
+                                Сотрудник не состоит в компании
+                            </CardTitle>
+                        }
                     </CardHeader>
                 </Card>
             )}

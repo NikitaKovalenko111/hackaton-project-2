@@ -44,7 +44,7 @@ interface SkillsTableProps {
 
 
 
-export function SkillsTable({data, isFetching}: SkillsTableProps) {
+export const SkillsTable: React.FC<SkillsTableProps> = ({data, isFetching}): React.JSX.Element => {
 
     const [openCreateDialog, setOpenCreateDialog] = React.useState<boolean>(false)
     // const [openInfoDialog, setOpenInfoDialog] = React.useState<boolean>(false)

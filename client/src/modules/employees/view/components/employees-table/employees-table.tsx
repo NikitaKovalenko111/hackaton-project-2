@@ -15,6 +15,7 @@ import { InfoDialog } from "../info-dialog/info-dialog";
 import { ConfirmDeleteDialog } from "../../ui/confirm-delete-dialog";
 import { Team } from "@/modules/teams/domain/teams.type";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 
 export const EmployeesTable = ({data, isFetching}: {isFetching: boolean, data: EmployeeTable[]}) => {
@@ -66,7 +67,9 @@ export const EmployeesTable = ({data, isFetching}: {isFetching: boolean, data: E
                 )
             },
             cell: ({ row }) => (
-            <div className="text-center capitalize">{row.getValue("employee_surname")}</div>
+            <Link href={`profile/${row.original.employee_id}`}>
+                <div className="text-center capitalize">{row.getValue("employee_surname")}</div>
+            </Link>
             ),
         },
         {
@@ -85,7 +88,11 @@ export const EmployeesTable = ({data, isFetching}: {isFetching: boolean, data: E
                 
             );
             },
-            cell: ({ row }) => <div className="text-center capitalize">{row.getValue("employee_name")}</div>,
+            cell: ({ row }) => (
+                <Link href={`profile/${row.original.employee_id}`}>
+                    <div className="text-center capitalize">{row.getValue("employee_name")}</div>
+                </Link>
+            )
         },
         {
             accessorKey: "role",
@@ -211,19 +218,19 @@ export const EmployeesTable = ({data, isFetching}: {isFetching: boolean, data: E
                         <TableBody>
                             {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                    className="animate-appear"
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
-                                    </TableCell>
-                                ))}
+                                    <TableRow
+                                        key={row.id}
+                                        data-state={row.getIsSelected() && "selected"}
+                                        className="animate-appear"
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id}>   
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </TableCell>
+                                    ))}
                                 </TableRow>
                             ))
                             ) : (

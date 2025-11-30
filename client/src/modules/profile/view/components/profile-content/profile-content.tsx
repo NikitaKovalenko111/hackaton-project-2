@@ -35,6 +35,7 @@ interface ProfileContentProps {
     employee_email: string;
     employee_status: string;
     skills: Skill[]
+    isCurrentEmployee: boolean
     team: Team
 }
 
@@ -52,6 +53,7 @@ export const ProfileContent = ({
     employee_name,
     employee_status,
     employee_surname,
+    isCurrentEmployee,
     skills,
     team,
     id
@@ -82,19 +84,22 @@ export const ProfileContent = ({
             </ProtectedRoute>
         </TabsList>
 
-        <PersonalTab 
+        <PersonalTab
+            isCurrentEmployee={isCurrentEmployee}
             employee_email={employee_email}
             employee_name={employee_name}
             employee_status={employee_status}
             employee_surname={employee_surname}
         />
 
-        <ProfileSkillsTab 
+        <ProfileSkillsTab
+            isCurrentEmployee={isCurrentEmployee}
             employeeId={id}
             skills={skills}
         />
 
         <TeamTab
+            isCurrentEmployee={isCurrentEmployee}
             id={id}
             team={team}
         />
