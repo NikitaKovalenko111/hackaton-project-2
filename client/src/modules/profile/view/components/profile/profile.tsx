@@ -48,6 +48,7 @@ export const Profile: React.FC<PropsType> = ({id, isCurrentEmployee}): JSX.Eleme
                     employee_email={data.employee_email}
                     employee_id={data.employee_id}
                     employee_name={data.employee_name}
+
                     employee_password={data.employee_password}
                     employee_photo={data.employee_photo}
                     employee_status={data.employee_status}

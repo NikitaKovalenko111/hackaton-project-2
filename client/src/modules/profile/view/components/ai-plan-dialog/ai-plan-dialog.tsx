@@ -6,21 +6,27 @@ import ReactMarkdown from 'react-markdown'
 export const AiPlanDialog = ({message, skill_level, skill_shape}: AiPlanData) => {
 
     return (
-        <DialogContent className="animate-appear">
-            <DialogHeader>
-                <DialogTitle>
+        <DialogContent className="animate-appear max-w-3xl w-full rounded-lg bg-white dark:bg-slate-900/60 shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <DialogHeader className="px-6 py-4">
+                <DialogTitle className="text-lg font-semibold text-slate-900 dark:text-slate-100">
                     План повышения квалификации по компетенции
                 </DialogTitle>
-                {/* <DialogDescription>
-                    Сохраните план! После
-                </DialogDescription> */}
+                {(skill_level || skill_shape) && (
+                    <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                        {skill_level ? `Уровень: ${skill_level}` : null}
+                        {skill_level && skill_shape ? " · " : ""}
+                        {skill_shape ? `Компетенция: ${skill_shape.skill_name}` : null}
+                    </div>
+                )}
             </DialogHeader>
-            {/* <div dangerouslySetInnerHTML={{__html: message}} className="max-h-[600px] overflow-y-scroll" /> */}
-                {/* {message} */}
-            <div className="p-5 max-h-[600px] overflow-y-scroll">
-                <ReactMarkdown>{message}</ReactMarkdown>
+
+            <div className="p-6 max-h-[600px] overflow-y-auto bg-transparent">
+                <div className="prose max-w-none prose-slate dark:prose-invert">
+                    <ReactMarkdown>{message}</ReactMarkdown>
+                </div>
             </div>
-            <DialogFooter>
+
+            <DialogFooter className="px-6 py-4 border-t border-slate-100 dark:border-slate-800">
                 <DialogClose asChild>
                     <Button variant="outline" asChild>
                         Закрыть

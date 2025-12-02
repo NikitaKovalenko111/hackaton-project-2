@@ -23,7 +23,7 @@ import CalendarWrapper from '@/libs/view/calendar-wrapper/calendar-wrapper'
 import { InterviewData, InterviewDTO, InterviewType } from '@/modules/interviews/domain/interviews.types'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import z from 'zod'
+import z, { set } from 'zod'
 import { useGetInterviews } from '@/modules/interviews/infrastructure/query/queries'
 import { CalendarIcon, Plus } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -31,7 +31,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Field, FieldDescription, FieldError, FieldLabel, FieldSet } from "@/components/ui/field"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAddInterview } from "@/modules/interviews/infrastructure/query/mutations"
+import { useAddInterview, useFinishInterview } from "@/modules/interviews/infrastructure/query/mutations"
 import { useGetTeamInfo } from "@/modules/teams/infrastructure/query/queries"
 import { Employee } from "@/modules/profile/domain/profile.types"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -39,9 +39,10 @@ import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { Calendar } from "@/components/ui/calendar"
 import { Textarea } from "@/components/ui/textarea"
-import { DialogClose } from "@radix-ui/react-dialog"
+import { DialogClose, DialogTrigger } from "@radix-ui/react-dialog"
 import { getInterviewType } from "../../ui/interview-type"
 import ProtectedRoute from "@/libs/protected-route"
+import { useAuth } from "@/libs/providers/ability-provider"
 // import { getBankList } from '@/api/requests/income'
 
 // Types
@@ -86,8 +87,13 @@ const CalendarInterview = () => {
     const [events, setEvents] = useState<InterviewData[]>([])
     const [calEvents, setCalEvents] = useState<any>([])
     const [isAddEventDialogOpen, setAddEventDialogOpen] = useState(false)
+    const [isFinishEventDialogOpen, setFinishEventDialogOpen] = useState(false)
 
-    // const {user} = useAuth()
+    const handleCloseFinishEventDialog = () => {
+        setFinishEventDialogOpen(false)
+    }
+
+    const { role } = useAuth()
 
     // const [calendarEvents, setCalendarEvents] = useState<>([])
 
@@ -135,6 +141,7 @@ const CalendarInterview = () => {
     })
 
     const {mutate} = useAddInterview()
+    const {mutate: mutateFinish} = useFinishInterview()
 
     const onSubmit: SubmitHandler<InterviewDTO> = (data) => {
         // setEvents(prev => [...prev, data])
@@ -589,23 +596,135 @@ const CalendarInterview = () => {
                     </DialogContent>
                 )}
             </Dialog>
+            
             <Dialog open={isViewEventDialogOpen} onOpenChange={handleCloseViewEventDialog} >
                 {selectedEvent && (
-                    <DialogContent className="animate-appear">
+                    <DialogContent className="animate-appear max-w-3xl">
                         <DialogHeader>
-                            <DialogTitle>
-                                Информация о собеседовании
-                            </DialogTitle>
+                            <div className="flex items-start justify-between gap-4 w-full">
+                                <div>
+                                    <DialogTitle className="text-lg font-semibold">
+                                        Информация о собеседовании
+                                    </DialogTitle>
+                                    <div className="text-sm text-muted-foreground mt-1">
+                                        {getInterviewType(selectedEvent.interview_type)} • {format(selectedEvent.interview_date, 'dd.MM.yyyy')}
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span
+                                        className={cn(
+                                            "text-xs px-2 py-1 rounded-full font-medium",
+                                            selectedEvent.interview_status === "completed" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                                        )}
+                                    >
+                                        {selectedEvent.interview_status === "completed" ? "Завершено" : "В процессе"}
+                                    </span>
+                                </div>
+                            </div>
                         </DialogHeader>
-                        <div>
-                            <p>{getInterviewType(selectedEvent.interview_type)}</p>
-                            <p>Собеседующий: {`${selectedEvent.interview_owner.employee_name} ${selectedEvent.interview_owner.employee_surname}`}</p>
-                            <p>Cобеседуемый: {`${selectedEvent.interview_subject.employee_name} ${selectedEvent.interview_subject.employee_surname}`}</p>
-                            <p>Дата: {format(selectedEvent.interview_date, 'dd.MM.yyyy')}</p>
-                            <p>Описание: {selectedEvent.interview_desc}</p>
+
+                        <div className="grid gap-4 md:grid-cols-3 mt-4">
+                            <div className="md:col-span-2 space-y-3">
+                                <div>
+                                    <div className="text-xs text-muted-foreground mb-1">Собеседующий</div>
+                                    <div className="text-sm font-medium">{`${selectedEvent.interview_owner.employee_name} ${selectedEvent.interview_owner.employee_surname}`}</div>
+                                </div>
+
+                                <div>
+                                    <div className="text-xs text-muted-foreground mb-1">Собеседуемый</div>
+                                    <div className="text-sm font-medium">{`${selectedEvent.interview_subject.employee_name} ${selectedEvent.interview_subject.employee_surname}`}</div>
+                                </div>
+
+                                <div>
+                                    <div className="text-xs text-muted-foreground mb-1">Описание</div>
+                                    <div className="bg-muted p-3 rounded-md text-sm leading-relaxed max-h-40 overflow-auto whitespace-pre-wrap">
+                                        {selectedEvent.interview_desc || 'Нет описания'}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div className="text-xs text-muted-foreground mb-1">Комментарии</div>
+                                    <div className="bg-muted p-3 rounded-md text-sm leading-relaxed max-h-40 overflow-auto whitespace-pre-wrap">
+                                        {selectedEvent.interview_comment || 'Отсутствуют'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <aside className="md:col-span-1 space-y-3">
+                                <div>
+                                    <div className="text-xs text-muted-foreground mb-1">Продолжительность</div>
+                                    <div className="text-sm">{selectedEvent.interview_duration ? `${selectedEvent.interview_duration} мин.` : 'Не указана'}</div>
+                                </div>
+
+                                <div className="pt-2">
+                                    {((role === 'teamlead' || role === 'hr') && (selectedEvent.interview_status !== "completed")) && (
+                                        <Button onClick={() => setFinishEventDialogOpen(true)} className="w-full">
+                                            Завершить
+                                        </Button>
+                                    )}
+                                </div>
+                            </aside>
                         </div>
                     </DialogContent>
                 )}
+            </Dialog>
+
+            <Dialog open={isFinishEventDialogOpen} onOpenChange={handleCloseFinishEventDialog} >
+                <DialogContent className="animate-appear">
+                    <DialogHeader>
+                        <DialogTitle>Завершить собеседование</DialogTitle>
+                    </DialogHeader>
+
+                    <form
+                        id="finish-interview"
+                        className="grid gap-4"
+                        onSubmit={(e) => {
+                            e.preventDefault()
+                            const form = e.currentTarget as HTMLFormElement
+                            const fd = new FormData(form)
+                            const result = String(fd.get('result') || '')
+                            const notes = String(fd.get('notes') || '')                       
+
+                            mutateFinish({
+                                id: selectedEvent ? selectedEvent.interview_id : 0,
+                                comment: notes,
+                                duration: 0
+                            })
+
+                            setViewEventDialogOpen(false)
+                            setFinishEventDialogOpen(false)
+                            setSelectedEvent(null)
+                            form.reset()
+                        }}
+                    >
+                        <Field>
+                            <FieldLabel htmlFor="result">Результат</FieldLabel>
+                            <Select name="result" defaultValue="passed">
+                                <SelectTrigger id="result">
+                                    <SelectValue placeholder="Выберите результат" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="passed">Пройдено</SelectItem>
+                                    <SelectItem value="failed">Не пройдено</SelectItem>
+                                    <SelectItem value="other">Другое</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <FieldDescription>Выберите итог собеседования</FieldDescription>
+                        </Field>
+
+                        <Field className="grid gap-2">
+                            <FieldLabel htmlFor="notes">Комментарии</FieldLabel>
+                            <Textarea id="notes" name="notes" placeholder="Добавьте комментарии по собеседованию" />
+                        </Field>
+                    </form>
+
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">Отмена</Button>
+                        </DialogClose>
+                        <Button type="submit" form="finish-interview">Завершить</Button>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
         </CalendarWrapper>
     )

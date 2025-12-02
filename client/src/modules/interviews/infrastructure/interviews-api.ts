@@ -20,3 +20,12 @@ export const getInterviewPlanned = async (): Promise<InterviewData[]> => {
     debugger
     return res.data
 }
+
+export const finishInterview = async (id: number, comment: string, duration: number): Promise<InterviewData> => {
+    const res = await http.post("interview/finish", {
+        interview_id: id,
+        interview_comment: comment,
+        interview_duration: duration
+    })
+    return res.data
+}
