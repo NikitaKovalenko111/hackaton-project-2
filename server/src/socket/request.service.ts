@@ -31,6 +31,9 @@ export class RequestService {
       const request = await this.requestRepository.findOne({
         where: {
           request_id: id
+        },
+        relations: {
+          request_owner: true,
         }
       })
   

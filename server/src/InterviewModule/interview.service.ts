@@ -25,6 +25,9 @@ export class InterviewService {
       const interview = await this.interviewRepository.findOne({
         where: {
           interview_id: id
+        },
+        relations: {
+          interview_owner: true,
         }
       })
   
