@@ -7,6 +7,8 @@ import { Skill } from "@/modules/skills/domain/skills.types"
 
 export type ROLE = 'hr' | 'developer' | 'teamlead' | 'techlead' | 'admin' | 'moderator'
 
+export type NotificationType = "newRequest" | "completedRequest" | "canceledRequest" | "newInterview"
+
 export interface NavItem {
     roles: ROLE[]
     href: string
@@ -74,17 +76,17 @@ export const NavItems: NavItem[] = [
         icon: 'MessagesSquare'
     },
     {
+        roles: ['admin', 'teamlead'],
+        title: 'Регламенты',
+        href: '/skill-orders',
+        icon: 'SquareRoundCorner'
+    },
+    {
         roles: ['admin', 'developer', 'hr', 'moderator', 'teamlead', 'techlead'],
         title: 'Профиль',
         href: '/profile',
         icon: 'CircleUser'
     },
-    {
-        roles: ['admin', 'teamlead'],
-        title: 'Регламенты',
-        href: '/skill-orders',
-        icon: 'SquareRoundCorner'
-    }
 ]
 
 export const rootActions = {
