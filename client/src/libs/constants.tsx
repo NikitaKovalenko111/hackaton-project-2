@@ -18,6 +18,7 @@ export interface NavItem {
 
 export interface Request {
     request_id: number
+    justification?: string
     request_type: 'upgrade'
     request_status: 'pending' | 'completed' | 'canceled'
     request_date: Date
