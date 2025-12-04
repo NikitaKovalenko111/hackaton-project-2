@@ -134,6 +134,8 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       const { request_id, employee_id, justification } = request
 
+      console.log(request);
+
       const requestData =
         await this.requestGatewayService.cancelRequest(request_id, employee_id, justification)
       
