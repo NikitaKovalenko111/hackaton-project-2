@@ -74,6 +74,7 @@ export const RequestsTab = ({employeeId}: {employeeId: number}) => {
                             onClick={() => {
                                 handleCancelRequest(selectedRequestId, employeeId, justification)
                                 setIsDialogOpen(false)
+                                setJustification("")
                             }}
                         >Отклонить</Button>
                     </DialogFooter>

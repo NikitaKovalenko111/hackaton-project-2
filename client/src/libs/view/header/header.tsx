@@ -51,6 +51,10 @@ export const Header = ({
                                                     notification.notification.notification_type === "canceledRequest" && `Заявка от ${notification.object.request_owner.employee_name} ${notification.object.request_owner.employee_surname} отменена` ||
                                                     notification.notification.notification_type === "newInterview" && `Новое интервью с ${notification.object.interview_owner.employee_name} ${notification.object.interview_owner.employee_surname}`
                                                 }</p>
+                                                {
+                                                    notification.notification.notification_type === "canceledRequest" &&
+                                                    <p className="text-xs text-muted-foreground">Причина: {notification.object.justification}</p>
+                                                }
                                                 <p className="text-xs text-muted-foreground">{new Date(notification.notification.created_at).toLocaleString()}</p>
                                                 <Button onClick={() => onApplyNotification(notification.notification.notification_id)} size="sm" variant={notification.notification.notification_status == "applied" ? "default" : "secondary"} disabled={notification.notification.notification_status == "applied"}>
                                                     {notification.notification.notification_status == "applied" ? "Просмотрено" : "Отметить как прочитанное"}
