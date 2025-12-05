@@ -1,3 +1,4 @@
+import { set } from 'zod';
 import http from "@/libs/http/http"
 import { AiPlanData, AiPlanDTO, Employee } from "../domain/profile.types"
 import { Request } from "@/libs/constants"
@@ -13,6 +14,29 @@ export const getProfile = async (id: number, isCurrentEmployee: boolean): Promis
     } else {
         res = await http.get(`employee/profile/${id}`, {})
     }
+
+    return res.data
+}
+
+export const setProfilePhoto = async (file: File): Promise<string> => {
+
+    const formData = new FormData()
+    console.log(file);
+    
+    formData.append("file", file)
+
+    const res = await http.post("employee/photo", formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    return res.data.photoUrl
+}
+
+export const getProfilePhoto = async (): Promise<string> => {
+
+    const res = await http.get(`employee/profile/photo`, {})
+    localStorage.setItem('profilePhoto', res.data)
 
     return res.data
 }

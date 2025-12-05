@@ -1,6 +1,7 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dropzone } from "@/components/shadcn-studio/dropzone/dropzone";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,12 +9,15 @@ import { ROLE, ROLE_TRANSLATION } from "@/libs/constants";
 import { SocketContext } from "@/libs/hooks/useSocket";
 import { CompanyData } from "@/modules/company/domain/company.type";
 import { Employee, Role } from "@/modules/profile/domain/profile.types";
-import { useLogout } from "@/modules/profile/infrastructure/query/mutations";
+import { useLogout, useSetProfilePhoto } from "@/modules/profile/infrastructure/query/mutations";
 import { Skill } from "@/modules/skills/domain/skills.types";
 import { Team } from "@/modules/teams/domain/teams.type";
-import { Camera, Calendar, Mail, MapPin, Building2, MessageCircle } from "lucide-react";
+import { Camera, Calendar, Mail, MapPin, Building2, MessageCircle, FileInput, File } from "lucide-react";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import { Dropdown } from "react-day-picker";
+import { useGetProfilePhoto } from "@/modules/profile/infrastructure/query/queries";
+import { base64 } from "zod";
 const Cookies = require('js-cookie')
 
 type PropsType = {
@@ -47,8 +51,20 @@ export const ProfileHeader = ({
 }: PropsType) => {
     
     const {resetSocket} = useContext(SocketContext)
+    const { data, refetch } = useGetProfilePhoto()
 
-    const {mutate} = useLogout({resetSocket})
+    const [profilePhoto, setProfilePhoto] = useState<string>("")
+
+    useEffect(() => {
+        refetch()
+        const photo = localStorage.getItem("profilePhoto") as string
+        setProfilePhoto(photo || "")
+    }, [])
+
+    console.log(base64().decode(data as string));
+
+    const {mutate: mutateLogout} = useLogout({resetSocket})
+    const {mutate: mutateSetProfilePhoto} = useSetProfilePhoto()
     // const [role, setRole] = useState<ROLE>('developer')
 
     // useEffect(() => {
@@ -62,20 +78,27 @@ export const ProfileHeader = ({
                     <div className="relative">
                         <Avatar className="h-24 w-24">
                             <AvatarImage
-                            src={employee_photo}
+                            src={profilePhoto}
                             alt="Profile"
                             />
                             <AvatarFallback className="text-2xl">{`${employee_name[0]}${employee_surname[0]}`}</AvatarFallback>
                         </Avatar>
                         {
                             isCurrentEmployee &&
-                            <Button
-                                size="icon"
-                                variant="outline"
-                                className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full"
-                            >
-                                <Camera />
-                            </Button>
+                            <>
+                                <Button
+                                    size="icon"
+                                    variant="outline"
+                                    className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full"
+                                >
+                                    <input type="file" onChange={(e) => {
+                                        if (e.target.files && e.target.files.length > 0) {
+                                            mutateSetProfilePhoto(e.target.files[0])
+                                        }
+                                    }} className="absolute cursor-pointer -right-2 -bottom-2 h-8 w-8 rounded-full opacity-0" />
+                                    <Camera />
+                                </Button>
+                            </>
                         }
                     </div>
                     <div className="flex-1 space-y-2">
@@ -107,7 +130,7 @@ export const ProfileHeader = ({
                         <>
                             <Button variant="default">Изменить профиль</Button>
                             <Button onClick={() => {
-                                mutate()
+                                mutateLogout()
                             }} variant="destructive">Выйти</Button>
                         </>
                     }

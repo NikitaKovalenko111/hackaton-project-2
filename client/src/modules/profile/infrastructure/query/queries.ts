@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getProfile, getRequests } from "../profile-api"
+import { getProfile, getProfilePhoto, getRequests } from "../profile-api"
 const Cookies = require('js-cookie')
 
 export const useGetProfile = () => {
@@ -14,6 +14,15 @@ export const useGetProfile = () => {
         enabled: !!token,
         staleTime: 0,
         gcTime: 0
+    })
+}
+
+export const useGetProfilePhoto = () => {
+
+    return useQuery({
+        queryKey: ['profilePhoto'],
+        queryFn: () => getProfilePhoto(),
+        enabled: false
     })
 }
 
