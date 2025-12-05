@@ -125,7 +125,7 @@ export class EmployeeController {
 
       const file = createReadStream(imagePath)
 
-      res.appendHeader('Content-Type', `image/${employee.employee_photo.split(".")[1]}`)
+      res.header('Image-Type', `image/${employee.employee_photo.split(".")[1]}`)
 
       return new StreamableFile(file, {
         "type": `image/${employee.employee_photo.split(".")[1]}`
