@@ -17,12 +17,12 @@ export const useGetProfile = () => {
     })
 }
 
-export const useGetProfilePhoto = () => {
+export const useGetProfilePhoto = (setter: (data: string) => void) => {
 
     return useQuery({
         queryKey: ['profilePhoto'],
-        queryFn: () => getProfilePhoto(),
-        enabled: false
+        queryFn: () => getProfilePhoto(setter),
+        enabled: true
     })
 }
 

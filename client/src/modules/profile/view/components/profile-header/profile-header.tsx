@@ -51,17 +51,16 @@ export const ProfileHeader = ({
 }: PropsType) => {
     
     const {resetSocket} = useContext(SocketContext)
-    const { data, refetch } = useGetProfilePhoto()
-
+    
     const [profilePhoto, setProfilePhoto] = useState<string>("")
+    const { data, refetch } = useGetProfilePhoto(setProfilePhoto)
 
     useEffect(() => {
-        refetch()
         const photo = localStorage.getItem("profilePhoto") as string
         setProfilePhoto(photo || "")
     }, [])
 
-    console.log(base64().decode(data as string));
+    console.log(profilePhoto);
 
     const {mutate: mutateLogout} = useLogout({resetSocket})
     const {mutate: mutateSetProfilePhoto} = useSetProfilePhoto()
@@ -76,12 +75,13 @@ export const ProfileHeader = ({
             <CardContent>
                 <div className="flex flex-col items-start gap-6 md:flex-row md:items-center">
                     <div className="relative">
+                        <img src={profilePhoto} alt="" />
                         <Avatar className="h-24 w-24">
                             <AvatarImage
                             src={profilePhoto}
                             alt="Profile"
                             />
-                            <AvatarFallback className="text-2xl">{`${employee_name[0]}${employee_surname[0]}`}</AvatarFallback>
+                            
                         </Avatar>
                         {
                             isCurrentEmployee &&
