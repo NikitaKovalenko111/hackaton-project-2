@@ -115,10 +115,7 @@ export class EmployeeController {
   })
   @ApiResponse({ status: 404, description: 'Фото не найдено' })
   @ApiBearerAuth()
-  async getProfilePhoto(@Req() req: Request): Promise<{
-    photo: StreamableFile,
-    type: string
-  }> {
+  async getProfilePhoto(@Req() req: Request, @Res() res: Response): Promise<StreamableFile> {
     try {
       const employeeId = (req as any).employee.employee_id
 
@@ -128,12 +125,13 @@ export class EmployeeController {
 
       const file = createReadStream(imagePath)
 
-      return {
-        photo: new StreamableFile(file, {
+      res.set({
+        'Content-Type': `image/${employee.employee_photo.split(".")[1]}`
+      })
+
+      return new StreamableFile(file, {
         "type": `image/${employee.employee_photo.split(".")[1]}`
-        }),
-        type: imagePath.split(".")[1]
-      }
+      })
     } catch (error) {
       throw new HttpException(error.message, error.status)
     }
