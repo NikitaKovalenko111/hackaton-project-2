@@ -30,6 +30,7 @@ import { EmployeeService } from './employee.service'
 import type { Request, Response } from 'express'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { employeeDto } from 'src/types'
+import * as fs from 'fs'
 import {
   authEmployeeBodyDto,
   authEmployeeTgBodyDto,
@@ -122,6 +123,10 @@ export class EmployeeController {
       const employee = await this.employeeService.getCleanEmployee(employeeId)
 
       const imagePath = join(process.cwd(), '../profilePhotos', `${employee.employee_photo}`)
+
+      if (!fs.existsSync(imagePath)) {
+        throw new HttpException("Photo doesn't exist!", HttpStatus.NOT_FOUND) 
+      }
 
       const file = createReadStream(imagePath)
 
