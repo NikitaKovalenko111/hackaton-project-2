@@ -37,22 +37,16 @@ export const getProfilePhoto = async (setter: (data: string) => void): Promise<s
 
     const res = await http.get(`employee/profile/photo`, {})
 
-    console.log(res.data.type);
+    console.log(res.data);
     
-    const blob = new Blob([res.data], {
-        type: res.headers['Content-Type'] as string
-    }) 
-    
-    const reader = new FileReader()
+    const blob = new Blob([res.data], {type: res.headers['content-type']})
 
-    reader.readAsDataURL(blob)
+    const url = URL.createObjectURL(blob)
 
-    reader.onload = function(e) {
-        localStorage.setItem('profilePhoto', e.target?.result as string)
-        setter(e.target?.result as string)
-    };
-    
-    return reader.result as string
+    localStorage.setItem("profilePhoto", url)
+    setter(url)
+
+    return url
 }
 
 export const logout = async () => {

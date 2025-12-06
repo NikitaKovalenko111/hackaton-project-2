@@ -36,6 +36,9 @@ export default function RootLayout({
       lang="ru"
       suppressHydrationWarning
     >
+      <head>
+        <meta httpEquiv="Content-Security-Policy" content="img-src 'self' blob: data:" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

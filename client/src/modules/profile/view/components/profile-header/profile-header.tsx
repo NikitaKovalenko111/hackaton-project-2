@@ -12,12 +12,13 @@ import { Employee, Role } from "@/modules/profile/domain/profile.types";
 import { useLogout, useSetProfilePhoto } from "@/modules/profile/infrastructure/query/mutations";
 import { Skill } from "@/modules/skills/domain/skills.types";
 import { Team } from "@/modules/teams/domain/teams.type";
-import { Camera, Calendar, Mail, MapPin, Building2, MessageCircle, FileInput, File } from "lucide-react";
+import { Camera, Calendar, Mail, MapPin, Building2, MessageCircle, FileInput } from "lucide-react";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { Dropdown } from "react-day-picker";
 import { useGetProfilePhoto } from "@/modules/profile/infrastructure/query/queries";
 import { base64 } from "zod";
+import { File } from "buffer";
 const Cookies = require('js-cookie')
 
 type PropsType = {
@@ -60,6 +61,8 @@ export const ProfileHeader = ({
         setProfilePhoto(photo || "")
     }, [])
 
+
+
     console.log(profilePhoto);
 
     const {mutate: mutateLogout} = useLogout({resetSocket})
@@ -78,7 +81,7 @@ export const ProfileHeader = ({
                         <img src={profilePhoto} alt="" />
                         <Avatar className="h-24 w-24">
                             <AvatarImage
-                            src={profilePhoto}
+                            src={profilePhoto ? (profilePhoto.startsWith("data:image") ? profilePhoto : `data:image/png;base64,${profilePhoto}`) : undefined}
                             alt="Profile"
                             />
                             
