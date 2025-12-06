@@ -39,7 +39,9 @@ export const getProfilePhoto = async (setter: (data: string) => void): Promise<s
 
     console.log(res.data.type);
     
-    const blob = new Blob([res.data]) 
+    const blob = new Blob([res.data], {
+        type: res.headers['Content-Type'] as string
+    }) 
     
     const reader = new FileReader()
 
