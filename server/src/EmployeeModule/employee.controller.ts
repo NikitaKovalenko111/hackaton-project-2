@@ -116,7 +116,7 @@ export class EmployeeController {
   })
   @ApiResponse({ status: 404, description: 'Фото не найдено' })
   @ApiBearerAuth()
-  async getProfilePhoto(@Req() req: Request, @Res() res: Response): Promise<StreamableFile> {
+  async getProfilePhoto(@Req() req: Request, @Res({ passthrough: true }) res: Response): Promise<StreamableFile> {
     try {
       const employeeId = (req as any).employee.employee_id
 
