@@ -26,6 +26,29 @@ export class RequestService {
     private skillService: SkillService,
   ) {}
 
+  async getCancelledRequests(employeeId: number): Promise<Request[]> {
+    try {
+      const requests = await this.requestRepository.find({
+        where: {
+          request_owner: {
+            employee_id: employeeId
+          },
+          request_status: requestStatus.CANCELED
+        },
+        relations: {
+          request_owner: true
+        }
+      })
+
+      return requests
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
   async getRequestById(id: number): Promise<Request> {
     try {
       const request = await this.requestRepository.findOne({

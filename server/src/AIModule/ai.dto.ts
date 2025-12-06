@@ -27,3 +27,7 @@ export class aiResponse {
   })
   skill_level: skillLevel;
 }
+
+export class aiReview {
+  message: string
+}

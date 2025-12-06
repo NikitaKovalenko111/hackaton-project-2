@@ -20,6 +20,29 @@ export class InterviewService {
     private employeeService: EmployeeService,
   ) {}
 
+  async getFinishedInterviews(employeeId: number): Promise<Interview[]> {
+    try {
+      const interviews = await this.interviewRepository.find({
+        where: {
+          interview_subject: {
+            employee_id: employeeId
+          },
+          interview_status: interviewStatusType.COMPLETED
+        },
+        relations: {
+          interview_subject: true
+        }
+      })
+
+      return interviews
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
   async getInterviewById(id: number): Promise<Interview> {
     try { 
       const interview = await this.interviewRepository.findOne({
