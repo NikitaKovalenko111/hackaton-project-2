@@ -131,7 +131,7 @@ export class EmployeeController {
       const file = createReadStream(imagePath)
 
       res.set({
-        'Content-Type': `application/image/${employee.employee_photo.split(".")[1]}`,
+        'Content-Type': `image/${employee.employee_photo.split(".")[1]}`,
         'Content-Disposition': 'attachment; filename="file.txt"',
       }).status(HttpStatus.OK)
 
