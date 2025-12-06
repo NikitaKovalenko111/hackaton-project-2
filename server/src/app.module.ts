@@ -86,6 +86,7 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
+        '/profilePhotos',
         '/employee/registration',
         '/employee/authorization',
         '/employee/refresh'
