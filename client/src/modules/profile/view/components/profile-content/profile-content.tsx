@@ -98,11 +98,15 @@ export const ProfileContent = ({
             skills={skills}
         />
 
-        <TeamTab
-            isCurrentEmployee={isCurrentEmployee}
-            id={id}
-            team={team}
-        />
+        {
+            isCurrentEmployee && 
+            <TeamTab
+                isCurrentEmployee={isCurrentEmployee}
+                id={id}
+                team={team}
+            />
+        }
+
 
         <ProtectedRoute allowedRoles={['teamlead', 'techlead']}>
             <RequestsTab 
