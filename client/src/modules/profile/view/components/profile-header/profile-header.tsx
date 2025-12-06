@@ -71,7 +71,9 @@ export const ProfileHeader = ({
                             src={`${process.env.NEXT_PUBLIC_BACKEND_API}/profilePhotos/${employee_photo}`}
                             alt="Profile"
                             />
-                            
+                            <AvatarFallback className="text-xl">
+                                {`${employee_name[0]}${employee_surname[0]}`}
+                            </AvatarFallback>
                         </Avatar>
                         {
                             isCurrentEmployee &&

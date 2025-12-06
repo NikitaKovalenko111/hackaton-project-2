@@ -124,7 +124,7 @@ export const RequestsTab = ({employeeId}: {employeeId: number}) => {
                             <div className="flex items-center gap-3">
                                 <Avatar className="h-16 w-16">
                                 <AvatarImage
-                                    src={owner?.employee_photo ?? ""}
+                                    src={`${process.env.NEXT_PUBLIC_BACKEND_API}/profilePhotos/${owner.employee_photo}`}
                                     alt="Profile"
                                 />
                                 <AvatarFallback className="text-lg">{initials}</AvatarFallback>

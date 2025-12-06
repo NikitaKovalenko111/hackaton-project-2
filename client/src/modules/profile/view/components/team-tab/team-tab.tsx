@@ -36,7 +36,7 @@ export const TeamTab = ({id, team, isCurrentEmployee}: {id: number, team: Team, 
                         <div className="rounded-lg bg-muted/50 p-4">
                             <div className="flex items-center gap-4">
                                 <Avatar className="h-20 w-20 ring-2 ring-muted/30">
-                                    <AvatarImage src={team.teamlead.employee_photo} alt="Team Lead" />
+                                    <AvatarImage src={`${process.env.NEXT_PUBLIC_BACKEND_API}/profilePhotos/${team.teamlead.employee_photo}`} alt="Team Lead" />
                                     <AvatarFallback className="text-xl">
                                         {`${team.teamlead.employee_name[0]}${team.teamlead.employee_surname[0]}`}
                                     </AvatarFallback>
@@ -54,6 +54,8 @@ export const TeamTab = ({id, team, isCurrentEmployee}: {id: number, team: Team, 
                             <p className="text-xl font-medium">Сотрудники команды</p>
                             <div className="grid gap-4">
                                 {team.employees.map((empl) => {
+                                    console.log(empl);
+                                    
                                     if (id == empl.employee_id) return null
                                     return (
                                         <div
@@ -62,14 +64,14 @@ export const TeamTab = ({id, team, isCurrentEmployee}: {id: number, team: Team, 
                                         >
                                             <div className="flex items-center gap-3">
                                                 <Avatar className="h-14 w-14">
-                                                    <AvatarImage src={empl.employee_photo} alt="Profile" />
+                                                    <AvatarImage src={`${process.env.NEXT_PUBLIC_BACKEND_API}/profilePhotos/${empl.employee_photo}`} alt="Profile" />
                                                     <AvatarFallback className="text-lg">
                                                         {`${empl.employee_name[0]}${empl.employee_surname[0]}`}
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <div>
                                                     <p className="font-medium">{`${empl.employee_name} ${empl.employee_surname}`}</p>
-                                                    <p className="text-sm text-muted-foreground">{ROLE_TRANSLATION[empl.role.role_name] ?? empl.role.role_name}</p>
+                                                    <p className="text-sm text-muted-foreground">{ROLE_TRANSLATION[empl.role.role_name] ? empl.role.role_name : ""}</p>
                                                 </div>
                                             </div>
                                             <div>{roleBadge(empl.role.role_name)}</div>
