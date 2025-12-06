@@ -101,6 +101,7 @@ export const ProfileContent = ({
         {
             isCurrentEmployee && 
             <TeamTab
+                role={role}
                 isCurrentEmployee={isCurrentEmployee}
                 id={id}
                 team={team}

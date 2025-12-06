@@ -27,6 +27,9 @@ export interface AiPlanDTO {
     skill_shape_id: number
     skill_level: SkillLevel
 }
+export interface AiReviewData {
+    message: string
+}
 
 export interface AiPlanData {
     message: string

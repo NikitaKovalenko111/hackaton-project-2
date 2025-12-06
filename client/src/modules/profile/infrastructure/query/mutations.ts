@@ -1,12 +1,12 @@
 'use client'
 
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { logout, requestAiPlan, setProfilePhoto } from "../profile-api"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { getAiReview, logout, requestAiPlan, setProfilePhoto } from "../profile-api"
 import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import { useActions } from "@/libs/hooks/useActions"
 import { useReduxSocket } from "@/libs/hooks/useReduxSocket"
-import { AiPlanData, AiPlanDTO } from "../../domain/profile.types"
+import { AiPlanData, AiPlanDTO, AiReviewData } from "../../domain/profile.types"
 
 export const useLogout = ({resetSocket}: {resetSocket: () => void}) => {
     const queryClient = useQueryClient()
@@ -44,6 +44,21 @@ export const useSetProfilePhoto = () => {
         onSuccess: (photoUrl: string) => {
             queryClient.invalidateQueries({ queryKey: ['profile'] })
             toast.success('Фото успешно обновлено!')
+        }
+    })
+}
+
+export const useGetAiReview = (setIsOpenDialog: (isOpen: boolean) => void) => {
+    return useMutation({
+        mutationKey: ['ai-review'],
+        mutationFn: (employeeId: number) => getAiReview(employeeId),
+        onSuccess: (data: AiReviewData) => {
+            toast.success('Ревью получено!')
+            setIsOpenDialog(true)
+            return data
+        },
+        onError: (e: any) => {
+            toast.error('Возникла ошибка!')
         }
     })
 }

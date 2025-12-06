@@ -1,6 +1,6 @@
 import { set } from 'zod';
 import http from "@/libs/http/http"
-import { AiPlanData, AiPlanDTO, Employee } from "../domain/profile.types"
+import { AiPlanData, AiPlanDTO, AiReviewData, Employee } from "../domain/profile.types"
 import { Request } from "@/libs/constants"
 // import socket from "@/app/socket"
 const Cookies = require('js-cookie')
@@ -31,6 +31,12 @@ export const setProfilePhoto = async (file: File): Promise<string> => {
         }
     })
     return res.data.photoUrl
+}
+
+export const getAiReview = async (employeeId: number): Promise<AiReviewData> => {
+
+    const res = await http.get(`ai/get/review/${employeeId}`, {})
+    return res.data
 }
 
 export const getProfilePhoto = async (setter: (data: string) => void): Promise<string> => {

@@ -1,16 +1,36 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { TabsContent } from "@/components/ui/tabs"
-import { ROLE_TRANSLATION } from "@/libs/constants"
+import { ROLE, ROLE_TRANSLATION } from "@/libs/constants"
 import { roleBadge } from "@/modules/employees/view/ui/role-badge"
+import { useGetAiReview } from "@/modules/profile/infrastructure/query/mutations"
 import { Team } from "@/modules/teams/domain/teams.type"
+import { Dialog } from "@radix-ui/react-dialog"
+import { on } from "events"
+import { useState } from "react"
+import { AiReviewDialog } from "../ai-review-dialog/ai-review-dialog"
 
-export const TeamTab = ({id, team, isCurrentEmployee}: {id: number, team: Team, isCurrentEmployee: boolean}) => {
+export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: Team, isCurrentEmployee: boolean, role: ROLE}) => {
+
+    const [openReviewDialog, setOpenReviewDialog] = useState<boolean>(false)
+    const [employeeName, setEmployeeName] = useState<string>("")
+    const [employeeSurname, setEmployeeSurname] = useState<string>("")
+
+    const {data, mutate: getAiReview} = useGetAiReview(setOpenReviewDialog)
 
     return (
+        <>
+        <Dialog open={openReviewDialog} onOpenChange={setOpenReviewDialog}>
+            <AiReviewDialog
+                message={data ? data.message : ""}
+                employeeName={employeeName}
+                employeeSurname={employeeSurname}
+            />
+        </Dialog>
         <TabsContent value="team" className="space-y-6">
             {team ? (
                 <Card className="overflow-visible">
@@ -74,7 +94,18 @@ export const TeamTab = ({id, team, isCurrentEmployee}: {id: number, team: Team, 
                                                     <p className="text-sm text-muted-foreground">{ROLE_TRANSLATION[empl.role.role_name] ? empl.role.role_name : ""}</p>
                                                 </div>
                                             </div>
-                                            <div>{roleBadge(empl.role.role_name)}</div>
+                                            <div className="flex gap-4">
+                                                {
+                                                    isCurrentEmployee && role === "teamlead" ? (
+                                                        <Button onClick={ () => {
+                                                            setEmployeeName(empl.employee_name)
+                                                            setEmployeeSurname(empl.employee_surname)
+                                                            getAiReview(empl.employee_id)
+                                                        } }>Ревью</Button>
+                                                    ) : null
+                                                }
+                                                {roleBadge(empl.role.role_name)}
+                                            </div>
                                         </div>
                                     )
                                 })}
@@ -92,5 +123,6 @@ export const TeamTab = ({id, team, isCurrentEmployee}: {id: number, team: Team, 
                 </Card>
             )}
         </TabsContent>
+        </>
     )
 }

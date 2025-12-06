@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
-import { getProfile, getProfilePhoto, getRequests } from "../profile-api"
+import { getAiReview, getProfile, getProfilePhoto, getRequests } from "../profile-api"
+import { AiReviewData } from "../../domain/profile.types"
+import toast from "react-hot-toast"
 const Cookies = require('js-cookie')
 
 export const useGetProfile = () => {
