@@ -187,7 +187,7 @@ export const TeamsTable = ({data, openAddDialog, onCloseAddDialog}: TeamsTablePr
                         </TableBody>
                     </Table>
                 </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 space-y-2 sm:space-y-0 py-3 sm:py-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 py-3 sm:py-4">
                     <div className="text-sm text-muted-foreground">
                         Страница {table.getState().pagination.pageIndex + 1} из {table.getPageCount()}
                     </div>

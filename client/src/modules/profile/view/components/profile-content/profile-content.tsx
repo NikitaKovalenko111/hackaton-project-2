@@ -73,14 +73,14 @@ export const ProfileContent = ({
     return (
         <Tabs defaultValue="personal" className="space-y-4 md:space-y-6">
         <TabsList className={clsx(
-            `grid w-full grid-cols-3 sm:grid-cols-4 text-xs sm:text-sm`,
+            `flex w-full flex-wrap gap-1 text-xs sm:text-sm`,
             tabList[role]
         )}>
-            <TabsTrigger value="personal" className="px-2 sm:px-3">Личное</TabsTrigger>
-            <TabsTrigger value="skills" className="px-2 sm:px-3">Компетенции</TabsTrigger>
-            <TabsTrigger value="team" className="px-2 sm:px-3">Команда</TabsTrigger>
+            <TabsTrigger value="personal" className="flex-1 min-w-[90px] px-2 sm:px-3">Личное</TabsTrigger>
+            <TabsTrigger value="skills" className="flex-1 min-w-[90px] px-2 sm:px-3">Компетенции</TabsTrigger>
+            <TabsTrigger value="team" className="flex-1 min-w-[90px] px-2 sm:px-3">Команда</TabsTrigger>
             <ProtectedRoute allowedRoles={['teamlead', 'techlead']}>
-                <TabsTrigger value="requests" className="px-2 sm:px-3 col-span-3 sm:col-span-1 mt-2 sm:mt-0">Запросы</TabsTrigger>
+                <TabsTrigger value="requests" className="flex-1 min-w-[90px] px-2 sm:px-3">Запросы</TabsTrigger>
             </ProtectedRoute>
         </TabsList>
 
