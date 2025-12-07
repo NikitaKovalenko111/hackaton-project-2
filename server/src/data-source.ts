@@ -1,7 +1,11 @@
+import { ConfigService } from '@nestjs/config'
 import dotenv from 'dotenv'
 import { DataSource } from 'typeorm'
+import { initialSchema1765128806097 } from './migrations/1765128806097-initial-schema'
 
 dotenv.config()
+
+const configService = new ConfigService()
 
 export default new DataSource({
   type: 'postgres',
@@ -10,6 +14,5 @@ export default new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [__dirname + '/entities/*.ts'],
-  synchronize: false,
+  migrations: [initialSchema1765128806097],
 })
