@@ -216,8 +216,8 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
                         <Button onClick={() => handleOpenCreateDialog()} variant="default" >Добавить регламент</Button>
                     
                 </div>
-                <div className="overflow-hidden rounded-md border">
-                    <Table>
+                <div className="overflow-x-auto -mx-2 sm:mx-0 rounded-md border">
+                    <Table className="min-w-full">
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
@@ -283,7 +283,7 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
                     )}
                     </Table>
                 </div>
-                <div className="flex items-center justify-end space-x-2 py-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 space-y-2 sm:space-y-0 py-3 sm:py-4">
                     <div className="space-x-2">
                     <Button
                         variant="outline"

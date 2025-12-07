@@ -13,11 +13,11 @@ export default function MainLayout({children}: {children: React.ReactNode}) {
 
     return (
         <>
-            <main className="w-full">
+            <main className="w-full min-h-screen">
                 <Header />
                 <AppSidebar />
                 <Suspense fallback={<Loading />}>
-                    <div className="flex items-center justify-center mt-30">
+                    <div className="flex items-start justify-center mt-20 md:mt-30 px-2 md:px-4">
                         {children}
                     </div>
                 </Suspense>

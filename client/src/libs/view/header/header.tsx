@@ -32,16 +32,16 @@ export const Header = ({
 
     return (
         <>
-        <div className="fixed flex justify-between top-0 w-full border py-6 shadow-sm z-2 bg-white p-4">
-            <p className="uppercase font-bold text-xl" >APC</p>
+        <div className="fixed flex justify-between top-0 w-full border py-3 md:py-6 shadow-sm z-2 bg-white p-2 md:p-4">
+            <p className="uppercase font-bold text-lg md:text-xl" >APC</p>
             {/* <SidebarTrigger /> */}
-            <div className="flex gap-8 items-center">
+            <div className="flex gap-4 md:gap-8 items-center">
                 <div>
                     <Popover>
                         <PopoverTrigger asChild>
                             <BellIcon fill={notifications && notifications?.length > 0 ? '#000' : 'transparent'} className="w-5 h-5 cursor-pointer text-black-600 hover:text-black-800" />
                         </PopoverTrigger>
-                        <PopoverContent className="w-80">
+                        <PopoverContent className="w-[calc(100vw-2rem)] max-w-80 sm:w-80">
                             <div className="grid gap-4">
                                 <p className="font-medium">Уведомления</p>
                                 <div className="scrollbar max-h-60 space-y-2 overflow-y-auto">

@@ -172,8 +172,8 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
                         className="max-w-sm"
                     /> */}
                 </div>
-                <div className="overflow-hidden rounded-md border">
-                    <Table>
+                <div className="overflow-x-auto -mx-2 sm:mx-0 rounded-md border">
+                    <Table className="min-w-full">
                         <TableHeader>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <TableRow key={headerGroup.id}>
@@ -242,8 +242,11 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
                         )}
                     </Table>
                 </div>
-                <div className="flex items-center justify-end space-x-2 py-4">
-                    <div className="space-x-2">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 space-y-2 sm:space-y-0 py-3 sm:py-4">
+                    <div className="text-sm text-muted-foreground">
+                        Страница {table.getState().pagination.pageIndex + 1} из {table.getPageCount()}
+                    </div>
+                    <div className="flex gap-2">
                         <Button
                             variant="outline"
                             size="sm"

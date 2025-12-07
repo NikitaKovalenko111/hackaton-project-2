@@ -35,10 +35,10 @@ export function AppSidebar() {
     }, [pathname])
 
     return (
-        <Sidebar className='mt-20 z-3'>
+        <Sidebar className='mt-16 md:mt-20 z-3'>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>APC</SidebarGroupLabel>
+                    <SidebarGroupLabel className="text-sm md:text-base">APC</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {NavItems.map((item) => {

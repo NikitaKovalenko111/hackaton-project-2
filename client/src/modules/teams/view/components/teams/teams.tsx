@@ -38,17 +38,17 @@ export const Teams = () => {
     }
 
     return (
-        <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10 animate-appear">
+        <div className="mx-auto w-full max-w-6xl space-y-4 md:space-y-6 px-2 sm:px-4 py-4 md:py-10 animate-appear">
             <ProtectedRoute allowedRoles={['admin']}>
-                <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex flex-col sm:flex-row gap-4 flex-1">
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4 flex-1">
                         <Input value={searchValue} onChange={onChangeTeam} placeholder="Название команды"></Input>
                         <Input value={teamleadSurname} onChange={onChangeSurname} placeholder="Фамилия тимлида"></Input>
                     </div>
                     <Button 
                         onClick={handleOpenAddDialog} 
                         variant="default"
-                        className="w-full sm:w-auto"
+                        className="w-full sm:w-auto whitespace-nowrap"
                     >
                         Добавить команду
                     </Button>

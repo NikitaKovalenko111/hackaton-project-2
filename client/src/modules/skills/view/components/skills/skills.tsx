@@ -42,19 +42,19 @@ export const Skills = () => {
     }, [data])
 
     return (
-        <div className="w-full max-w-6xl space-y-6 px-4 py-10 animate-appear">
+        <div className="w-full max-w-6xl space-y-4 md:space-y-6 px-2 sm:px-4 py-4 md:py-10 animate-appear">
             <ProtectedRoute allowedRoles={['admin', 'teamlead']}>
-                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 items-stretch sm:items-center justify-between">
                     <Input 
                         value={searchValue} 
                         onChange={onChange} 
                         placeholder="Название компетенции" 
-                        className="flex-1 max-w-[300px]"
+                        className="flex-1 max-w-full sm:max-w-[300px]"
                     />
                     <Button 
                         onClick={handleOpenCreateDialog} 
                         variant="default"
-                        className="w-full sm:w-auto"
+                        className="w-full sm:w-auto whitespace-nowrap"
                     >
                         Добавить компетенцию
                     </Button>
