@@ -66,7 +66,7 @@ export const AddEmployee = ({
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-                <form id="create-skill" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+                <form id="add-employee-form" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
                     <Controller 
                         name="employee_to_add_email"
                         control={control}
@@ -149,7 +149,7 @@ export const AddEmployee = ({
                 <DialogClose asChild>
                     <Button variant="outline" onClick={() => handleCloseDialog()} data-testid="add-employee-cancel-button">Отмена</Button>
                 </DialogClose>
-                <Button type="submit" form="create-skill" data-testid="add-employee-submit-button">Добавить</Button>
+                <Button type="submit" form="add-employee-form" data-testid="add-employee-submit-button">Добавить</Button>
             </DialogFooter>
         </DialogContent>
     )

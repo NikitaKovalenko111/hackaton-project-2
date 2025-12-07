@@ -73,7 +73,7 @@ export const AddTeam = ({
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-                <form id="create-skill" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+                <form id="add-team-form" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
                     <Controller 
                         name="team_name"
                         control={control}
@@ -157,7 +157,7 @@ export const AddTeam = ({
                 <DialogClose asChild>
                     <Button variant="outline" data-testid="add-team-cancel-button">Отмена</Button>
                 </DialogClose>
-                <Button type="submit" form="create-skill" data-testid="add-team-submit-button">Добавить</Button>
+                <Button type="submit" form="add-team-form" data-testid="add-team-submit-button">Добавить</Button>
             </DialogFooter>
         </DialogContent>
     )

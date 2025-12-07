@@ -145,8 +145,7 @@ This document lists all `data-testid` attributes added to the application for en
 ## Navigation
 
 ### App Sidebar
-- `app-sidebar` - Main sidebar container
-- `nav-link-{path}` - Navigation link (dynamic path, e.g., `nav-link--employees`)
+- `nav-link-{path}` - Navigation link (dynamic path, e.g., `nav-link--main`, `nav-link--employees`)
 
 ### App Header
 - `app-header` - Main header container
@@ -190,7 +189,7 @@ await page.getByTestId('add-employee-role-trigger').click();
 // Select role from dropdown
 await page.getByTestId('add-employee-submit-button').click();
 
-// Navigate to teams
+// Navigate to teams (note: single dash after 'link')
 await page.getByTestId('nav-link--teams').click();
 ```
 
