@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { CreateSkillDTO, GiveSkillDTO } from "../../domain/skills.types"
-import { createSkill, giveSkill, removeSkill, removeSkillFromCompany } from "../skills-api"
+import { CreateSkillDTO, GiveSkillDTO, SkillOrderDTO } from "../../domain/skills.types"
+import { createSkill, createSkillOrder, giveSkill, removeSkill, removeSkillFromCompany } from "../skills-api"
 import toast from "react-hot-toast"
 
 export const useCreateSkill = () => {
@@ -60,6 +60,22 @@ export const useRemoveSkillFromCompany = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["skills"] })
             toast.success('Компетенция удалена из компании!')
+        },
+        onError: (e: any) => {
+            toast.error('Возникла ошибка!')
+        }
+    })
+}
+
+export const useCreateSkillOrder = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationKey: ["create-skill-order"],
+        mutationFn: (data: SkillOrderDTO) => createSkillOrder(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['skill-orders']})
+            toast.success('Регламент добавлен!')
         },
         onError: (e: any) => {
             toast.error('Возникла ошибка!')

@@ -78,6 +78,12 @@ export const NavItems: NavItem[] = [
         title: 'Профиль',
         href: '/profile',
         icon: 'CircleUser'
+    },
+    {
+        roles: ['admin', 'teamlead'],
+        title: 'Регламенты',
+        href: '/skill-orders',
+        icon: 'SquareRoundCorner'
     }
 ]
 

@@ -3,11 +3,12 @@ import { CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardT
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SocketContext } from "@/libs/hooks/useSocket";
 import { AuthSignupDTO, LoginFormProps } from "@/modules/auth/domain/auth.type";
 import { useSignup } from "@/modules/auth/infrastructure/query/mutations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import clsx from "clsx";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import z from "zod";
@@ -41,7 +42,9 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
         }
     })
 
-    const {mutate, isError, isSuccess} = useSignup()
+    const {regSocket} = useContext(SocketContext)
+
+    const {mutate, isError, isSuccess} = useSignup({regSocket})
 
     const onSubmit: SubmitHandler<AuthSignupDTO> = (data) => {
         mutate(data)

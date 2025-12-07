@@ -3,7 +3,6 @@ import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Socket } from './socket.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
-import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
 import { clientType } from 'src/types'
 
@@ -21,17 +20,11 @@ export class SocketService {
     clientType: clientType,
   ): Promise<Socket> {
     try {
-      console.log(employeeId)
-
-      const employee = await this.employeeService.getCleanEmployee(employeeId)
-
-      if (!employee) {
-        throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
-      }
-
       const socketCurrent = await this.socketRepository.findOne({
         where: {
-          employee: employee,
+          employee: {
+            employee_id: employeeId
+          },
           client_type: clientType,
         },
       })
@@ -42,6 +35,12 @@ export class SocketService {
         const socketData = await this.socketRepository.save(socketCurrent)
 
         return socketData
+      }
+
+      const employee = await this.employeeService.getCleanEmployee(employeeId)
+
+      if (!employee) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
       }
 
       const socket = new Socket({
@@ -77,13 +76,15 @@ export class SocketService {
   }
 
   async getSocketByEmployeeId(
-    employee: Employee,
+    employeeId: number,
     client: clientType = clientType.WEB,
   ): Promise<Socket | null> {
     try {
       const socket = await this.socketRepository.findOne({
         where: {
-          employee: employee,
+          employee: {
+            employee_id: employeeId
+          },
           client_type: client,
         },
       })

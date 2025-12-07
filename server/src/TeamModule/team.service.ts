@@ -6,6 +6,8 @@ import { CompanyService } from 'src/CompanyModule/company.service'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
+import { RoleType } from 'src/types'
+import { Role } from 'src/EmployeeModule/role.entity'
 
 @Injectable()
 export class TeamService {
@@ -15,6 +17,9 @@ export class TeamService {
 
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
+
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
 
     private companyService: CompanyService,
     private employeeService: EmployeeService,
@@ -47,6 +52,23 @@ export class TeamService {
     return teamData
   }
 
+  async getTeamsByCompany(companyId: number): Promise<Team[]> {
+    const teams = await this.teamRepository.find({
+      where: {
+        company: {
+          company_id: companyId
+        }
+      },
+      relations: {
+        employees: {
+          role: true
+        }
+      }
+    })
+
+    return teams
+  }
+
   async addTeam(
     companyId: number,
     teamName: string,
@@ -56,6 +78,7 @@ export class TeamService {
     try {
       const company = await this.companyService.getCompanyInfo(companyId)
       const teamlead = await this.employeeService.getEmployee(teamlead_id)
+      const role = await this.employeeService.getEmployeeRoleById(teamlead_id)
 
       const team = new Team({
         team_name: teamName,
@@ -70,6 +93,9 @@ export class TeamService {
         teamData.team_id,
         teamData.teamlead.employee_id,
       )
+
+      role.role_name = RoleType.TEAMLEAD
+      await this.roleRepository.save(role)
 
       return teamData
     } catch (error) {
@@ -100,16 +126,6 @@ export class TeamService {
       }
 
       employee.team = team
-      /*const history: Employee[] = []
-            
-            for (let i = 0; i < employee.team.employees.length; i++) {
-                const element = employee.team.employees[i]
-                
-                if (element.employee_id != employee.employee_id) {
-                    history.push(element)
-                }
-            }
-            employee.workedWith = history*/
 
       const employeeData = await this.employeeRepository.save(employee)
 

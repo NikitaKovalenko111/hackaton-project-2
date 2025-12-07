@@ -45,3 +45,20 @@ export interface GiveSkillDTO {
     employee_to_give_id: number
     skill_level: SkillLevel
 }
+
+export interface Orders {
+    order_text: string
+}
+
+export interface SkillOrderDTO {
+    skill_shape_id: number,
+    skill_level: SkillLevel,
+    orders: Orders[]
+}
+
+export interface SkillOrderGet {
+    skill_order_id: number
+    skill_shape: SkillShape,
+    skill_level: SkillLevel,
+    order_text: string
+}

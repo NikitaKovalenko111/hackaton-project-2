@@ -6,12 +6,11 @@ import { Question } from './question.entity'
 import { Answer } from './answer.entity'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import { sendedAnswer } from './review.dto'
-import { SocketGateway } from 'src/socket/socket.gateway'
-import { CompanyService } from 'src/CompanyModule/company.service'
-import { SocketService } from 'src/socket/socket.service'
-import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import ApiError from 'src/apiError'
-import { reviewStatus } from 'src/types'
+import { intervalI, reviewStatus } from 'src/types'
+import { SocketGateway } from 'src/socket/socket.gateway'
+import { SchedulerRegistry } from '@nestjs/schedule'
+import { CronJob } from 'cron'
 
 @Injectable()
 export class ReviewService {
@@ -25,10 +24,9 @@ export class ReviewService {
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>,
 
-    private readonly socketGateway: SocketGateway,
-    private readonly companyService: CompanyService,
-    private readonly socketService: SocketService,
-    private readonly employeeService: EmployeeService,
+    private schedulerRegistry: SchedulerRegistry,
+
+    private readonly socketGateway: SocketGateway
   ) {}
 
   async addQuestion(questionText: string, reviewId: number): Promise<Question> {
@@ -74,7 +72,7 @@ export class ReviewService {
     }
   }
 
-  async setReview(reviewId: number, reviewInterval: number): Promise<Review> {
+  async setReview(reviewId: number, reviewInterval: intervalI): Promise<Review> {
     try {
       const review = await this.reviewRepository.findOne({
         where: {
@@ -86,7 +84,25 @@ export class ReviewService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
       }
 
-      review.review_interval = reviewInterval
+      let months = ''
+
+      reviewInterval.months.forEach((m, i) => {
+        if (i != reviewInterval.months.length-1) {
+          months += `${m},`
+        } else {
+          months += `${m}`
+        }
+      })
+
+      const job = new CronJob(`0 0 ${reviewInterval.day} ${months} *`, async () => {
+        await this.startReview(review.review_id)
+      })
+
+      this.schedulerRegistry.addCronJob('startReviewJob', job)
+
+      job.start()
+
+      review.review_interval = `0 0 ${reviewInterval.day} ${months} *`
 
       const reviewData = await this.reviewRepository.save(review)
 
@@ -103,43 +119,24 @@ export class ReviewService {
     try {
       const review = await this.reviewRepository.findOne({
         where: {
-          review_id: reviewId,
+          review_id: reviewId
         },
         relations: {
-          questions: true,
-          company: true,
-        },
+          company: true
+        }
       })
 
       if (!review) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
       }
 
+      this.socketGateway.server.to(`company/${review.company.company_id}`).emit('startedReview', {
+        msg: 'review started!'
+      })
+
       review.review_status = reviewStatus.ACTIVE
 
       const reviewData = await this.reviewRepository.save(review)
-
-      const companyEmployees = await this.companyService.getEmployees(
-        review.company.company_id,
-      )
-
-      companyEmployees.forEach(async (employee) => {
-        const workedWith = employee.team?.employees.filter(
-          (el) => el.employee_id != employee.employee_id,
-        )
-        const employeeClean = await this.employeeService.getCleanEmployee(
-          employee.employee_id,
-        )
-
-        const socket =
-          await this.socketService.getSocketByEmployeeId(employeeClean)
-
-        if (socket) {
-          this.socketGateway.server
-            .to(socket.client_id)
-            .emit('startedPerfomanceReview', workedWith)
-        }
-      })
 
       return reviewData
     } catch (error) {
@@ -194,6 +191,41 @@ export class ReviewService {
         error.message ? error.message : error,
       )
     }
+  }
+
+  async scheduleTesting() {
+    console.log("Scheduled");
+  }
+
+  async getReviewByCompany(companyId: number): Promise<Review> {
+    const review = await this.reviewRepository.findOne({
+      where: {
+        company: {
+          company_id: companyId
+        }
+      },
+      relations: {
+        company: true
+      }
+    })
+
+    if (!review) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
+    }
+
+    return review
+  }
+
+  async getReviewQuestions(reviewId: number): Promise<Question[]> {
+    const questions = await this.questionRepository.find({
+      where: {
+        review: {
+          review_id: reviewId
+        }
+      }
+    })
+
+    return questions
   }
 
   async sendAnswers(

@@ -27,19 +27,28 @@ import { ReviewModule } from './ReviewModule/review.module'
 import { Statistics } from './StatisticsModule/statistics.entity'
 import { StatisticsModule } from './StatisticsModule/statistics.module'
 import { AIModule } from './AIModule/ai.module'
+import { SkillOrder } from './SkillModule/skillOrder.entity'
+import { NotificationModule } from './NotificationModule/notification.module'
+import { Notification } from './NotificationModule/notification.entity'
+import { ServeStaticModule } from '@nestjs/serve-static'
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: __dirname + '/..' + '/../profilePhotos',
+      serveRoot: '/profilePhotos/',
+    }),
     CompanyModule,
     EmployeeModule,
     InterviewModule,
     TeamModule,
     SkillModule,
+    NotificationModule,
     SocketGatewayModule,
     ReviewModule,
     StatisticsModule,
     AIModule,
-    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -47,6 +56,7 @@ import { AIModule } from './AIModule/ai.module'
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      autoLoadEntities: true,
       entities: [
         Company,
         Employee,
@@ -54,8 +64,10 @@ import { AIModule } from './AIModule/ai.module'
         Employee_token,
         Skill,
         SkillShape,
+        SkillOrder,
         Team,
         Role,
+        Notification,
         Request,
         Socket,
         Question,
@@ -63,7 +75,7 @@ import { AIModule } from './AIModule/ai.module'
         Review,
         Statistics,
       ],
-      synchronize: true,
+      synchronize: false,
     }),
   ],
   controllers: [AppController],
@@ -73,44 +85,12 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes(
-        'employee/photo',
-        'employee/status',
-        'employee/profile',
-        'employee/profile/:id',
-        'company/employees',
-        'company/create',
-        'company/:companyId/teams',
-        'company/skill/create',
-        'company/skills',
-        'company/skill/give',
-        'company/info',
-        'company/employee/add',
-        'team/add',
-        'team/add/employee',
-        'team/info',
-        'interview/add',
-        'interview/finish',
-        'skill/level/update',
-        'skill/:id/delete',
-        'interview/get',
-        'interview/cancel',
-        'interview/finish',
-        'review/add/question',
-        'review/set',
-        'review/remove/question/:id',
-        'review/send/answers',
-        'review/start',
-        'company/skill/giveToMany',
-        'company/employee/addByEmail',
-        'statistics/generate',
-        'request/received/getAll',
-        'request/sended/getAll',
-        'ai/get/plan',
-        'team/employees',
-        'company/employee/remove/:id',
-        'team/remove/:id',
-        'company/skillShape/remove/:id'
+      .exclude(
+        '/profilePhotos/*',
+        '/employee/registration',
+        '/employee/authorization',
+        '/employee/refresh'
       )
+      .forRoutes("*")
   }
 }

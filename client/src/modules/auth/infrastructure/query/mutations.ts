@@ -6,7 +6,7 @@ import toast from "react-hot-toast"
 import { useAuth } from "@/libs/providers/ability-provider"
 import { saveCompanyStorage } from "@/modules/company/infrastructure/company-storage"
 
-export const useLogin = () => {
+export const useLogin = ({regSocket}: {regSocket: () => void}) => {
     const queryClient = useQueryClient()
 
     const {push} = useRouter()
@@ -17,6 +17,7 @@ export const useLogin = () => {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ["profile"] })
             toast.success('Вы вошли!')
+            regSocket()
             if (data.payload.company && data.payload.company.company_id) {
                 saveCompanyStorage(data.payload.company.company_id)
                 push('/profile')
@@ -29,7 +30,7 @@ export const useLogin = () => {
     })
 }
 
-export const useSignup = () => {
+export const useSignup = ({regSocket}: {regSocket: () => void}) => {
     const queryClient = useQueryClient()
 
     const {push} = useRouter()
@@ -40,6 +41,7 @@ export const useSignup = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["profile"] })
             toast.success('Вы зарегистрировались!')
+            regSocket()
             push('/company')
         },
         onError: (error) => {

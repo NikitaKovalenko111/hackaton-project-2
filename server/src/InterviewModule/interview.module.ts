@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 import { InterviewController } from './interview.controller'
 import { InterviewService } from './interview.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -11,11 +11,14 @@ import { SocketGatewayModule } from 'src/socket/socket.module'
 import { EmployeeModule } from 'src/EmployeeModule/employee.module'
 import { CompanyModule } from 'src/CompanyModule/company.module'
 import { Role } from 'src/EmployeeModule/role.entity'
+import { NotificationModule } from 'src/NotificationModule/notification.module'
 
 @Module({
   imports: [
     EmployeeModule,
-    CompanyModule,
+    forwardRef(() => NotificationModule),
+    forwardRef(() => CompanyModule),
+    forwardRef(() => SocketGatewayModule),
     TypeOrmModule.forFeature([
       Interview,
       Employee,
@@ -24,7 +27,6 @@ import { Role } from 'src/EmployeeModule/role.entity'
       Request,
       Role
     ]),
-    SocketGatewayModule,
   ],
   controllers: [InterviewController],
   providers: [InterviewService],

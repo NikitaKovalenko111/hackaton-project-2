@@ -1,12 +1,14 @@
 'use client'
 
-import socket from "@/app/socket"
+// import socket from "@/app/socket"
 import { Request } from "@/libs/constants"
-import { useSocket } from "@/libs/hooks/useSocket"
-import { useEffect, useState } from "react"
+import { SocketContext, useSocket } from "@/libs/hooks/useSocket"
+import { useContext, useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export const RequestNotifications = () => {
+
+    const {socket} = useContext(SocketContext)
 
     // const [requests, setRequests] = useState<Request[]>([])
     // const {socket} = useSocket()

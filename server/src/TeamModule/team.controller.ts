@@ -2,14 +2,27 @@ import { Body, Controller, Delete, Get, HttpException, Param, Post, Req } from '
 import { TeamService } from './team.service'
 import { Team } from './team.entity'
 import { employeeDto } from 'src/types'
-import type { addEmployeeBodyDto, addTeamBodyDto } from './team.dto'
+import { addEmployeeBodyDto, addTeamBodyDto } from './team.dto'
 import { Employee } from 'src/EmployeeModule/employee.entity'
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
+  ApiExtraModels,
+} from '@nestjs/swagger';
 
+@ApiTags('Team')
+@ApiExtraModels(Team, Employee)
 @Controller('team')
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
   @Delete('/remove/:id')
+  @ApiOperation({ summary: 'Удалить команду по ID' })
+  @ApiParam({ name: 'id', example: 1, description: 'ID команды' })
+  @ApiResponse({ status: 200, type: Team })
   async removeTeamById(@Param('id') teamId: number): Promise<Team> {
     const team = await this.teamService.removeTeam(teamId)
 
@@ -17,6 +30,8 @@ export class TeamController {
   }
 
   @Get('/info')
+  @ApiOperation({ summary: 'Получить информацию о команде текущего сотрудника' })
+  @ApiResponse({ status: 200, type: Team })
   async getTeamInfo(@Req() req: Request): Promise<Team> {
     try {
       const employeeId = (req as any).employee.employee_id
@@ -30,6 +45,8 @@ export class TeamController {
   }
 
   @Get('/employees')
+  @ApiOperation({ summary: 'Получить список сотрудников своей команды' })
+  @ApiResponse({ status: 200, type: [Employee] })
   async getTeamEmployees(@Req() req: Request): Promise<Employee[]> {
     try {
       const employeeId = (req as any).employee.employee_id
@@ -43,6 +60,9 @@ export class TeamController {
   }
 
   @Post('/add')
+  @ApiOperation({ summary: 'Создать новую команду' })
+  @ApiBody({ type: addTeamBodyDto })
+  @ApiResponse({ status: 201, type: Team })
   async addTeam(
     @Body() addTeamBody: addTeamBodyDto,
     @Req() req: Request,
@@ -66,6 +86,9 @@ export class TeamController {
   }
 
   @Post('/add/employee')
+  @ApiOperation({ summary: 'Добавить сотрудника в команду' })
+  @ApiBody({ type: addEmployeeBodyDto })
+  @ApiResponse({ status: 200, type: employeeDto })
   async addEmployeeToTeam(
     @Body() addEmployeeBody: addEmployeeBodyDto,
     @Req() req: Request,

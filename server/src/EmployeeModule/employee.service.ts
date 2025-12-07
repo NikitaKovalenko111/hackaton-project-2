@@ -1,9 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
-import type {
-  authEmployeeBodyDto,
-  authEmployeeTgBodyDto,
-  registerEmployeeBodyDto,
-  registerEmployeeReturnDto,
+import {
+  employeePayloadDto,
+  type authEmployeeBodyDto,
+  type authEmployeeTgBodyDto,
+  type changeProfileDataBodyDto,
+  type registerEmployeeBodyDto,
+  type registerEmployeeReturnDto,
 } from './employee.dto'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Employee } from './employee.entity'
@@ -12,12 +14,16 @@ import bcrypt from 'bcrypt'
 import { TokenService } from './token.service'
 import { employeeDto } from 'src/types'
 import ApiError from 'src/apiError'
+import { Role } from './role.entity'
 
 @Injectable()
 export class EmployeeService {
   constructor(
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
+
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
 
     private tokenService: TokenService,
   ) {}
@@ -38,11 +44,102 @@ export class EmployeeService {
     return employees
   }
 
+  async updateProfile(newProfileData: changeProfileDataBodyDto, employeeId: number): Promise<Employee> {
+    try {    
+      const { employee_email, employee_name, employee_surname } = newProfileData
+  
+      const employee = await this.employeeRepository.findOne({
+        where: {
+          employee_id: employeeId
+        }
+      })
+  
+      if (!employee) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
+      }
+  
+      employee.employee_name = employee_name ? employee_name : employee.employee_name
+      employee.employee_surname = employee_surname ? employee_surname : employee.employee_surname
+      employee.employee_email = employee_email ? employee_email : employee.employee_email
+  
+      const employeeData = await this.employeeRepository.save(employee)
+  
+      return employeeData
+    } catch (error) {
+      throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, error)
+    }
+  }
+
+  async changePassword(newPassword: string, oldPassword: string, employeeId: number): Promise<Employee> {
+    try {
+      
+      const employee = await this.employeeRepository.findOne({
+        where: {
+          employee_id: employeeId
+        },
+        select: {
+          employee_password: true,
+          employee_id: true
+        }
+      })
+  
+      if (!employee) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
+      }
+  
+      const isPassCorrect = await bcrypt.compare(
+        oldPassword,
+        employee.employee_password
+      )
+  
+      if (!isPassCorrect) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Неверный пароль!')
+      }
+  
+      const hashedPassword = await bcrypt.hash(newPassword, 3)
+  
+      employee.employee_password = hashedPassword
+  
+      const employeeData = await this.employeeRepository.save(employee)
+  
+      return employeeData
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
+  async getEmployeeByEmail(email: string) {
+    try {
+      const employee = await this.employeeRepository.findOne({
+        where: {
+          employee_email: email
+        }
+      })
+
+      if (!employee) {
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь с таким Email не найден!')
+      }
+
+      return employee
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
   async getEmployee(employeeId: number) {
     try {
       const employee = await this.employeeRepository.findOne({
         where: {
           employee_id: employeeId,
+        },
+        select: {
+
         },
         relations: {
           skills: {
@@ -62,6 +159,8 @@ export class EmployeeService {
           createdInterviews: true,
         },
       })
+
+      console.log(employee);
 
       if (!employee) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
@@ -126,6 +225,7 @@ export class EmployeeService {
     try {
       const filename =
         String(employee_id) + '.' + String(file.mimetype.split('/')[1])
+      
       const employee = await this.employeeRepository.findOne({
         where: {
           employee_id: employee_id,
@@ -165,7 +265,7 @@ export class EmployeeService {
       })
 
       if (candidate) {
-        throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь с таким email уже существует!')
       }
 
       const hashPassword = await bcrypt.hash(password, 3)
@@ -179,20 +279,17 @@ export class EmployeeService {
 
       const employeeCurrent = await this.employeeRepository.save(employee)
 
-      const employeeData = {
-        employee_id: employeeCurrent.employee_id,
-        employee_name: employeeCurrent.employee_name,
-        employee_surname: employeeCurrent.employee_surname,
-        employee_photo: employeeCurrent.employee_photo,
-        employee_status: employeeCurrent.employee_status,
-        employee_email: employeeCurrent.employee_email,
-        company: employeeCurrent.company,
-        team: employeeCurrent.team,
-        employeeRoles: employeeCurrent.role,
-        employeeSkills: employeeCurrent.skills,
-      }
+      const employeeData = new employeePayloadDto(employeeCurrent)
 
-      const tokens = this.tokenService.generateTokens(employeeData)
+
+      const tokens = this.tokenService.generateTokens({
+        employee_id: employeeData.employee_id,
+        employee_email: employeeData.employee_email,
+        employee_name: employeeData.employee_name,
+        employee_photo: employeeData.employee_photo,
+        employee_status: employeeData.employee_status,
+        employee_surname: employeeData.employee_surname
+      })
 
       await this.tokenService.saveToken(
         employeeData.employee_id,
@@ -238,7 +335,7 @@ export class EmployeeService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
       }
 
-      const isPassCorrect = bcrypt.compare(
+      const isPassCorrect = await bcrypt.compare(
         data.employee_password,
         employee.employee_password,
       )
@@ -286,6 +383,22 @@ export class EmployeeService {
         },
       })
 
+      if (!employee) {
+        throw new ApiError(
+          HttpStatus.NOT_FOUND,
+          'Пользователя с таким email не существует!',
+        )
+      }
+
+      const isPassCorrect = await bcrypt.compare(
+        data.employee_password,
+        employee.employee_password,
+      )
+
+      if (!isPassCorrect) {
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Неверный пароль!')
+      }
+
       const previousEmployee = await this.employeeRepository.findOne({
         where: {
           telegram_id: data.tg_id,
@@ -296,22 +409,6 @@ export class EmployeeService {
         previousEmployee.telegram_id = null
 
         await this.employeeRepository.save(previousEmployee)
-      }
-
-      if (!employee) {
-        throw new ApiError(
-          HttpStatus.NOT_FOUND,
-          'Пользователя с таким email не существует!',
-        )
-      }
-
-      const isPassCorrect = bcrypt.compare(
-        data.employee_password,
-        employee.employee_password,
-      )
-
-      if (!isPassCorrect) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, 'Неверный пароль!')
       }
 
       employee.telegram_id = data.tg_id
@@ -397,12 +494,29 @@ export class EmployeeService {
     }
   }
 
+  async getEmployeeRoleById(employeeId: number): Promise<Role> {
+    const role = await this.roleRepository.findOne({
+      where: {
+        employee: {
+          employee_id: employeeId
+        }
+      },
+      relations: {
+        employee: true
+      }
+    })
+
+    if (!role) {
+      throw new ApiError(HttpStatus.NOT_FOUND, 'Роль не найдена!')
+    }
+
+    return role
+  }
+
   async refresh(
     refreshToken: string | null,
   ): Promise<registerEmployeeReturnDto> {
     try {
-      console.log(refreshToken)
-
       if (!refreshToken) {
         throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
       }
@@ -410,9 +524,6 @@ export class EmployeeService {
       const employeeData = this.tokenService.validateRefreshToken(refreshToken)
 
       const dbToken = await this.tokenService.findToken(refreshToken)
-
-      console.log(employeeData)
-      console.log(dbToken)
 
       if (!dbToken || !employeeData) {
         throw new ApiError(HttpStatus.UNAUTHORIZED, 'Вы не авторизованы!')
@@ -434,18 +545,7 @@ export class EmployeeService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
       }
 
-      const employeePayload = {
-        employee_id: employee.employee_id,
-        employee_name: employee.employee_name,
-        employee_surname: employee.employee_surname,
-        employee_photo: employee.employee_photo,
-        employee_status: employee.employee_status,
-        employee_email: employee.employee_email,
-        company: employee.company,
-        team: employee.team,
-        employeeRoles: employee.role,
-        employeeSkills: employee.skills,
-      }
+      const employeePayload = new employeePayloadDto(employee)
 
       const tokens = await this.tokenService.generateTokens(employeePayload)
 

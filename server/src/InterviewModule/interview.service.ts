@@ -6,7 +6,6 @@ import { interviewStatusType, interviewType, RoleType } from 'src/types'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
-import { CompanyService } from 'src/CompanyModule/company.service'
 import { Role } from 'src/EmployeeModule/role.entity'
 
 @Injectable()
@@ -19,8 +18,54 @@ export class InterviewService {
     private roleRepository: Repository<Role>,
 
     private employeeService: EmployeeService,
-    private companyService: CompanyService,
   ) {}
+
+  async getFinishedInterviews(employeeId: number): Promise<Interview[]> {
+    try {
+      const interviews = await this.interviewRepository.find({
+        where: {
+          interview_subject: {
+            employee_id: employeeId
+          },
+          interview_status: interviewStatusType.COMPLETED
+        },
+        relations: {
+          interview_subject: true
+        }
+      })
+
+      return interviews
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
+
+  async getInterviewById(id: number): Promise<Interview> {
+    try { 
+      const interview = await this.interviewRepository.findOne({
+        where: {
+          interview_id: id
+        },
+        relations: {
+          interview_owner: true,
+        }
+      })
+  
+      if (!interview) {
+        throw new ApiError(HttpStatus.NOT_FOUND, "Собеседование не найдено!")
+      }
+
+      return interview
+    } catch (error) {
+      throw new ApiError(
+        error.status ? error.status : HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message ? error.message : error,
+      )
+    }
+  }
 
   async addInterview(
     interviewSubject: Employee,
@@ -88,11 +133,11 @@ export class InterviewService {
   }
 
   async getPlannedInterviews(employeeId: number): Promise<Interview[]> {
-    const employee = await this.employeeService.getCleanEmployee(employeeId)
-
     const role = await this.roleRepository.find({
       where: {
-        employee: employee,
+        employee: {
+          employee_id: employeeId
+        },
         role_name: In([RoleType.HR, RoleType.TEAMLEAD, RoleType.ADMIN])
       }
     })
@@ -100,7 +145,9 @@ export class InterviewService {
     if (role.length != 0) {
       const interviews = await this.interviewRepository.find({
         where: {
-          interview_owner: employee
+          interview_owner: {
+            employee_id: employeeId
+          }
         },
         relations: {
           interview_subject: true,
@@ -112,7 +159,9 @@ export class InterviewService {
     } else { 
       const interviews = await this.interviewRepository.find({
         where: {
-          interview_subject: employee
+          interview_subject: {
+            employee_id: employeeId
+          }
         },
         relations: {
           interview_owner: true,
@@ -151,10 +200,11 @@ export class InterviewService {
 
   async getInterviews(companyId: number): Promise<Interview[]> {
     try {
-      const company = await this.companyService.getCompanyInfo(companyId)
       const interviews = await this.interviewRepository.find({
         where: {
-          company: company,
+          company: {
+            company_id: companyId
+          },
         },
       })
 

@@ -1,4 +1,5 @@
 import { Employee } from './EmployeeModule/employee.entity'
+import { ApiProperty } from '@nestjs/swagger'
 
 export enum RoleType {
   HR = 'hr',
@@ -41,6 +42,32 @@ export enum reviewStatus {
 export enum clientType {
   WEB = 'web',
   TELEGRAM = 'telegram'
+}
+export enum notificationType {
+  NEW_REQUEST = 'newRequest',
+  COMPLETED_REQUEST = 'completedRequest',
+  NEW_INTERVIEW = 'newInterview',
+  CANCELED_REQUEST = 'canceledRequest',
+  INTERVIEW_CANCELLED = 'canceledInterview'
+}
+export enum notificationStatusType {
+  APPLIED = "applied",
+  NOT_APPLIED = "not_applied"
+}
+
+export class intervalI {
+  @ApiProperty({
+    example: [1, 3, 6, 9, 12],
+    description: 'Месяцы, в которые проводится ревью (номера месяцев: 1 = январь, 12 = декабрь)',
+    type: [Number],
+  })
+  months: number[]
+
+  @ApiProperty({
+    example: 15,
+    description: 'День месяца, в который проводится ревью (1–31)',
+  })
+  day: number
 }
 
 export class employeeDto {
