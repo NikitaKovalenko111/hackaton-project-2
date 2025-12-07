@@ -57,7 +57,7 @@ export const Employees = () => {
     return (
         <div className="mx-auto animate-appear w-full max-w-6xl space-y-6 px-4 py-10" data-testid="employees-page">
             <ProtectedRoute allowedRoles={['admin']}>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
                     <div className="flex flex-col sm:flex-row gap-4 flex-1">
                         <Input 
                             value={surnameSearch} 

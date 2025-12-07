@@ -41,7 +41,7 @@ export const Teams = () => {
         <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10 animate-appear" data-testid="teams-page">
             <ProtectedRoute allowedRoles={['admin']}>
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex flex-col sm:flex-row gap-4 flex-1">
+                    <div className="flex flex-col sm:flex-row items-center gap-4 flex-1">
                         <Input 
                             value={searchValue} 
                             onChange={onChangeTeam} 

@@ -357,8 +357,8 @@ const CalendarInterview = () => {
             sx={{display: 'unset'}}
         >
                 <Card>
-                    <CardHeader className="flex items-center justify-between">
-                        <CardTitle className="text-2xl">
+                    <CardHeader className="flex items-center justify-between flex-col sm:flex-row">
+                        <CardTitle className="text-2xl text-center sm:text-left">
                             Планировщик собеседований
                         </CardTitle>
                         <CardDescription>

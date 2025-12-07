@@ -203,7 +203,7 @@ export function SkillOrdersTable({data, isFetching, handleChangeSelectedSkills}:
     return (
         <div className="w-full">
             <Dialog key={"create-dialog"} open={openCreateDialog} onOpenChange={handleCloseCreateDialog}>
-                <div className="flex justify-between items-center py-4 sm:flex-wrap gap-2.5">
+                <div className="flex justify-between py-4 flex-col items-center sm:flex-row gap-2.5 items-start ">
                     {/* <Input
                     placeholder="Фильтр по названию"
                     value={(table.getColumn("skill_desc")?.getFilterValue() as string) ?? ""}
