@@ -40,7 +40,7 @@ export const Profile: React.FC<PropsType> = ({id, isCurrentEmployee}): JSX.Eleme
     // }, [isRefetching])
     
     return (
-        <div className="mx-auto max-w-4xl space-y-6 px-4 py-10">
+        <div className="mx-auto w-full max-w-4xl space-y-6 px-4 py-10">
             {loading || !data ? 
                 <SkeletonHeader /> : 
                 <ProfileHeader

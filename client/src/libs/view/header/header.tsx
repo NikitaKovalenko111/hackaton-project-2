@@ -39,7 +39,7 @@ export const Header = ({
                 <div>
                     <Popover>
                         <PopoverTrigger asChild>
-                            <BellIcon className="w-5 h-5 cursor-pointer text-black-600 hover:text-black-800" />
+                            <BellIcon fill={notifications && notifications?.length > 0 ? '#000' : 'transparent'} className="w-5 h-5 cursor-pointer text-black-600 hover:text-black-800" />
                         </PopoverTrigger>
                         <PopoverContent className="w-80">
                             <div className="grid gap-4">
