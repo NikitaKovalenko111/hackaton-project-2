@@ -99,6 +99,7 @@ export const TeamsTable = ({data, openAddDialog, onCloseAddDialog}: TeamsTablePr
                         <Trash 
                             className="w-4 h-4 cursor-pointer"
                             onClick={() => handleOpenConfirmDeleteDialog(row.original.team_id)}
+                            data-testid={`team-delete-button-${row.original.team_id}`}
                         />
                     </div>
                 )
@@ -130,7 +131,7 @@ export const TeamsTable = ({data, openAddDialog, onCloseAddDialog}: TeamsTablePr
     const {companyId} = useAuth()
 
     return (
-        <div className="w-full">
+        <div className="w-full" data-testid="teams-table-container">
             {/* Диалог AddTeam остается здесь, но управляется извне */}
             <Dialog open={openAddDialog} onOpenChange={onCloseAddDialog}>
                 {/* Убрана кнопка из этого компонента */}
@@ -194,6 +195,7 @@ export const TeamsTable = ({data, openAddDialog, onCloseAddDialog}: TeamsTablePr
                             size="sm"
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}
+                            data-testid="teams-table-previous-button"
                         >
                             Назад
                         </Button>
@@ -202,6 +204,7 @@ export const TeamsTable = ({data, openAddDialog, onCloseAddDialog}: TeamsTablePr
                             size="sm"
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}
+                            data-testid="teams-table-next-button"
                         >
                             Дальше
                         </Button>

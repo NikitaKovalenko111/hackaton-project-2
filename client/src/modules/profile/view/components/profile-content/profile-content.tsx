@@ -77,14 +77,14 @@ export const ProfileContent = ({
                 'grid-cols-2 lg:grid-cols-4',
                 tabList[role]
             )}>
-                <TabsTrigger value="personal">Личное</TabsTrigger>
-                <TabsTrigger value="skills">Компетенции</TabsTrigger>
+                <TabsTrigger value="personal" data-testid="profile-personal-tab">Личное</TabsTrigger>
+                <TabsTrigger value="skills" data-testid="profile-skills-tab">Компетенции</TabsTrigger>
                 {
                     isCurrentEmployee && (
                     <>
-                    <TabsTrigger value="team">Команда</TabsTrigger>
+                    <TabsTrigger value="team" data-testid="profile-team-tab">Команда</TabsTrigger>
                     <ProtectedRoute allowedRoles={['teamlead', 'techlead']}>
-                        <TabsTrigger value="requests">Запросы</TabsTrigger>
+                        <TabsTrigger value="requests" data-testid="profile-requests-tab">Запросы</TabsTrigger>
                     </ProtectedRoute>
                     </>
                     )

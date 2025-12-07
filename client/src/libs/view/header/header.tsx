@@ -32,14 +32,18 @@ export const Header = ({
 
     return (
         <>
-        <div className="fixed flex justify-between top-0 w-full border py-6 shadow-sm z-2 bg-white p-4">
-            <p className="uppercase font-bold text-xl" >APC</p>
+        <div className="fixed flex justify-between top-0 w-full border py-6 shadow-sm z-2 bg-white p-4" data-testid="app-header">
+            <p className="uppercase font-bold text-xl" data-testid="app-logo">APC</p>
             {/* <SidebarTrigger /> */}
             <div className="flex gap-8 items-center">
                 <div>
                     <Popover>
                         <PopoverTrigger asChild>
-                            <BellIcon fill={notifications && notifications?.length > 0 ? '#000' : 'transparent'} className="w-5 h-5 cursor-pointer text-black-600 hover:text-black-800" />
+                            <BellIcon 
+                                fill={notifications && notifications?.length > 0 ? '#000' : 'transparent'} 
+                                className="w-5 h-5 cursor-pointer text-black-600 hover:text-black-800" 
+                                data-testid="notifications-button"
+                            />
                         </PopoverTrigger>
                         <PopoverContent className="w-80">
                             <div className="grid gap-4">
@@ -59,7 +63,13 @@ export const Header = ({
                                                     <p className="text-xs text-muted-foreground">Причина: {notification.object.justification}</p>
                                                 }
                                                 <p className="text-xs text-muted-foreground">{new Date(notification.notification.created_at).toLocaleString()}</p>
-                                                <Button onClick={() => onApplyNotification(notification.notification.notification_id)} size="sm" variant={notification.notification.notification_status == "applied" ? "default" : "secondary"} disabled={notification.notification.notification_status == "applied"}>
+                                                <Button 
+                                                    onClick={() => onApplyNotification(notification.notification.notification_id)} 
+                                                    size="sm" 
+                                                    variant={notification.notification.notification_status == "applied" ? "default" : "secondary"} 
+                                                    disabled={notification.notification.notification_status == "applied"}
+                                                    data-testid={`notification-mark-read-${notification.notification.notification_id}`}
+                                                >
                                                     {notification.notification.notification_status == "applied" ? "Просмотрено" : "Отметить как прочитанное"}
                                                 </Button>
                                             </div>
@@ -75,7 +85,7 @@ export const Header = ({
                         </PopoverContent>
                     </Popover>
                 </div>
-                <Link href={'/profile'} className="flex-row items-center gap-2.5">
+                <Link href={'/profile'} className="flex-row items-center gap-2.5" data-testid="profile-link">
                     <CircleUser className="h-5 w-5 stroke-2 text-black shrink-0" />
                 </Link>
             </div>
