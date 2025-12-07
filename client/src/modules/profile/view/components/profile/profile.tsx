@@ -1,14 +1,14 @@
 'use client'
 
-import { JSX, useEffect, useState } from "react"
-import { ProfileContent } from "../profile-content/profile-content"
-import { ProfileHeader } from "../profile-header/profile-header"
-import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
-import { SkeletonHeader } from "../../ui/skeleton-header"
-import { SkeletonContent } from "../../ui/skeleton-content"
-import { Employee } from "@/modules/profile/domain/profile.types"
-import { getProfile } from "@/modules/profile/infrastructure/profile-api"
-import { useParams } from "next/navigation"
+import { JSX, useEffect, useState } from 'react'
+import { ProfileContent } from '../profile-content/profile-content'
+import { ProfileHeader } from '../profile-header/profile-header'
+import { useGetProfile } from '@/modules/profile/infrastructure/query/queries'
+import { SkeletonHeader } from '../../ui/skeleton-header'
+import { SkeletonContent } from '../../ui/skeleton-content'
+import { Employee } from '@/modules/profile/domain/profile.types'
+import { getProfile } from '@/modules/profile/infrastructure/profile-api'
+import { useParams } from 'next/navigation'
 const Cookies = require('js-cookie')
 
 type PropsType = {
@@ -16,10 +16,13 @@ type PropsType = {
     isCurrentEmployee: boolean
 }
 
-export const Profile: React.FC<PropsType> = ({id, isCurrentEmployee}): JSX.Element => {
+export const Profile: React.FC<PropsType> = ({
+    id,
+    isCurrentEmployee,
+}): JSX.Element => {
     const [data, setData] = useState<Employee | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
-    
+
     // const {data: profileData, isSuccess, isError, isPending, isRefetching, refetch} = useGetProfile()
 
     const fetchData = async (id: number) => {
@@ -37,7 +40,7 @@ export const Profile: React.FC<PropsType> = ({id, isCurrentEmployee}): JSX.Eleme
     //     debugger
     //     if (profileData) setData(profileData)
     // }, [isRefetching])
-    
+
     return (
         <div className="mx-auto w-full max-w-4xl space-y-6 px-4 py-10" data-testid="profile-page">
             {loading || !data ? 
@@ -47,7 +50,6 @@ export const Profile: React.FC<PropsType> = ({id, isCurrentEmployee}): JSX.Eleme
                     employee_email={data.employee_email}
                     employee_id={data.employee_id}
                     employee_name={data.employee_name}
-
                     employee_password={data.employee_password}
                     employee_photo={data.employee_photo}
                     employee_status={data.employee_status}
@@ -59,8 +61,9 @@ export const Profile: React.FC<PropsType> = ({id, isCurrentEmployee}): JSX.Eleme
                     skills={data.skills}
                 />
             }
-            {loading || !data ? 
-                <SkeletonContent /> : 
+            {loading || !data ? (
+                <SkeletonContent />
+            ) : (
                 <ProfileContent
                     isCurrentEmployee={isCurrentEmployee}
                     id={data.employee_id}
@@ -71,7 +74,7 @@ export const Profile: React.FC<PropsType> = ({id, isCurrentEmployee}): JSX.Eleme
                     skills={data.skills}
                     team={data.team}
                 />
-            }
+            )}
         </div>
     )
 }

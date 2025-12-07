@@ -1,5 +1,5 @@
-import { CompanyData } from "@/modules/company/domain/company.type"
-import { Employee, Role } from "@/modules/profile/domain/profile.types"
+import { CompanyData } from '@/modules/company/domain/company.type'
+import { Employee, Role } from '@/modules/profile/domain/profile.types'
 
 export type SkillLevel = 'junior' | 'junior+' | 'middle' | 'middle+' | 'senior'
 
@@ -32,9 +32,9 @@ export interface SkillTable {
 }
 
 export interface EmployeeTable {
-    employee_name: string;
-    employee_surname: string;
-    employee_id: number;
+    employee_name: string
+    employee_surname: string
+    employee_id: number
     skills: Skill[]
     role: Role
 }
@@ -51,14 +51,14 @@ export interface Orders {
 }
 
 export interface SkillOrderDTO {
-    skill_shape_id: number,
-    skill_level: SkillLevel,
+    skill_shape_id: number
+    skill_level: SkillLevel
     orders: Orders[]
 }
 
 export interface SkillOrderGet {
     skill_order_id: number
-    skill_shape: SkillShape,
-    skill_level: SkillLevel,
+    skill_shape: SkillShape
+    skill_level: SkillLevel
     order_text: string
 }

@@ -5,7 +5,7 @@
 // import { initSockets } from '@/libs/initSockets';
 // //       ^ initSockets is shown later on
 // const SocketProvider = ({children}: {children: React.ReactNode}) => {
-  
+
 // useEffect(() => initSockets({ setValue }), [initSockets]);
 // // Note, we are passing setValue ^ to initSockets
 // return(

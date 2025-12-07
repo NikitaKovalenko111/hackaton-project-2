@@ -1,21 +1,39 @@
 'use client'
 
-import { Button } from "@/components/ui/button";
-import { Dialog } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { EmployeeTable } from "@/modules/employees/domain/employees.type";
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
-import { ArrowUpDown, Pen, Trash } from "lucide-react";
-import React, { useState } from "react";
-import { AddEmployee } from "../add-employee/add-employee";
-import { useAuth } from "@/libs/providers/ability-provider";
-import { roleBadge } from "../../ui/role-badge";
-import { InfoDialog } from "../info-dialog/info-dialog";
-import { ConfirmDeleteDialog } from "../../ui/confirm-delete-dialog";
-import { Team } from "@/modules/teams/domain/teams.type";
-import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
+import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table'
+import { EmployeeTable } from '@/modules/employees/domain/employees.type'
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+    VisibilityState,
+} from '@tanstack/react-table'
+import { ArrowUpDown, Pen, Trash } from 'lucide-react'
+import React, { useState } from 'react'
+import { AddEmployee } from '../add-employee/add-employee'
+import { useAuth } from '@/libs/providers/ability-provider'
+import { roleBadge } from '../../ui/role-badge'
+import { InfoDialog } from '../info-dialog/info-dialog'
+import { ConfirmDeleteDialog } from '../../ui/confirm-delete-dialog'
+import { Team } from '@/modules/teams/domain/teams.type'
+import { Skeleton } from '@/components/ui/skeleton'
+import Link from 'next/link'
 
 interface EmployeesTableProps {
     data: EmployeeTable[]
@@ -24,18 +42,26 @@ interface EmployeesTableProps {
     onCloseAddDialog: () => void // Принимаем коллбэк
 }
 
-export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialog}: EmployeesTableProps) => {
+export const EmployeesTable = ({
+    data,
+    isFetching,
+    openAddDialog,
+    onCloseAddDialog,
+}: EmployeesTableProps) => {
     // Убрано локальное состояние openAddDialog
     const [openInfoDialog, setOpenInfoDialog] = React.useState<boolean>(false)
-    const [openConfirmDelete, setOpenConfirmDelete] = React.useState<boolean>(false)
-    
+    const [openConfirmDelete, setOpenConfirmDelete] =
+        React.useState<boolean>(false)
+
     const [employeeId, setEmployeeId] = React.useState<number>(0)
     const [employeeTeam, setEmployeeTeam] = React.useState<Team | null>(null)
 
-    const [sorting, setSorting] = React.useState<SortingState>([]);
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-    const [rowSelection, setRowSelection] = React.useState({});
+    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [columnFilters, setColumnFilters] =
+        React.useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] =
+        React.useState<VisibilityState>({})
+    const [rowSelection, setRowSelection] = React.useState({})
 
     const handleOpenConfirmDeleteDialog = (employeeId: number) => {
         setEmployeeId(employeeId)
@@ -61,79 +87,87 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
 
     const columns: ColumnDef<EmployeeTable>[] = [
         {
-            accessorKey: "employee_surname",
+            accessorKey: 'employee_surname',
             header: () => {
-                return (
-                    <p className="text-center">
-                        Фамилия
-                    </p>
-                )
+                return <p className="text-center">Фамилия</p>
             },
             cell: ({ row }) => (
                 <Link href={`profile/${row.original.employee_id}`}>
-                    <div className="text-center capitalize">{row.getValue("employee_surname")}</div>
+                    <div className="text-center capitalize">
+                        {row.getValue('employee_surname')}
+                    </div>
                 </Link>
             ),
         },
         {
-            accessorKey: "employee_name",
+            accessorKey: 'employee_name',
             header: ({ column }) => {
                 return (
                     <div className="w-full flex items-center justify-center">
                         <Button
                             variant="ghost"
-                            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                        >
+                            onClick={() =>
+                                column.toggleSorting(
+                                    column.getIsSorted() === 'asc'
+                                )
+                            }>
                             Имя
                             <ArrowUpDown />
                         </Button>
                     </div>
-                );
+                )
             },
             cell: ({ row }) => (
                 <Link href={`profile/${row.original.employee_id}`}>
-                    <div className="text-center capitalize">{row.getValue("employee_name")}</div>
+                    <div className="text-center capitalize">
+                        {row.getValue('employee_name')}
+                    </div>
                 </Link>
-            )
+            ),
         },
         {
-            accessorKey: "role",
-            header: ({column}) => {
+            accessorKey: 'role',
+            header: ({ column }) => {
                 return (
-                    <div className="flex items-center justify-center">
-                        Роль
-                    </div>
+                    <div className="flex items-center justify-center">Роль</div>
                 )
             },
-            cell: ({ row }) => <div className="text-center capitalize">{roleBadge(row.original.role)}</div>
+            cell: ({ row }) => (
+                <div className="text-center capitalize">
+                    {roleBadge(row.original.role)}
+                </div>
+            ),
         },
         {
             accessorKey: 'actions',
-            header: ({column}) => {
+            header: ({ column }) => {
+                return <div className="flex justify-center">Действия</div>
+            },
+            cell: ({ row }) => {
                 return (
-                    <div className="flex justify-center">
-                        Действия
+                    <div className="flex justify-center gap-1">
+                        <Pen
+                            className="w-4 h-4 cursor-pointer"
+                            onClick={() =>
+                                handleOpenInfoDialog(
+                                    row.original.employee_id,
+                                    row.original.team
+                                )
+                            }
+                        />
+                        <Trash
+                            className="w-4 h-4 cursor-pointer"
+                            onClick={() =>
+                                handleOpenConfirmDeleteDialog(
+                                    row.original.employee_id
+                                )
+                            }
+                        />
                     </div>
                 )
             },
-            cell: ({row}) => {
-                return (
-                    <div className="flex justify-center gap-1">
-                        <Pen 
-                            className="w-4 h-4 cursor-pointer" 
-                            onClick={() => handleOpenInfoDialog(row.original.employee_id, row.original.team)}
-                            data-testid={`employee-edit-button-${row.original.employee_id}`}
-                        />
-                        <Trash 
-                            className="w-4 h-4 cursor-pointer"
-                            onClick={() => handleOpenConfirmDeleteDialog(row.original.employee_id)}
-                            data-testid={`employee-delete-button-${row.original.employee_id}`}
-                        />
-                    </div>
-                )
-            }
-        }
-    ];
+        },
+    ]
 
     // Убраны функции handleOpenAddDialog и handleCloseAddDialog
 
@@ -154,9 +188,9 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
             columnVisibility,
             rowSelection,
         },
-    });
+    })
 
-    const {companyId} = useAuth()
+    const { companyId } = useAuth()
 
     return (
         <div className="w-full" data-testid="employees-table-container">
@@ -185,11 +219,12 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext()
-                                                    )}
+                                                          header.column
+                                                              .columnDef.header,
+                                                          header.getContext()
+                                                      )}
                                             </TableHead>
-                                        );
+                                        )
                                     })}
                                 </TableRow>
                             ))}
@@ -217,25 +252,29 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
                                     table.getRowModel().rows.map((row) => (
                                         <TableRow
                                             key={row.id}
-                                            data-state={row.getIsSelected() && "selected"}
-                                            className="animate-appear"
-                                        >
-                                            {row.getVisibleCells().map((cell) => (
-                                                <TableCell key={cell.id}>   
-                                                    {flexRender(
-                                                        cell.column.columnDef.cell,
-                                                        cell.getContext()
-                                                    )}
-                                                </TableCell>
-                                            ))}
+                                            data-state={
+                                                row.getIsSelected() &&
+                                                'selected'
+                                            }
+                                            className="animate-appear">
+                                            {row
+                                                .getVisibleCells()
+                                                .map((cell) => (
+                                                    <TableCell key={cell.id}>
+                                                        {flexRender(
+                                                            cell.column
+                                                                .columnDef.cell,
+                                                            cell.getContext()
+                                                        )}
+                                                    </TableCell>
+                                                ))}
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
                                         <TableCell
                                             colSpan={columns.length}
-                                            className="h-24 text-center"
-                                        >
+                                            className="h-24 text-center">
                                             Пусто
                                         </TableCell>
                                     </TableRow>
@@ -266,14 +305,32 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
                         </Button>
                     </div>
                 </div>
-                <AddEmployee companyId={companyId!} handleCloseDialog={onCloseAddDialog} />
+                <AddEmployee
+                    companyId={companyId!}
+                    handleCloseDialog={onCloseAddDialog}
+                />
             </Dialog>
-            {openInfoDialog && <Dialog open={openInfoDialog} onOpenChange={handleCloseInfoDialog}>
-                <InfoDialog open={openInfoDialog} team={employeeTeam} id={employeeId} />
-            </Dialog>}
-            <Dialog open={openConfirmDelete} onOpenChange={handleCloseConfirmDeleteDialog}>
-                {openConfirmDelete && <ConfirmDeleteDialog employeeId={employeeId} handleClose={handleCloseConfirmDeleteDialog} />}
+            {openInfoDialog && (
+                <Dialog
+                    open={openInfoDialog}
+                    onOpenChange={handleCloseInfoDialog}>
+                    <InfoDialog
+                        open={openInfoDialog}
+                        team={employeeTeam}
+                        id={employeeId}
+                    />
+                </Dialog>
+            )}
+            <Dialog
+                open={openConfirmDelete}
+                onOpenChange={handleCloseConfirmDeleteDialog}>
+                {openConfirmDelete && (
+                    <ConfirmDeleteDialog
+                        employeeId={employeeId}
+                        handleClose={handleCloseConfirmDeleteDialog}
+                    />
+                )}
             </Dialog>
         </div>
-    );
+    )
 }
