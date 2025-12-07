@@ -61,7 +61,7 @@ export class CompanyController {
       const employee = (req as any).employee
 
       const company = await this.companyService.getCompanyInfo(
-        employee.company.company_id,
+        employee.company_id,
       )
 
       return company
