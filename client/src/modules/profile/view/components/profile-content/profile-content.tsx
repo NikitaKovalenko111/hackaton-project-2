@@ -78,10 +78,16 @@ export const ProfileContent = ({
         )}>
             <TabsTrigger value="personal">Личное</TabsTrigger>
             <TabsTrigger value="skills">Компетенции</TabsTrigger>
-            <TabsTrigger value="team">Команда</TabsTrigger>
-            <ProtectedRoute allowedRoles={['teamlead', 'techlead']}>
-                <TabsTrigger value="requests">Запросы</TabsTrigger>
-            </ProtectedRoute>
+            {
+                isCurrentEmployee && (
+                <>
+                <TabsTrigger value="team">Команда</TabsTrigger>
+                <ProtectedRoute allowedRoles={['teamlead', 'techlead']}>
+                    <TabsTrigger value="requests">Запросы</TabsTrigger>
+                </ProtectedRoute>
+                </>
+                )
+            }
         </TabsList>
 
         <PersonalTab

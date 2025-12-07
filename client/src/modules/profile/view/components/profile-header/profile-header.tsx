@@ -14,11 +14,11 @@ import { Skill } from "@/modules/skills/domain/skills.types";
 import { Team } from "@/modules/teams/domain/teams.type";
 import { Camera, Calendar, Mail, MapPin, Building2, MessageCircle, FileInput } from "lucide-react";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Dropdown } from "react-day-picker";
 import { useGetProfilePhoto } from "@/modules/profile/infrastructure/query/queries";
 import { base64 } from "zod";
-import { File } from "buffer";
+import { Input } from "@/components/ui/input";
 const Cookies = require('js-cookie')
 
 type PropsType = {
@@ -55,6 +55,23 @@ export const ProfileHeader = ({
 
     const {mutate: mutateLogout} = useLogout({resetSocket})
     const {mutate: mutateSetProfilePhoto} = useSetProfilePhoto()
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [croppedImage, setCroppedImage] = useState<string | null>(null);
+
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+
+        if (file) {
+            setSelectedFile(file);
+            setCroppedImage(null);
+        }
+    };
+
+    const handleReset = () => {
+        setSelectedFile(null);
+        setCroppedImage(null);
+    };
+
     // const [role, setRole] = useState<ROLE>('developer')
 
     // useEffect(() => {
@@ -83,11 +100,12 @@ export const ProfileHeader = ({
                                     variant="outline"
                                     className="absolute -right-2 -bottom-2 h-8 w-8 rounded-full"
                                 >
-                                    <input type="file" onChange={(e) => {
-                                        if (e.target.files && e.target.files.length > 0) {
-                                            mutateSetProfilePhoto(e.target.files[0])
-                                        }
-                                    }} className="absolute cursor-pointer -right-2 -bottom-2 h-8 w-8 rounded-full opacity-0" />
+                                    <Input
+                                        accept="image/*"
+                                        className="absolute cursor-pointer -right-2 -bottom-2 h-8 w-8 rounded-full opacity-0"
+                                        onChange={handleFileChange}
+                                        type="file"
+                                    />
                                     <Camera />
                                 </Button>
                             </>

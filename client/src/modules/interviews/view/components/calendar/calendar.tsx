@@ -651,11 +651,6 @@ const CalendarInterview = () => {
                             </div>
 
                             <aside className="md:col-span-1 space-y-3">
-                                <div>
-                                    <div className="text-xs text-muted-foreground mb-1">Продолжительность</div>
-                                    <div className="text-sm">{selectedEvent.interview_duration ? `${selectedEvent.interview_duration} мин.` : 'Не указана'}</div>
-                                </div>
-
                                 <div className="pt-2">
                                     {((role === 'teamlead' || role === 'hr') && (selectedEvent.interview_status !== "completed")) && (
                                         <Button onClick={() => setFinishEventDialogOpen(true)} className="w-full">
@@ -697,21 +692,6 @@ const CalendarInterview = () => {
                             form.reset()
                         }}
                     >
-                        <Field>
-                            <FieldLabel htmlFor="result">Результат</FieldLabel>
-                            <Select name="result" defaultValue="passed">
-                                <SelectTrigger id="result">
-                                    <SelectValue placeholder="Выберите результат" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="passed">Пройдено</SelectItem>
-                                    <SelectItem value="failed">Не пройдено</SelectItem>
-                                    <SelectItem value="other">Другое</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <FieldDescription>Выберите итог собеседования</FieldDescription>
-                        </Field>
-
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="notes">Комментарии</FieldLabel>
                             <Textarea id="notes" name="notes" placeholder="Добавьте комментарии по собеседованию" />

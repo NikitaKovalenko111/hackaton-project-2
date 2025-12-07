@@ -13,6 +13,7 @@ import { Dialog } from "@radix-ui/react-dialog"
 import { on } from "events"
 import { useState } from "react"
 import { AiReviewDialog } from "../ai-review-dialog/ai-review-dialog"
+import Link from "next/link"
 
 export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: Team, isCurrentEmployee: boolean, role: ROLE}) => {
 
@@ -89,10 +90,9 @@ export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: 
                                                         {`${empl.employee_name[0]}${empl.employee_surname[0]}`}
                                                     </AvatarFallback>
                                                 </Avatar>
-                                                <div>
+                                                <Link href={`profile/${empl.employee_id}`}>
                                                     <p className="font-medium">{`${empl.employee_name} ${empl.employee_surname}`}</p>
-                                                    <p className="text-sm text-muted-foreground">{ROLE_TRANSLATION[empl.role.role_name] ? empl.role.role_name : ""}</p>
-                                                </div>
+                                                </Link>
                                             </div>
                                             <div className="flex gap-4">
                                                 {
