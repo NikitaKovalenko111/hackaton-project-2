@@ -19,7 +19,7 @@ const MultipleSelectWithPlaceholderDemo = ({
 
     return (
         <div className="w-full max-w-xs space-y-2">
-            <Label>Выберите компетенции</Label>
+            {/* <Label>Выберите компетенции</Label> */}
             <MultipleSelector
                 commandProps={{
                     label: 'Компетенции',
