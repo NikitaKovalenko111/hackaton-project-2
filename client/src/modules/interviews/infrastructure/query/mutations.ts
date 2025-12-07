@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { InterviewDTO } from "../../domain/interviews.types"
-import { addInterview } from "../interviews-api"
+import { addInterview, finishInterview } from "../interviews-api"
 import toast from "react-hot-toast"
 
 export const useAddInterview = () => {
@@ -18,6 +18,24 @@ export const useAddInterview = () => {
         onError: (error) => {
             toast.error('Возникла ошибка!')
             // toast.error(error.message)
+        }
+    })
+}
+
+export const useFinishInterview = () => {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationKey: ["finish-interview"],
+        mutationFn: ({id, comment, duration}: {id: number, comment: string, duration: number}) => finishInterview(id, comment, duration),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["interviews"] })
+            setTimeout(() => {
+                toast.success('Собеседование завершено!')
+            }, 1000)
+        },
+        onError: (error) => {
+            toast.error('Возникла ошибка!')
         }
     })
 }

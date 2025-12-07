@@ -7,6 +7,7 @@ interface PeronsalTabProps {
     employee_name: string;
     employee_surname: string;
     employee_email: string;
+    isCurrentEmployee: boolean
     employee_status: string;
 }
 
@@ -14,6 +15,7 @@ export const PersonalTab = ({
     employee_email,
     employee_name,
     employee_status,
+    isCurrentEmployee,
     employee_surname
 }: PeronsalTabProps) => {
 
@@ -21,20 +23,25 @@ export const PersonalTab = ({
         <TabsContent value="personal" className="space-y-6">
             <Card>
             <CardHeader>
-                <CardTitle>Личная информация</CardTitle>
+                { isCurrentEmployee ? 
+                <CardTitle>Личная информация</CardTitle> :
+                <CardTitle>Информация о сотруднике</CardTitle>
+                }
+                { isCurrentEmployee && 
                 <CardDescription>
                     Здесь вы можете обновить личную информацию
-                </CardDescription>
+                </CardDescription> 
+                }
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div className="space-y-2">
                         <Label htmlFor="firstName">Имя</Label>
-                        <Input id="firstName" defaultValue={employee_name} />
+                        <Input id="firstName" style={{ opacity: 1 }} disabled={!isCurrentEmployee} defaultValue={employee_name} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="lastName">Фамилия</Label>
-                        <Input id="lastName" defaultValue={employee_surname} />
+                        <Input style={{ opacity: 1 }} disabled={!isCurrentEmployee} id="lastName" defaultValue={employee_surname} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
@@ -42,6 +49,8 @@ export const PersonalTab = ({
                         id="email"
                         type="email"
                         defaultValue={employee_email}
+                        disabled={!isCurrentEmployee}
+                        style={{ opacity: 1 }}
                         />
                     </div>
                     {/* <div className="space-y-2">

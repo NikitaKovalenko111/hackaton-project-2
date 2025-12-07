@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
-import { getProfile, getRequests } from "../profile-api"
+import { getAiReview, getProfile, getProfilePhoto, getRequests } from "../profile-api"
+import { AiReviewData } from "../../domain/profile.types"
+import toast from "react-hot-toast"
 const Cookies = require('js-cookie')
 
 export const useGetProfile = () => {
@@ -8,12 +10,21 @@ export const useGetProfile = () => {
 
     return useQuery({
         queryKey: ['profile', token],
-        queryFn: () => getProfile(),
+        queryFn: () => getProfile(0, true),
         // retry: 2,
         // retryOnMount: true,
         enabled: !!token,
         staleTime: 0,
         gcTime: 0
+    })
+}
+
+export const useGetProfilePhoto = (setter: (data: string) => void) => {
+
+    return useQuery({
+        queryKey: ['profilePhoto'],
+        queryFn: () => getProfilePhoto(setter),
+        enabled: true
     })
 }
 

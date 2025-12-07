@@ -128,14 +128,16 @@ export const useSocket = () => {
 
     const cancelRequest = (
         request_id: number,
-        employee_id: number
+        employee_id: number,
+        justification: string
     ) => {
         if (!socketInstance) {
             return 
         }
         socketInstance.timeout(5000).emit('cancelRequest', {
             request_id,
-            employee_id
+            employee_id,
+            justification
         })
     }
 

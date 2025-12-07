@@ -8,9 +8,9 @@ export const addEmployeeToCompany = async (data: AddEmployeeDTO) => {
     return res.data
 }
 
-export const getCompanyEmployees = async (): Promise<Employee[]> => {
-    const res = await http.get("company/employees", {})
-    debugger
+export const getCompanyEmployees = async (surname: string, name: string): Promise<Employee[]> => {
+    const res = await http.get(`company/employees?surname=${surname}&name=${name}`, {})
+    
     return res.data
 }
 

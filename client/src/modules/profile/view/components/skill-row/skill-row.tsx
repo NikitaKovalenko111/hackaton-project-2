@@ -13,11 +13,13 @@ import ProtectedRoute from "@/libs/protected-route";
 export const SkillRow = ({
     skill,
     employeeId,
-    handleSendRequest
+    handleSendRequest,
+    isCurrentEmployee
 }: {
     skill: Skill,
     employeeId: number,
-    handleSendRequest: (requestType: "upgrade", employeeId: number, skill_id: number) => void
+    handleSendRequest: (requestType: "upgrade", employeeId: number, skill_id: number) => void,
+    isCurrentEmployee: boolean
 }) => {
 
     const [aiData, setAiData] = useState<AiPlanData | null>(null)
@@ -50,46 +52,55 @@ export const SkillRow = ({
     }
 
     return (
-        <div className="flex justify-between">
-            <div className="flex gap-2 items-center">
-                <p className="capitalize">{skill.skill_shape.skill_name}: </p>
+        <div className="flex items-center justify-between gap-4 p-3 rounded-md bg-white/70 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-700 shadow-sm">
+            <div className="flex items-center gap-3 min-w-0">
+            <p className="truncate font-medium text-sm capitalize text-slate-700 dark:text-slate-200">
+                {skill.skill_shape.skill_name}:
+            </p>
+            <div className="flex-shrink-0">
                 {SkillLevelBadge(skill.skill_level)}
             </div>
-            <div className="flex gap-2">
-            <Button
+            </div>
+
+            <div className="flex items-center gap-2">
+            {isCurrentEmployee && (
+                <Button
                 variant="secondary"
                 disabled={isPending}
+                className="h-9 px-3 transition-colors duration-150"
                 onClick={
-                aiData
+                    aiData
                     ? () => setOpenAiDataDialog(true)
-                    : () => {
-                        handleRequestAiPlan(
-                            skill.skill_level,
-                            skill.skill_shape.skill_shape_id
-                        );
-                    }
+                    : () =>
+                          handleRequestAiPlan(
+                          skill.skill_level,
+                          skill.skill_shape.skill_shape_id
+                          )
                 }
-            >
+                >
                 AI-План
-            </Button>
+                </Button>
+            )}
+
             <ProtectedRoute allowedRoles={['developer', 'hr', 'moderator']}>
                 <Button
-                    onClick={() => sendRequest(employeeId, skill.skill_connection_id)}
-                    disabled={isLoading}
+                onClick={() => sendRequest(employeeId, skill.skill_connection_id)}
+                disabled={isLoading}
+                className="h-9 px-3 transition-colors duration-150"
                 >
-                    Отправить запрос
+                Отправить запрос
                 </Button>
             </ProtectedRoute>
-            
             </div>
+
             <Dialog open={openAiDataDialog} onOpenChange={handleCloseAiPlan}>
-                {openAiDataDialog && aiData && (
-                    <AiPlanDialog 
-                        message={aiData.message}
-                        skill_level={aiData.skill_level}
-                        skill_shape={aiData.skill_shape}
-                    />
-                )}
+            {openAiDataDialog && aiData && (
+                <AiPlanDialog
+                message={aiData.message}
+                skill_level={aiData.skill_level}
+                skill_shape={aiData.skill_shape}
+                />
+            )}
             </Dialog>
         </div>
     );

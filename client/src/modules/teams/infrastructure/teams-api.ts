@@ -1,8 +1,8 @@
 import http from "@/libs/http/http"
 import { AddTeamDTO, Team } from "../domain/teams.type"
 
-export const getTeams = async (companyId: number): Promise<Team[]> => {
-    const res = await http.get(`/company/${companyId}/teams`, {})
+export const getTeams = async (companyId: number, teamName: string, teamleadSurname: string = ""): Promise<Team[]> => {
+    const res = await http.get(`/company/${companyId}/teams?name=${teamName}&teamleadSurname=${teamleadSurname}`, {})
 
     return res.data
 }

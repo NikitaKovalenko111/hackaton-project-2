@@ -35,7 +35,12 @@ export const RequestNotifications = () => {
             // setRequests(prev => [...prev.slice(0, 9), request])
             debugger
             toast("Запрос на повышение квалификации отклонен!", {
-                description: <p>Ваш запрос на повышение квалификации компетенции отклонен!</p>,
+                description: (
+                    <div>
+                        <p>Ваш запрос на повышение квалификации компетенции отклонен!</p>
+                        <p>Причина: {request.justification}</p>
+                    </div>
+                ),
                 action: {
                     label: 'Понял',
                     onClick: () => {}
