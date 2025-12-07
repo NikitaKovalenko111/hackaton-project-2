@@ -31,7 +31,6 @@ import { SkillOrder } from './SkillModule/skillOrder.entity'
 import { NotificationModule } from './NotificationModule/notification.module'
 import { Notification } from './NotificationModule/notification.entity'
 import { ServeStaticModule } from '@nestjs/serve-static'
-
 @Module({
   imports: [
     ConfigModule.forRoot(),

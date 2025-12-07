@@ -8,6 +8,8 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "typeorm": "ts-node ./node_modules/typeorm/cli -f ./ormconfig.json",
+    "migration:create": "typeorm migration:create ./src/migrations/${MIGRATION_NAME}",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
