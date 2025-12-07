@@ -105,10 +105,12 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
                     <UserPen 
                         className="w-4 h-4 cursor-pointer" 
                         onClick={() => push(`skills-settings/${row.original.skill_shape_id}`)} 
+                        data-testid={`skill-edit-button-${row.original.skill_shape_id}`}
                     />
                     <Trash 
                         className="w-4 h-4 cursor-pointer"
                         onClick={() => handleOpenConfirmDeleteDialog(row.original.skill_shape_id)}
+                        data-testid={`skill-delete-button-${row.original.skill_shape_id}`}
                     />
                 </div>
             ),
@@ -135,7 +137,7 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
     });
 
     return (
-        <div className="w-full">
+        <div className="w-full" data-testid="skills-table-container">
             {/* Диалог CreateSkill остается здесь, но управляется извне */}
             <Dialog key={"create-dialog"} open={openCreateDialog} onOpenChange={onCloseCreateDialog}>
                 {/* Убрана кнопка из этого компонента */}
@@ -220,6 +222,7 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
                             size="sm"
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}
+                            data-testid="skills-table-previous-button"
                         >
                             Назад
                         </Button>
@@ -228,6 +231,7 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
                             size="sm"
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}
+                            data-testid="skills-table-next-button"
                         >
                             Дальше
                         </Button>

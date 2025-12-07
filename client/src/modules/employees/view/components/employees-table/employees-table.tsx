@@ -122,10 +122,12 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
                         <Pen 
                             className="w-4 h-4 cursor-pointer" 
                             onClick={() => handleOpenInfoDialog(row.original.employee_id, row.original.team)}
+                            data-testid={`employee-edit-button-${row.original.employee_id}`}
                         />
                         <Trash 
                             className="w-4 h-4 cursor-pointer"
                             onClick={() => handleOpenConfirmDeleteDialog(row.original.employee_id)}
+                            data-testid={`employee-delete-button-${row.original.employee_id}`}
                         />
                     </div>
                 )
@@ -157,7 +159,7 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
     const {companyId} = useAuth()
 
     return (
-        <div className="w-full">
+        <div className="w-full" data-testid="employees-table-container">
             {/* Диалог AddEmployee остается здесь, но управляется извне */}
             <Dialog open={openAddDialog} onOpenChange={onCloseAddDialog}>
                 {/* Убрана кнопка из этого компонента */}
@@ -249,6 +251,7 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
                             size="sm"
                             onClick={() => table.previousPage()}
                             disabled={!table.getCanPreviousPage()}
+                            data-testid="employees-table-previous-button"
                         >
                             Назад
                         </Button>
@@ -257,6 +260,7 @@ export const EmployeesTable = ({data, isFetching, openAddDialog, onCloseAddDialo
                             size="sm"
                             onClick={() => table.nextPage()}
                             disabled={!table.getCanNextPage()}
+                            data-testid="employees-table-next-button"
                         >
                             Дальше
                         </Button>

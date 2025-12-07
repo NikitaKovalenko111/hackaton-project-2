@@ -9,15 +9,15 @@ export const ConfirmDeletionOfTeam = ({skillId, handleClose}: {skillId: number, 
     const {mutate} = useRemoveSkillFromCompany()
 
     return (
-        <DialogContent className="animate-appear">
+        <DialogContent className="animate-appear" data-testid="confirm-delete-skill-dialog">
             <DialogHeader>
-                <DialogTitle>
+                <DialogTitle data-testid="confirm-delete-skill-title">
                     Вы уверены, что хотите удалить эту компетенцию?
                 </DialogTitle>
             </DialogHeader>
             <DialogFooter>
                 <DialogClose asChild>
-                    <Button variant="outline">Нет</Button>
+                    <Button variant="outline" data-testid="confirm-delete-skill-cancel">Нет</Button>
                 </DialogClose>
                 <Button 
                     variant="destructive"  
@@ -25,6 +25,7 @@ export const ConfirmDeletionOfTeam = ({skillId, handleClose}: {skillId: number, 
                         mutate(skillId)
                         handleClose()
                     }}
+                    data-testid="confirm-delete-skill-confirm"
                 >
                     Да
                 </Button>

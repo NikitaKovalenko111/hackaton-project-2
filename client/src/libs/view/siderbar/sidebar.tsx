@@ -56,12 +56,16 @@ export function AppSidebar() {
                                                                         <ProtectedRoute key={item.title} allowedRoles={item.roles}>
                                                                                 <SidebarMenuItem key={item.title}>
                                                                                         <SidebarMenuButton asChild>
-                                                                                                <Link href={item.href} className={clsx(
-                                                                                                        "transition-all duration-200 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-800",
-                                                                                                        selected 
-                                                                                                                ? "bg-black text-white hover:bg-gray-800" 
-                                                                                                                : "bg-transparent text-black dark:text-white"
-                                                                                                )}>
+                                                                                                <Link 
+                                                                                                        href={item.href} 
+                                                                                                        className={clsx(
+                                                                                                                "transition-all duration-200 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-800",
+                                                                                                                selected 
+                                                                                                                        ? "bg-black text-white hover:bg-gray-800" 
+                                                                                                                        : "bg-transparent text-black dark:text-white"
+                                                                                                        )}
+                                                                                                        data-testid={`nav-link-${item.href.replace(/\//g, '-')}`}
+                                                                                                >
                                                                                                         <IconComponent />
                                                                                                         <span className={clsx({ 'hidden': !isHovered })}>{item.title}</span>
                                                                                                 </Link>

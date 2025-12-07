@@ -43,7 +43,7 @@ export const CreateCompany = ({handleModeChange}: CreateCompanyProps) => {
 
 
     return (
-        <div className="flex flex-col gap-8 w-full transition-[margin-top]">
+        <div className="flex flex-col gap-8 w-full transition-[margin-top]" data-testid="create-company-form-container">
             <CardContent>
                 <form id="create-company-form" onSubmit={handleSubmit(onSubmit)}>
                     <FieldSet className="flex flex-col gap-6">
@@ -63,6 +63,7 @@ export const CreateCompany = ({handleModeChange}: CreateCompanyProps) => {
                                             autoComplete="off"
                                             value={field.value}
                                             required
+                                            data-testid="create-company-name-input"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -73,13 +74,14 @@ export const CreateCompany = ({handleModeChange}: CreateCompanyProps) => {
                 </form>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-                <Button type="submit" form="create-company-form" className="w-full cursor-pointer">
+                <Button type="submit" form="create-company-form" className="w-full cursor-pointer" data-testid="create-company-submit-button">
                     Создать
                 </Button>
                 <Button 
                     className="w-full cursor-pointer"
                     variant="outline"
                     onClick={() => handleModeChange('info')}
+                    data-testid="create-company-back-button"
                 >
                     Назад
                 </Button>

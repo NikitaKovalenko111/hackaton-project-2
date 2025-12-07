@@ -58,9 +58,9 @@ export const CreateSkill = ({
     }
 
     return (
-        <DialogContent className="animate-appear">
+        <DialogContent className="animate-appear" data-testid="create-skill-dialog">
             <DialogHeader>
-                <DialogTitle>Добавить компетенцию</DialogTitle>
+                <DialogTitle data-testid="create-skill-title">Добавить компетенцию</DialogTitle>
                 <DialogDescription>
                     Добавьте новую компетенцию. Нажмите "Добавить", когда закончите.
                 </DialogDescription>
@@ -81,6 +81,7 @@ export const CreateSkill = ({
                                 aria-invalid={fieldState.invalid}
                                 autoComplete="off"
                                 value={field.value}
+                                data-testid="create-skill-name-input"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -99,6 +100,7 @@ export const CreateSkill = ({
                                 aria-invalid={fieldState.invalid}
                                 autoComplete="off"
                                 value={field.value}
+                                data-testid="create-skill-desc-input"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -108,9 +110,9 @@ export const CreateSkill = ({
             </FieldSet>
             <DialogFooter>
                 <DialogClose asChild>
-                    <Button variant="outline">Отмена</Button>
+                    <Button variant="outline" data-testid="create-skill-cancel-button">Отмена</Button>
                 </DialogClose>
-                <Button type="submit" form="create-skill">Добавить</Button>
+                <Button type="submit" form="create-skill" data-testid="create-skill-submit-button">Добавить</Button>
             </DialogFooter>
         </DialogContent>
     )

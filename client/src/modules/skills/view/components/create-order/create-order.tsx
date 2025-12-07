@@ -143,9 +143,9 @@ export const CreateOrder = ({
     // }
 
     return (
-        <DialogContent className="animate-appear">
+        <DialogContent className="animate-appear" data-testid="create-order-dialog">
             <DialogHeader>
-                <DialogTitle>Добавить регламент</DialogTitle>
+                <DialogTitle data-testid="create-order-title">Добавить регламент</DialogTitle>
                 <DialogDescription>
                     Добавьте новый регламент для компетенции.
                 </DialogDescription>
@@ -155,9 +155,10 @@ export const CreateOrder = ({
                     <div className="mb-4">
                         <Select
                             onValueChange={(val) => setSkillId(Number(val))}
+                            data-testid="create-order-skill-select"
                         >
                             <Label className="mb-2">Компетенция</Label>
-                            <SelectTrigger className="w-[180px]">
+                            <SelectTrigger className="w-[180px]" data-testid="create-order-skill-trigger">
                                 <SelectValue placeholder="Компетенция" />
                             </SelectTrigger>
                             <SelectContent>
@@ -173,9 +174,10 @@ export const CreateOrder = ({
                     <div className="mb-4">
                         <Select
                             onValueChange={(val) => handleLevelChange(val as SkillLevel)}
+                            data-testid="create-order-level-select"
                         >
                             <Label className="mb-2">Уровень</Label>
-                            <SelectTrigger className="w-[180px]">
+                            <SelectTrigger className="w-[180px]" data-testid="create-order-level-trigger">
                                 <SelectValue placeholder="Уровень" />
                             </SelectTrigger>
                             <SelectContent>
@@ -199,6 +201,7 @@ export const CreateOrder = ({
                         variant='outline' 
                         size='icon'
                         onClick={() => handleMinusCount()}
+                        data-testid="create-order-remove-criterion-button"
                     >
                         <MinusIcon />
                     </Button>
@@ -206,12 +209,13 @@ export const CreateOrder = ({
                         variant='outline' 
                         size='icon'
                         onClick={() => handleAddCount()}
+                        data-testid="create-order-add-criterion-button"
                     >
                         <PlusIcon />
                     </Button>
                 </div>
                 <DialogClose asChild>
-                    <Button variant="outline">Отмена</Button>
+                    <Button variant="outline" data-testid="create-order-cancel-button">Отмена</Button>
                 </DialogClose>
                 <Button 
                     onClick={() => {
@@ -221,6 +225,7 @@ export const CreateOrder = ({
                     disabled={isOrdersEmpty || !level} 
                     type="submit" 
                     form="create-skill"
+                    data-testid="create-order-submit-button"
                 >
                     Добавить
                 </Button>

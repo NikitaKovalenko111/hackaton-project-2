@@ -58,15 +58,15 @@ export const AddEmployee = ({
     }, [companyId])
 
     return (
-        <DialogContent className="animate-appear">
+        <DialogContent className="animate-appear" data-testid="add-employee-dialog">
             <DialogHeader>
-                <DialogTitle>Добавить сотрудника</DialogTitle>
+                <DialogTitle data-testid="add-employee-title">Добавить сотрудника</DialogTitle>
                 <DialogDescription>
                     Добавьте сотрудника в свою компанию. Введите его почту.
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-                <form id="create-skill" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+                <form id="add-employee-form" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
                     <Controller 
                         name="employee_to_add_email"
                         control={control}
@@ -81,6 +81,7 @@ export const AddEmployee = ({
                                 aria-invalid={fieldState.invalid}
                                 autoComplete="off"
                                 value={field.value}
+                                data-testid="add-employee-email-input"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -98,10 +99,12 @@ export const AddEmployee = ({
                             name={field.name}
                             value={field.value}
                             onValueChange={field.onChange}
+                            data-testid="add-employee-role-select"
                           >
                             <SelectTrigger
                               id="form-rhf-complex-billingPeriod"
                               aria-invalid={fieldState.invalid}
+                              data-testid="add-employee-role-trigger"
                             >
                               <SelectValue placeholder="Роль" />
                             </SelectTrigger>
@@ -144,9 +147,9 @@ export const AddEmployee = ({
             </FieldSet>
             <DialogFooter>
                 <DialogClose asChild>
-                    <Button variant="outline" onClick={() => handleCloseDialog()}>Отмена</Button>
+                    <Button variant="outline" onClick={() => handleCloseDialog()} data-testid="add-employee-cancel-button">Отмена</Button>
                 </DialogClose>
-                <Button type="submit" form="create-skill">Добавить</Button>
+                <Button type="submit" form="add-employee-form" data-testid="add-employee-submit-button">Добавить</Button>
             </DialogFooter>
         </DialogContent>
     )

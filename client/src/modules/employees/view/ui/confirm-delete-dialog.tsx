@@ -15,15 +15,15 @@ export const ConfirmDeleteDialog = ({
     const {mutate} = useDeleteEmployee()
     
     return (
-        <DialogContent className="animate-appear">
+        <DialogContent className="animate-appear" data-testid="confirm-delete-employee-dialog">
             <DialogHeader>
-                <DialogTitle>
+                <DialogTitle data-testid="confirm-delete-employee-title">
                     Вы уверены, что хотите удалить сотрудника из компании?
                 </DialogTitle>
             </DialogHeader>
             <DialogFooter className="mt-3">
                 <DialogClose asChild>
-                    <Button variant="outline">Нет</Button>
+                    <Button variant="outline" data-testid="confirm-delete-employee-cancel">Нет</Button>
                 </DialogClose>
                 <Button 
                     onClick={() => {
@@ -31,6 +31,7 @@ export const ConfirmDeleteDialog = ({
                         handleClose()
                     }} 
                     variant="destructive"
+                    data-testid="confirm-delete-employee-confirm"
                 >
                     Да
                 </Button>

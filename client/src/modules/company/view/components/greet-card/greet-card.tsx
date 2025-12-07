@@ -60,9 +60,9 @@ export const GreetCard = () => {
         <Card className={clsx(
             "w-full max-w-sm relative overflow-hidden p-6 animate-appear transition-[min-height]",
             variantStyleCard[mode]
-        )}>
+        )} data-testid="greet-card">
             <CardHeader>
-                <CardTitle className="text-center text-xl">
+                <CardTitle className="text-center text-xl" data-testid="greet-card-title">
                     Данные о компании
                 </CardTitle>
             </CardHeader>
@@ -75,6 +75,7 @@ export const GreetCard = () => {
                     <Button 
                         className="w-full cursor-pointer"
                         onClick={() => handleModeChange('create')}
+                        data-testid="greet-create-company-button"
                     >
                         Создать компанию
                     </Button>
@@ -82,6 +83,7 @@ export const GreetCard = () => {
                         className="w-full cursor-pointer"
                         variant="destructive"
                         onClick={() => mutate()}
+                        data-testid="greet-logout-button"
                     >
                         Выйти
                     </Button>
