@@ -19,7 +19,6 @@ type PropsType = {
 export const Profile: React.FC<PropsType> = ({id, isCurrentEmployee}): JSX.Element => {
     const [data, setData] = useState<Employee | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
-    console.log(id);
     
     // const {data: profileData, isSuccess, isError, isPending, isRefetching, refetch} = useGetProfile()
 
