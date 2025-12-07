@@ -1,0 +1,166 @@
+import socketio
+from aiogram import Bot
+
+import os, sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
+from config import BOT_TOKEN, WS_URL
+
+
+class WebSocketClient:
+    def __init__(self, telegram_id: int):
+        self.sio = socketio.AsyncClient()
+        self.is_connected = False
+        self.bot = Bot(token=BOT_TOKEN)
+        self.telegram_id = telegram_id
+        self.sio.on('newRequest', self._requests)
+        self.sio.on('canceledRequest', self._requests)
+        self.sio.on('completedRequest', self._requests)
+        self.sio.on('newInterview', self._new_interview)
+
+    async def connect(self,  employee_data: dict):
+        """Подключение к Socket.IO серверу только для newRequest"""
+        try:
+            if self.is_connected:
+                await self.disconnect()
+                print("🔌 Предыдущее подключение отключено")
+
+            print(f"🔌 Подключаюсь к Socket.IO...")
+            print(WS_URL)
+
+            # Подключаемся с аутентификацией
+            await self.sio.connect(
+                WS_URL,
+                headers={
+                    "client_type": "telegram",
+                    "telegram_id": str(self.telegram_id),
+                }
+            )
+            self.is_connected = True
+
+            print("✅ Успешно подключился к Socket.IO")
+
+
+        except Exception as e:
+            print(f"❌ Ошибка подключения к Socket.IO: {e}")
+            self.is_connected = False
+            await self._send_telegram_message(f"❌ Ошибка подключения, причина: {e}")
+
+    async def _send_telegram_message(self, text: str):
+        """Отправка сообщения в Telegram"""
+        try:
+            if self.telegram_id:
+                await self.bot.send_message(self.telegram_id, text,  parse_mode="HTML")
+        except Exception as e:
+            print(f"❌ Ошибка отправки сообщения в Telegram: {e}")
+
+    async def _requests(self, data: dict):
+        """Универсальный метод для обработки запросов"""
+        print(data.get('request_date', 'N/A'))
+
+        # Формат времени
+        interview_dtime = data.get('request_date', 'N/A')[:-6].split("T")
+        interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
+        interview_dtime[0][1] = \
+            ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
+             "декабря"][int(interview_dtime[0][1]) - 1]
+
+        skill_data = data.get('request_skill', {})
+        skill_name = "Не указан"
+        skill_level = "Не указан"
+        if isinstance(skill_data, dict):
+            skill_shape = skill_data.get('skill_shape', {})
+            if isinstance(skill_shape, dict):
+                skill_name = skill_shape.get('skill_name', 'Не указан')
+            skill_level = skill_data.get('skill_level', 'Не указан')
+
+        headers = {
+            'pending': f"❗️ Новый запрос № {data.get('request_id', 'N/A')}",
+            'canceled': f"❗️ Запрос № {data.get('request_id', 'N/A')} <b>отменен</b>",
+            'completed': f"❗️ Запрос № {data.get('request_id', 'N/A')} <b>одобрен</b>"
+        }
+
+        request_info = (
+            f"{headers.get(data.get('request_status', 'N/A'), headers.get('pending'))}\n"
+            f"📋Тип: {'повышение компетенции' if data.get('request_type') == 'upgrade' else data.get('request_type', 'N/A')}\n"
+        f"🎯Навык: {skill_name}\n"
+        f"📊Уровень: {skill_level}\n"
+        f"📅Дата: {interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n"
+        f"👤Роль получателя: {data.get('request_role_receiver', 'N/A')}\n"
+        f"👤Отправитель: {data.get('request_owner', {}).get('employee_name', 'N/A')} {data.get('request_owner', {}).get('employee_surname', 'N/A')}"
+    )
+        await self._send_telegram_message(request_info)
+
+    async def _new_interview(self, data: dict):
+        """Сообщение о новом интервью"""
+        interview_dtime = data.get('interview_date', 'N/A')[:-6].split(
+            "T")
+        interview_dtime = ((interview_dtime[0].split("-")), interview_dtime[1])
+        interview_dtime[0][1] = \
+        ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября",
+         "декабря"][int(interview_dtime[0][1]) - 1]
+
+        interview_info = (
+            f"{ {'planned': '🎯 ПРИГЛАШЕНИЕ НА СОБЕСЕДОВАНИЕ', 'completed': '✅ СОБЕСЕДОВАНИЕ ЗАВЕРШЕНО', 'canceled': '❌ СОБЕСЕДОВАНИЕ ОТМЕНЕНО'}.get(data.get('interview_status', 'planned'), '🎯 ПРИГЛАШЕНИЕ НА СОБЕСЕДОВАНИЕ')}\n\n"
+            f"<b>👤 Кандидат:</b>\n"
+            f"{data.get('interview_subject', {}).get('employee_name')} {data.get('interview_subject', {}).get('employee_surname')}\n\n"
+            f"<b>📅 Дата и время:</b>\n"
+            f"{interview_dtime[0][2]} {interview_dtime[0][1]} {interview_dtime[0][0]}, {interview_dtime[1][:-2]}\n\n"
+            f"<b>🔧 Тип собеседования:</b>\n"
+            f"{ {'tech': 'Техническое собеседование', 'soft': 'Собеседование на софт-скиллы', 'hr': 'HR-собеседование', 'case': 'Кейс-собеседование'}.get(data.get('interview_type', 'N/A'), 'Тип собеседования скрыт.')}\n\n"  
+            f"<b>👨‍💼 Собеседующий:</b>\n"
+            f"<a href=\"tg://openmessage?user_id={data.get('interview_owner', {}).get('telegram_id', '')}\">{data.get('interview_owner', {}).get('employee_name')} {data.get('interview_owner', {}).get('employee_surname')}</a> ({data.get('interview_owner', {}).get('employee_email')})\n\n"
+            f"<b>📋 Описание:</b>\n"
+            f"{data.get('interview_desc', 'Описание отсутствует.')}\n\n"
+            f"<i>ID собеседования: #{data.get('interview_id', 'N/A')}</i>\n"
+        )
+        await self._send_telegram_message(interview_info)
+
+    async def disconnect(self):
+        """Отключение от Socket.IO"""
+        if self.sio.connected:
+            await self.sio.disconnect()
+            self.is_connected = False
+            self.telegram_id = None
+            print("🔌 Отключился от Socket.IO")
+
+    async def disconnect_user(self, telegram_id: int):
+        """Отключение конкретного пользователя"""
+        if self.is_connected and self.telegram_id == telegram_id:
+            await self.disconnect()
+
+class WebSocketManager:
+    """Менеджер для хранения всех WebSocket подключений"""
+    def __init__(self):
+        self.clients = {}  # {telegram_id: WebSocketClient}
+
+    async def connect_user(self, telegram_id: int, employee_data: dict):
+        """Подключение пользователя к WebSocket"""
+        if telegram_id in self.clients:
+            # Пользователь уже есть, переподключаем если нужно
+            client = self.clients[telegram_id]
+            if not client.is_connected:
+                await client.connect(employee_data)
+            else:
+                print(f"✅ Пользователь {telegram_id} уже подключен")
+        else:
+            # Создаем нового клиента
+            client = WebSocketClient(telegram_id)
+            self.clients[telegram_id] = client
+            await client.connect(employee_data)
+
+    async def disconnect_user(self, telegram_id: int):
+        """Отключение пользователя от WebSocket"""
+        if telegram_id in self.clients:
+            client = self.clients[telegram_id]
+            await client.disconnect()
+            del self.clients[telegram_id]
+            print(f"🗑️ Пользователь {telegram_id} удален из менеджера")
+
+    def get_user_client(self, telegram_id: int) -> WebSocketClient:
+        """Получение клиента по ID пользователя"""
+        return self.clients.get(telegram_id)
+
+
+websocket_manager = WebSocketManager()
+
