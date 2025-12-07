@@ -1,24 +1,26 @@
 'use client'
 
-import { useEffect, useState } from "react"
-import { EmployeesTable } from "../employees-table/employees-table"
-import { useGetCompanyEmployees } from "@/modules/employees/infrastructure/query/queries"
-import { EmployeeTable } from "@/modules/employees/domain/employees.type"
-import ProtectedRoute from "@/libs/protected-route"
-import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from 'react'
+import { EmployeesTable } from '../employees-table/employees-table'
+import { useGetCompanyEmployees } from '@/modules/employees/infrastructure/query/queries'
+import { EmployeeTable } from '@/modules/employees/domain/employees.type'
+import ProtectedRoute from '@/libs/protected-route'
+import { useGetProfile } from '@/modules/profile/infrastructure/query/queries'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export const Employees = () => {
-
     const [employees, setEmployees] = useState<EmployeeTable[]>([])
-    const [surnameSearch, setSurnameSearch] = useState<string>("")
-    const [nameSearch, setNameSearch] = useState<string>("")
+    const [surnameSearch, setSurnameSearch] = useState<string>('')
+    const [nameSearch, setNameSearch] = useState<string>('')
     const [openAddDialog, setOpenAddDialog] = useState<boolean>(false) // Перенесено состояние
 
-    const {data, isFetching} = useGetCompanyEmployees(surnameSearch, nameSearch)
+    const { data, isFetching } = useGetCompanyEmployees(
+        surnameSearch,
+        nameSearch
+    )
 
-    const {data: profileData, refetch} = useGetProfile()
+    const { data: profileData, refetch } = useGetProfile()
 
     const onChangeSurname = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
@@ -42,14 +44,16 @@ export const Employees = () => {
     useEffect(() => {
         refetch()
         if (data) {
-            const items: EmployeeTable[] = data.map((item) => ({
-                employee_id: item.employee_id,
-                employee_name: item.employee_name,
-                employee_surname: item.employee_surname,
-                role: item.role.role_name,
-                team: item.team
-            })).filter(item => item.employee_id != profileData?.employee_id)
-        
+            const items: EmployeeTable[] = data
+                .map((item) => ({
+                    employee_id: item.employee_id,
+                    employee_name: item.employee_name,
+                    employee_surname: item.employee_surname,
+                    role: item.role.role_name,
+                    team: item.team,
+                }))
+                .filter((item) => item.employee_id != profileData?.employee_id)
+
             setEmployees(items)
         }
     }, [data])
@@ -57,7 +61,7 @@ export const Employees = () => {
     return (
         <div className="mx-auto animate-appear w-full max-w-6xl space-y-6 px-4 py-10" data-testid="employees-page">
             <ProtectedRoute allowedRoles={['admin']}>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
                     <div className="flex flex-col sm:flex-row gap-4 flex-1">
                         <Input 
                             value={surnameSearch} 
@@ -72,8 +76,8 @@ export const Employees = () => {
                             data-testid="employees-name-search-input"
                         />
                     </div>
-                    <Button 
-                        onClick={handleOpenAddDialog} 
+                    <Button
+                        onClick={handleOpenAddDialog}
                         variant="default"
                         className="w-full sm:w-auto"
                         data-testid="employees-add-button"
@@ -81,9 +85,9 @@ export const Employees = () => {
                         Добавить сотрудника
                     </Button>
                 </div>
-                <EmployeesTable 
-                    isFetching={isFetching} 
-                    data={employees} 
+                <EmployeesTable
+                    isFetching={isFetching}
+                    data={employees}
                     openAddDialog={openAddDialog}
                     onCloseAddDialog={handleCloseAddDialog}
                 />

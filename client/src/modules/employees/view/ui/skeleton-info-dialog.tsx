@@ -1,8 +1,13 @@
-import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Skeleton } from "@/components/ui/skeleton"
+import {
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export const SkeletonInfoDialog = () => {
-
     return (
         <DialogContent className="animate-appear">
             <DialogHeader>

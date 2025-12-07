@@ -1,51 +1,74 @@
-import { Button } from "@/components/ui/button"
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Field, FieldDescription, FieldError, FieldLabel, FieldSet } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ROLE_TRANSLATION, ROLES } from "@/libs/constants"
-import { AddEmployeeDTO } from "@/modules/employees/domain/employees.type"
-import { useAddEmployeeToCompany } from "@/modules/employees/infrastructure/query/mutations"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
-import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import z from "zod"
+import { Button } from '@/components/ui/button'
+import {
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import {
+    Field,
+    FieldDescription,
+    FieldError,
+    FieldLabel,
+    FieldSet,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import { ROLE_TRANSLATION, ROLES } from '@/libs/constants'
+import { AddEmployeeDTO } from '@/modules/employees/domain/employees.type'
+import { useAddEmployeeToCompany } from '@/modules/employees/infrastructure/query/mutations'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import z from 'zod'
 
 interface AddEmployeeProps {
-  companyId: number
-  handleCloseDialog: () => void
+    companyId: number
+    handleCloseDialog: () => void
 }
 
 const zodSchema = z.object({
-    employee_role: z.enum(['hr', 'developer', 'teamlead', 'techlead', 'admin', 'moderator']),
-    employee_to_add_email: z.email({message: "Некорректный email"}),
-    company_id: z.number()
+    employee_role: z.enum([
+        'hr',
+        'developer',
+        'teamlead',
+        'techlead',
+        'admin',
+        'moderator',
+    ]),
+    employee_to_add_email: z.email({ message: 'Некорректный email' }),
+    company_id: z.number(),
 })
 
 export const AddEmployee = ({
-  companyId,
-  handleCloseDialog
+    companyId,
+    handleCloseDialog,
 }: AddEmployeeProps) => {
-
     const {
-
         handleSubmit,
         control,
-        formState: {errors},
+        formState: { errors },
         reset,
-        setValue
-
+        setValue,
     } = useForm<AddEmployeeDTO>({
         resolver: zodResolver(zodSchema),
         mode: 'onChange',
         defaultValues: {
             employee_role: 'developer',
             employee_to_add_email: '',
-            company_id: companyId
-        }
+            company_id: companyId,
+        },
     })
 
-    const {mutate} = useAddEmployeeToCompany()
+    const { mutate } = useAddEmployeeToCompany()
 
     const onSubmit: SubmitHandler<AddEmployeeDTO> = (data) => {
         mutate(data)
@@ -54,7 +77,7 @@ export const AddEmployee = ({
     }
 
     useEffect(() => {
-      setValue("company_id", companyId)
+        setValue('company_id', companyId)
     }, [companyId])
 
     return (
@@ -66,64 +89,64 @@ export const AddEmployee = ({
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-                <form id="add-employee-form" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
-                    <Controller 
+                <form
+                    id="create-skill"
+                    className="grid gap-4"
+                    onSubmit={handleSubmit(onSubmit)}>
+                    <Controller
                         name="employee_to_add_email"
                         control={control}
-                        render={({field, fieldState}) => (
-                        <Field className="grid gap-2">
-                            <FieldLabel htmlFor="email">Email</FieldLabel>
-                            <Input
-                                {...field}
-                                id="email"
-                                type="email"
-                                placeholder="Введите email"
-                                aria-invalid={fieldState.invalid}
-                                autoComplete="off"
-                                value={field.value}
-                                data-testid="add-employee-email-input"
-                            />
-                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
+                        render={({ field, fieldState }) => (
+                            <Field className="grid gap-2">
+                                <FieldLabel htmlFor="email">Email</FieldLabel>
+                                <Input
+                                    {...field}
+                                    id="email"
+                                    type="email"
+                                    placeholder="Введите email"
+                                    aria-invalid={fieldState.invalid}
+                                    autoComplete="off"
+                                    value={field.value}
+                                />
+                                {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                )}
+                            </Field>
                         )}
                     />
                     <Controller
-                      name="employee_role"
-                      control={control}
-                      render={({ field, fieldState }) => (
-                        <Field data-invalid={fieldState.invalid}>
-                          <FieldLabel htmlFor="select_employee">
-                            Роль
-                          </FieldLabel>
-                          <Select
-                            name={field.name}
-                            value={field.value}
-                            onValueChange={field.onChange}
-                            data-testid="add-employee-role-select"
-                          >
-                            <SelectTrigger
-                              id="form-rhf-complex-billingPeriod"
-                              aria-invalid={fieldState.invalid}
-                              data-testid="add-employee-role-trigger"
-                            >
-                              <SelectValue placeholder="Роль" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {ROLES.map((role, id) => (
-                                <SelectItem key={id} value={role}>
-                                  {ROLE_TRANSLATION[role]}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FieldDescription>
-                            Выберите роль сотрудника
-                          </FieldDescription>
-                          {fieldState.invalid && (
-                            <FieldError errors={[fieldState.error]} />
-                          )}
-                        </Field>
-                      )}
+                        name="employee_role"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <Field data-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="select_employee">
+                                    Роль
+                                </FieldLabel>
+                                <Select
+                                    name={field.name}
+                                    value={field.value}
+                                    onValueChange={field.onChange}>
+                                    <SelectTrigger
+                                        id="form-rhf-complex-billingPeriod"
+                                        aria-invalid={fieldState.invalid}>
+                                        <SelectValue placeholder="Роль" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {ROLES.map((role, id) => (
+                                            <SelectItem key={id} value={role}>
+                                                {ROLE_TRANSLATION[role]}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FieldDescription>
+                                    Выберите роль сотрудника
+                                </FieldDescription>
+                                {fieldState.invalid && (
+                                    <FieldError errors={[fieldState.error]} />
+                                )}
+                            </Field>
+                        )}
                     />
                     {/* <Controller 
                         name="skill_desc"
@@ -147,9 +170,15 @@ export const AddEmployee = ({
             </FieldSet>
             <DialogFooter>
                 <DialogClose asChild>
-                    <Button variant="outline" onClick={() => handleCloseDialog()} data-testid="add-employee-cancel-button">Отмена</Button>
+                    <Button
+                        variant="outline"
+                        onClick={() => handleCloseDialog()}>
+                        Отмена
+                    </Button>
                 </DialogClose>
-                <Button type="submit" form="add-employee-form" data-testid="add-employee-submit-button">Добавить</Button>
+                <Button type="submit" form="create-skill">
+                    Добавить
+                </Button>
             </DialogFooter>
         </DialogContent>
     )

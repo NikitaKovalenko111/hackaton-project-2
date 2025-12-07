@@ -1,23 +1,22 @@
-
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { socketSlice } from './slices/socket.slice'
 
 const combindedReducers = combineReducers({
-  socket: socketSlice.reducer
+    socket: socketSlice.reducer,
 })
 
 export const makeStore = () => {
-  return configureStore({
-    reducer: combindedReducers,
-    middleware: (getDefaultMiddleware) => 
-      getDefaultMiddleware({
-        serializableCheck: {
-          ignoredActuibs: ['socket/setSocket'],
-          ignoredActionPaths: ['payload.socket'],
-          ignoredPaths: ['payload.socket', 'socket.socket']
-        }
-      })
-  })
+    return configureStore({
+        reducer: combindedReducers,
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware({
+                serializableCheck: {
+                    ignoredActuibs: ['socket/setSocket'],
+                    ignoredActionPaths: ['payload.socket'],
+                    ignoredPaths: ['payload.socket', 'socket.socket'],
+                },
+            }),
+    })
 }
 
 // Infer the type of makeStore

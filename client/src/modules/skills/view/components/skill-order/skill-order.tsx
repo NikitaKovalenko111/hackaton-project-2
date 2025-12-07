@@ -1,18 +1,17 @@
 'use client'
 
-import { useEffect, useState } from "react"
-import { SkillOrdersTable } from "../skill-order-table/skill-order-table"
-import { useGetSkillOrders } from "@/modules/skills/infrastructure/query/queries"
+import { useEffect, useState } from 'react'
+import { SkillOrdersTable } from '../skill-order-table/skill-order-table'
+import { useGetSkillOrders } from '@/modules/skills/infrastructure/query/queries'
 
 export const SkillOrder = () => {
-
     const [selectedSkillNames, setSelectedSkillNames] = useState<string[]>([])
 
     const handleChangeSkillNames = (names: string[]) => {
         setSelectedSkillNames(names)
     }
 
-    const {data, refetch, isFetching} = useGetSkillOrders(selectedSkillNames)
+    const { data, refetch, isFetching } = useGetSkillOrders(selectedSkillNames)
 
     useEffect(() => {
         refetch()

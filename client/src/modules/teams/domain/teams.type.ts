@@ -1,5 +1,5 @@
-import { CompanyData } from "@/modules/company/domain/company.type"
-import { Employee } from "@/modules/profile/domain/profile.types"
+import { CompanyData } from '@/modules/company/domain/company.type'
+import { Employee } from '@/modules/profile/domain/profile.types'
 
 export interface Team {
     team_name: string

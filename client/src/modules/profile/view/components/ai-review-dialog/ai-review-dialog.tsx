@@ -1,7 +1,13 @@
-import { Button } from "@/components/ui/button"
-import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { JSX } from "react"
-import ReactMarkdown from "react-markdown"
+import { Button } from '@/components/ui/button'
+import {
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import { JSX } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 type PropsType = {
     message: string
@@ -9,7 +15,11 @@ type PropsType = {
     employeeSurname?: string
 }
 
-export const AiReviewDialog: React.FC<PropsType> = ({ message, employeeName, employeeSurname }): JSX.Element => {
+export const AiReviewDialog: React.FC<PropsType> = ({
+    message,
+    employeeName,
+    employeeSurname,
+}): JSX.Element => {
     return (
         <DialogContent className="animate-appear max-w-3xl w-full rounded-lg bg-white dark:bg-slate-900/60 shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
             <DialogHeader className="px-6 py-4">

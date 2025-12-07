@@ -1,44 +1,52 @@
 'use client'
 
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { useActions } from './useActions';
-import { useReduxSocket } from './useReduxSocket';
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from 'react'
+import { io, Socket } from 'socket.io-client'
+import { useActions } from './useActions'
+import { useReduxSocket } from './useReduxSocket'
 // import socket from '@/app/socket';
-const Cookies = require("js-cookie")
+const Cookies = require('js-cookie')
 
-export const SocketContext = createContext<{socket: Socket | null, resetSocket: () => void, regSocket: () => void}>({
+export const SocketContext = createContext<{
+    socket: Socket | null
+    resetSocket: () => void
+    regSocket: () => void
+}>({
     socket: null,
     resetSocket: () => {},
-    regSocket: () => {}
+    regSocket: () => {},
 })
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-
     const [socket, setSocket] = useState<Socket | null>(null)
     const [log, setLog] = useState<boolean>(false)
 
     const resetSocket = () => {
         if (socket) socket.disconnect()
         setSocket(null)
-        setLog(prev => !prev)
+        setLog((prev) => !prev)
     }
 
     const regSocket = () => {
-        setLog(prev => !prev)
+        setLog((prev) => !prev)
     }
 
     // const connectSocket = () => {
     //     if (!socket) {
-    //         const sk = 
+    //         const sk =
     //     }
     // }
 
     useEffect(() => {
-        const token = Cookies.get("accessToken", {domain: process.env.DOMAIN})
-        
+        const token = Cookies.get('accessToken', { domain: process.env.DOMAIN })
+
         if (!token) {
-        
             if (socket) {
                 socket.disconnect()
                 setSocket(null)
@@ -51,79 +59,77 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
                     authorization: `Bearer ${token}`,
                     client_type: 'web',
                 },
-                reconnection: false}
-            )
+                reconnection: false,
+            })
             setSocket(sk)
         }
 
-        socket?.on("connect", () => { 
-            console.log("Socket ID: ", socket.id)
+        socket?.on('connect', () => {
+            console.log('Socket ID: ', socket.id)
         })
 
         return () => {
-            socket?.off("connect", () => {
-                console.log("Socket ID: ", socket.id)
+            socket?.off('connect', () => {
+                console.log('Socket ID: ', socket.id)
             })
             socket?.disconnect()
             setSocket(null)
         }
-
     }, [log])
 
     return (
-        <SocketContext.Provider value={{socket, resetSocket, regSocket}}>
+        <SocketContext.Provider value={{ socket, resetSocket, regSocket }}>
             {children}
         </SocketContext.Provider>
     )
 }
 
 export const useSocket = () => {
-
-    const {socket: socketInstance} = useContext(SocketContext)
+    const { socket: socketInstance } = useContext(SocketContext)
 
     useEffect(() => {
-    if (!socketInstance) return;
+        if (!socketInstance) return
 
-    const token = Cookies.get("accessToken");
-    if (!token) {
-        console.log('No token, disconnecting existing socket');
-        if (socketInstance) {
-            // let sk: Socket = socketInstance as Socket
-            // sk.disconnect()
-            socketInstance.disconnect()
-            
-        };
-        return;
-    }
+        const token = Cookies.get('accessToken')
+        if (!token) {
+            console.log('No token, disconnecting existing socket')
+            if (socketInstance) {
+                // let sk: Socket = socketInstance as Socket
+                // sk.disconnect()
+                socketInstance.disconnect()
+            }
+            return
+        }
 
-    socketInstance.on('connect', () => {
-        console.log('Socket connected, ID:', socketInstance.id);
-    });
-
-    return () => {
-        socketInstance.off('connect', () => {
-            console.log('Socket connected, ID:', socketInstance.id);
+        socketInstance.on('connect', () => {
+            console.log('Socket connected, ID:', socketInstance.id)
         })
-    };
-}, [socketInstance]);
 
-
-    const handleSendRequest = (requestType: 'upgrade', employeeId: number, skill_id: number) => {
-        socketInstance!.timeout(5000).emit('addRequest', {
-                requestType, 
-                employeeId,
-                skill_id
+        return () => {
+            socketInstance.off('connect', () => {
+                console.log('Socket connected, ID:', socketInstance.id)
             })
+        }
+    }, [socketInstance])
+
+    const handleSendRequest = (
+        requestType: 'upgrade',
+        employeeId: number,
+        skill_id: number
+    ) => {
+        socketInstance!.timeout(5000).emit('addRequest', {
+            requestType,
+            employeeId,
+            skill_id,
+        })
     }
 
-    const acceptRequest = (
-        request_id: number
-    ) => {
+    const acceptRequest = (request_id: number) => {
         if (!socketInstance) {
             return
         }
-        
-        socketInstance.timeout(5000).emit('completeRequest', {request_id})
+
+        socketInstance.timeout(5000).emit('completeRequest', { request_id })
     }
 
     const cancelRequest = (
@@ -132,12 +138,12 @@ export const useSocket = () => {
         justification: string
     ) => {
         if (!socketInstance) {
-            return 
+            return
         }
         socketInstance.timeout(5000).emit('cancelRequest', {
             request_id,
             employee_id,
-            justification
+            justification,
         })
     }
 
@@ -145,6 +151,6 @@ export const useSocket = () => {
         // socket,
         handleSendRequest,
         acceptRequest,
-        cancelRequest
-    };
-};
+        cancelRequest,
+    }
+}

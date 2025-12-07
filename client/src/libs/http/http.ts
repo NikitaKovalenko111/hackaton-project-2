@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios'
-import authConfig from "@/libs/configs/auth";
-import { logout } from '@/modules/profile/infrastructure/profile-api';
-const Cookies = require("js-cookie")
+import authConfig from '@/libs/configs/auth'
+import { logout } from '@/modules/profile/infrastructure/profile-api'
+const Cookies = require('js-cookie')
 
 const http = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
-    
 
     // baseURL: 'http://0.0.0.0:8000/'
 })
@@ -19,7 +18,7 @@ const https = axios.create({
 
 const refreshAxios = axios.create({
     baseURL: process.env.NEXT_PUBLIC_BACKEND_API,
-    withCredentials: true
+    withCredentials: true,
 })
 
 refreshAxios.interceptors.request.use(
@@ -28,16 +27,15 @@ refreshAxios.interceptors.request.use(
             // const token = localStorage.getItem(authConfig.storageTokenKeyName) || ''
             const token = Cookies.get('refreshToken') || ''
             if (token) {
-                config.headers['refreshToken'] =  token
+                config.headers['refreshToken'] = token
             }
         }
-        
 
         return config
     },
     (error) => {
         return Promise.reject(error)
-    },
+    }
 )
 
 let isRefetching = false
@@ -46,7 +44,7 @@ let isRefetching = false
 // const refreshTokens = async () => {
 //     const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API}/employee/refresh`, {}, {
 //         withCredentials: true,
-        
+
 //     })
 //     debugger
 //     Cookies.set("accessToken", res.data.accessToken)
@@ -57,42 +55,45 @@ let isRefetching = false
 //     }
 // }
 
-let failedQueue: Array<{ resolve: (value: any) => void; reject: (reason?: any) => void }> = [];
+let failedQueue: Array<{
+    resolve: (value: any) => void
+    reject: (reason?: any) => void
+}> = []
 
-export const refreshTokens = async (): Promise<{accessToken: string, refreshToken: string}> => {
+export const refreshTokens = async (): Promise<{
+    accessToken: string
+    refreshToken: string
+}> => {
     if (isRefetching) {
         return new Promise((resolve, reject) => {
-            failedQueue.push({ resolve, reject });
-        });
+            failedQueue.push({ resolve, reject })
+        })
     }
 
-    isRefetching = true;
+    isRefetching = true
 
     try {
         // const res = await refreshAxios.post('/employee/refresh', {}, {
         //     withCredentials: true,
         // });
-
         // const { accessToken, refreshToken } = res.data;
         // Cookies.set("accessToken", accessToken);
         // if (refreshToken) Cookies.set("refreshToken", refreshToken);
-
         // failedQueue.forEach(p => p.resolve({ accessToken, refreshToken }));
         // failedQueue = [];
-
         // return { accessToken, refreshToken };
     } catch (err) {
         // failedQueue.forEach(p => p.reject(err));
         // failedQueue = [];
         // await logout()
     } finally {
-        isRefetching = false;
+        isRefetching = false
         return {
             accessToken: '',
             refreshToken: '',
         }
     }
-};
+}
 
 http.interceptors.request.use(
     (config) => {
@@ -103,13 +104,12 @@ http.interceptors.request.use(
                 config.headers['Authorization'] = 'Bearer ' + token
             }
         }
-        
 
         return config
     },
     (error) => {
         return Promise.reject(error)
-    },
+    }
 )
 
 // Intercept response to handle 401 errors
@@ -118,11 +118,11 @@ http.interceptors.response.use(
         return res
     },
     async (err) => {
-        const accessToken = Cookies.get("accessToken")
-        const refreshToken = Cookies.get("refreshToken")
+        const accessToken = Cookies.get('accessToken')
+        const refreshToken = Cookies.get('refreshToken')
 
         const config = err.config
-        
+
         if (err.response.status === 401 && !config._retry) {
             config._retry = true
             // isRefetching = true
@@ -139,13 +139,12 @@ http.interceptors.response.use(
         }
 
         return Promise.reject(err)
-        
-    },
+    }
 )
 
 const get = (url: string, headers: any, params = {}) => {
     return http.get(url, {
-        params: {...params},
+        params: { ...params },
         headers: {
             ...headers,
         },
@@ -154,12 +153,12 @@ const get = (url: string, headers: any, params = {}) => {
 
 const getSec = (url: string, headers: any, params = {}) => {
     return https.get(url, {
-        params: {...params},
+        params: { ...params },
         headers: {
             ...headers,
         },
-    });
-};
+    })
+}
 
 const post = (url: string, data: any, headers = {}, params = {}) => {
     return http.post(url, data, {
@@ -180,7 +179,7 @@ const put = (url: string, data: any, headers = {}) => {
 
 const remove = (url: string, data: any, headers = {}, params = {}) => {
     return http.delete(url, {
-        params: {...params},
+        params: { ...params },
         headers: {
             ...headers,
         },

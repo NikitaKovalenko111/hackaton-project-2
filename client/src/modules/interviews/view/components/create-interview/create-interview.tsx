@@ -1,19 +1,20 @@
-import { DialogContent } from "@/components/ui/dialog"
-import { InterviewDTO } from "@/modules/interviews/domain/interviews.types"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import z from "zod"
+import { DialogContent } from '@/components/ui/dialog'
+import { InterviewDTO } from '@/modules/interviews/domain/interviews.types'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import z from 'zod'
 
 const zodSchema = z.object({
     interview_subject: z.number(),
-    interview_date: z.date({message: 'Дата собеседования обязательна'}),
+    interview_date: z.date({ message: 'Дата собеседования обязательна' }),
     interview_desc: z.string(),
-    interview_type: z.string().refine((data) => ['tech', 'soft', 'hr', 'case'].includes(data) ).min(1, {message: 'Выберите тип собеседования'})
+    interview_type: z
+        .string()
+        .refine((data) => ['tech', 'soft', 'hr', 'case'].includes(data))
+        .min(1, { message: 'Выберите тип собеседования' }),
 })
 
-
 export const CreateInterviewDialog = () => {
-
     // const {
 
     //     handleSubmit,
@@ -32,9 +33,5 @@ export const CreateInterviewDialog = () => {
     //     }
     // })
 
-    return (
-        <DialogContent>
-
-        </DialogContent>
-    )
+    return <DialogContent></DialogContent>
 }

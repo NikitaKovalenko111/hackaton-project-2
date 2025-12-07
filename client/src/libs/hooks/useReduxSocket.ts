@@ -1,3 +1,3 @@
-import { useTypedSelector } from "./useTypedSelector";
+import { useTypedSelector } from './useTypedSelector'
 
-export const useReduxSocket = () => useTypedSelector(state => state.socket)
+export const useReduxSocket = () => useTypedSelector((state) => state.socket)

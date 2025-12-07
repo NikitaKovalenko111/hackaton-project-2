@@ -1,4 +1,4 @@
-import { SkillOrder } from "@/modules/skills/view/components/skill-order/skill-order";
+import { SkillOrder } from '@/modules/skills/view/components/skill-order/skill-order'
 
 export default function SkillOrdersPage() {
     return (

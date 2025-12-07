@@ -1,59 +1,69 @@
-import { Button } from "@/components/ui/button"
-import { CardContent, CardFooter } from "@/components/ui/card"
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { CreateCompanyDTO, GreetMode } from "@/modules/company/domain/company.type"
-import { useCreate } from "@/modules/company/infrastructure/query/mutations"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
-import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import toast from "react-hot-toast"
-import z from "zod"
+import { Button } from '@/components/ui/button'
+import { CardContent, CardFooter } from '@/components/ui/card'
+import {
+    Field,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+    FieldSet,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import {
+    CreateCompanyDTO,
+    GreetMode,
+} from '@/modules/company/domain/company.type'
+import { useCreate } from '@/modules/company/infrastructure/query/mutations'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import z from 'zod'
 
 interface CreateCompanyProps {
     handleModeChange: (value: GreetMode) => void
 }
 
 const zodSchema = z.object({
-    company_name: z.string().min(1, 'Название обязательно')
+    company_name: z.string().min(1, 'Название обязательно'),
 })
 
-export const CreateCompany = ({handleModeChange}: CreateCompanyProps) => {
+export const CreateCompany = ({ handleModeChange }: CreateCompanyProps) => {
     const {
-
         handleSubmit,
         control,
-        formState: {errors},
-        reset
-
+        formState: { errors },
+        reset,
     } = useForm<CreateCompanyDTO>({
         resolver: zodResolver(zodSchema),
         mode: 'onChange',
         defaultValues: {
-            company_name: ''
-        }
+            company_name: '',
+        },
     })
 
-    const {mutate} = useCreate()
+    const { mutate } = useCreate()
 
     const onSubmit: SubmitHandler<CreateCompanyDTO> = (data) => {
         mutate(data)
         reset()
     }
 
-
     return (
         <div className="flex flex-col gap-8 w-full transition-[margin-top]" data-testid="create-company-form-container">
             <CardContent>
-                <form id="create-company-form" onSubmit={handleSubmit(onSubmit)}>
+                <form
+                    id="create-company-form"
+                    onSubmit={handleSubmit(onSubmit)}>
                     <FieldSet className="flex flex-col gap-6">
                         <FieldGroup>
                             <Controller
                                 name="company_name"
                                 control={control}
-                                render={({field, fieldState}) => (
+                                render={({ field, fieldState }) => (
                                     <Field className="grid gap-2">
-                                        <FieldLabel htmlFor="company_name_input">Название</FieldLabel>
+                                        <FieldLabel htmlFor="company_name_input">
+                                            Название
+                                        </FieldLabel>
                                         <Input
                                             {...field}
                                             id="company_name_input"
@@ -65,27 +75,32 @@ export const CreateCompany = ({handleModeChange}: CreateCompanyProps) => {
                                             required
                                             data-testid="create-company-name-input"
                                         />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && (
+                                            <FieldError
+                                                errors={[fieldState.error]}
+                                            />
+                                        )}
                                     </Field>
                                 )}
                             />
-                        </FieldGroup> 
+                        </FieldGroup>
                     </FieldSet>
                 </form>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-                <Button type="submit" form="create-company-form" className="w-full cursor-pointer" data-testid="create-company-submit-button">
+                <Button
+                    type="submit"
+                    form="create-company-form"
+                    className="w-full cursor-pointer">
                     Создать
                 </Button>
-                <Button 
+                <Button
                     className="w-full cursor-pointer"
                     variant="outline"
-                    onClick={() => handleModeChange('info')}
-                    data-testid="create-company-back-button"
-                >
+                    onClick={() => handleModeChange('info')}>
                     Назад
                 </Button>
             </CardFooter>
         </div>
-    );
+    )
 }

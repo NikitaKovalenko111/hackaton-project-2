@@ -1,55 +1,59 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Field, FieldError, FieldLabel, FieldSet } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { CreateSkillDTO } from "@/modules/skills/domain/skills.types"
-import { useCreateSkill } from "@/modules/skills/infrastructure/query/mutations"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
-import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import z from "zod"
+import { Button } from '@/components/ui/button'
+import {
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import { Field, FieldError, FieldLabel, FieldSet } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { CreateSkillDTO } from '@/modules/skills/domain/skills.types'
+import { useCreateSkill } from '@/modules/skills/infrastructure/query/mutations'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import z from 'zod'
 
 const zodSchema = z.object({
-    skill_name: z.string().min(1, {message: "Название обязательно"}),
-    skill_desc: z.string().min(1, {message: "Описание обязательно"}),
-    company_id: z.number()
+    skill_name: z.string().min(1, { message: 'Название обязательно' }),
+    skill_desc: z.string().min(1, { message: 'Описание обязательно' }),
+    company_id: z.number(),
 })
 
 export const CreateSkill = ({
     companyId,
-    handleCloseDialog
+    handleCloseDialog,
 }: {
-    companyId: number,
+    companyId: number
     handleCloseDialog: () => void
 }) => {
-
     const {
-
         handleSubmit,
         control,
-        formState: {errors},
+        formState: { errors },
         reset,
-        setValue
-
+        setValue,
     } = useForm<CreateSkillDTO>({
         resolver: zodResolver(zodSchema),
         mode: 'onChange',
         defaultValues: {
-            skill_name: "",
-            skill_desc: "",
-            company_id: companyId
-        }
+            skill_name: '',
+            skill_desc: '',
+            company_id: companyId,
+        },
     })
 
     useEffect(() => {
-        setValue("company_id", companyId)
+        setValue('company_id', companyId)
     }, [companyId])
 
-    const {mutate} = useCreateSkill()
+    const { mutate } = useCreateSkill()
 
     const onSubmit: SubmitHandler<CreateSkillDTO> = (data) => {
         mutate(data)
@@ -62,12 +66,16 @@ export const CreateSkill = ({
             <DialogHeader>
                 <DialogTitle data-testid="create-skill-title">Добавить компетенцию</DialogTitle>
                 <DialogDescription>
-                    Добавьте новую компетенцию. Нажмите "Добавить", когда закончите.
+                    Добавьте новую компетенцию. Нажмите "Добавить", когда
+                    закончите.
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-                <form id="create-skill" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
-                    <Controller 
+                <form
+                    id="create-skill"
+                    className="grid gap-4"
+                    onSubmit={handleSubmit(onSubmit)}>
+                    <Controller
                         name="skill_name"
                         control={control}
                         render={({field, fieldState}) => (
@@ -87,7 +95,7 @@ export const CreateSkill = ({
                         </Field>
                         )}
                     />
-                    <Controller 
+                    <Controller
                         name="skill_desc"
                         control={control}
                         render={({field, fieldState}) => (

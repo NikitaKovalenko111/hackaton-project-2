@@ -1,12 +1,23 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useRemoveSkillFromCompany } from "@/modules/skills/infrastructure/query/mutations"
+import { Button } from '@/components/ui/button'
+import {
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import { useRemoveSkillFromCompany } from '@/modules/skills/infrastructure/query/mutations'
 
-export const ConfirmDeletionOfTeam = ({skillId, handleClose}: {skillId: number, handleClose: () => void}) => {
-
-    const {mutate} = useRemoveSkillFromCompany()
+export const ConfirmDeletionOfTeam = ({
+    skillId,
+    handleClose,
+}: {
+    skillId: number
+    handleClose: () => void
+}) => {
+    const { mutate } = useRemoveSkillFromCompany()
 
     return (
         <DialogContent className="animate-appear" data-testid="confirm-delete-skill-dialog">
@@ -19,8 +30,8 @@ export const ConfirmDeletionOfTeam = ({skillId, handleClose}: {skillId: number, 
                 <DialogClose asChild>
                     <Button variant="outline" data-testid="confirm-delete-skill-cancel">Нет</Button>
                 </DialogClose>
-                <Button 
-                    variant="destructive"  
+                <Button
+                    variant="destructive"
                     onClick={() => {
                         mutate(skillId)
                         handleClose()

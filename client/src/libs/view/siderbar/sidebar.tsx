@@ -10,17 +10,17 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { NavItems } from "@/libs/constants";
-import ProtectedRoute from "@/libs/protected-route";
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import clsx from 'clsx';
-import Link from 'next/link';
+} from '@/components/ui/sidebar'
+import { NavItems } from '@/libs/constants'
+import ProtectedRoute from '@/libs/protected-route'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import clsx from 'clsx'
+import Link from 'next/link'
 
 const routeStyle: Record<string, string> = {
-        'true': 'bg-black text-white',
-        'false': 'bg-transparent text-black'
+    true: 'bg-black text-white',
+    false: 'bg-transparent text-black',
 }
 
 export function AppSidebar() {
@@ -30,9 +30,9 @@ export function AppSidebar() {
 
         const {push} = useRouter()
 
-        useEffect(() => {
-                setCurPath(pathname)
-        }, [pathname])
+    useEffect(() => {
+        setCurPath(pathname)
+    }, [pathname])
 
         return (
                 <Sidebar 

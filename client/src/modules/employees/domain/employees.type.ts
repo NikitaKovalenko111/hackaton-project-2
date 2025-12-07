@@ -1,5 +1,5 @@
-import { ROLE } from "@/libs/constants"
-import { Team } from "@/modules/teams/domain/teams.type";
+import { ROLE } from '@/libs/constants'
+import { Team } from '@/modules/teams/domain/teams.type'
 
 export interface AddEmployeeDTO {
     company_id: number
@@ -8,9 +8,9 @@ export interface AddEmployeeDTO {
 }
 
 export interface EmployeeTable {
-    employee_id: number;
-    employee_name: string;
-    employee_surname: string;
+    employee_id: number
+    employee_name: string
+    employee_surname: string
     role: ROLE
     team: Team
 }
