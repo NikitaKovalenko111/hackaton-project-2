@@ -67,7 +67,7 @@ export const ProfileHeader = ({
     return (
         <Card>
             <CardContent>
-                <div className="flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-6">
+                <div className="flex flex-col sm:items-center items-center gap-4 md:flex-row md:items-center md:gap-6">
                     <div className="relative">
                         <Avatar className="h-24 w-24">
                             <AvatarImage
@@ -94,12 +94,12 @@ export const ProfileHeader = ({
                             </Button>
                         )}
                     </div>
-                    <div className="flex-1 space-y-2">
-                        <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                    <div className="flex-1 space-y-2 text-center sm:text-center md:text-left">
+                        <div className="flex flex-col gap-2 md:flex-row md:items-center justify-center md:justify-start">
                             <h1 className="text-2xl font-bold">{`${employee_name} ${employee_surname}`}</h1>
-                            <Badge variant="secondary">{ROLE_TRANSLATION[role.role_name]}</Badge>
+                            <Badge variant="secondary" className="md:mx-2 mx-auto">{ROLE_TRANSLATION[role.role_name]}</Badge>
                         </div>
-                        <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">
+                        <div className="text-muted-foreground flex flex-wrap gap-4 text-sm justify-center md:justify-start">
                             <div className="flex items-center gap-1">
                                 <Mail className="size-4" />
                                 {employee_email}
@@ -117,9 +117,9 @@ export const ProfileHeader = ({
                         </div>
                     </div>
                     {isCurrentEmployee && (
-                        <div className="flex flex-col md:flex-row gap-2">
-                            <Button variant="default">Изменить профиль</Button>
-                            <Button onClick={() => mutateLogout()} variant="destructive">Выйти</Button>
+                        <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                            <Button variant="default" className="md:flex-none flex-1">Изменить профиль</Button>
+                            <Button onClick={() => mutateLogout()} variant="destructive" className="md:flex-none flex-1">Выйти</Button>
                         </div>
                     )}
                 </div>
