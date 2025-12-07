@@ -52,4 +52,7 @@ services:
     volumes:
       - ./telegram_bot:/telegram_bot
     restart: unless-stopped
+
+volumes:
+  postgres_data:
   
