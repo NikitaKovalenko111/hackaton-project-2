@@ -40,14 +40,14 @@ export function DropdownMenuComponent() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start">
         <DropdownMenuGroup>
-        {NavItems.map(item => {
+        {NavItems.map((item, id) => {
 
             const IconComponent = Icons[item.icon as keyof typeof Icons] as React.ComponentType<{ className?: string }>
             const selected = curPath.includes(item.href)
 
             return (
                 
-                    <DropdownMenuItem className={clsx(
+                    <DropdownMenuItem key={id} className={clsx(
                         "transition-all duration-200 ease-in-out hover:bg-gray-100 dark:hover:bg-gray-800",
                             selected 
                                 ? "bg-black !text-white hover:bg-gray-800" 
