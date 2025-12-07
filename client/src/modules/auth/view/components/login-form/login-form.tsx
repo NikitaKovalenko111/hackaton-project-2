@@ -54,14 +54,15 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
         <div className={clsx(
             "flex flex-col gap-8 w-full transition-[margin-top]",
             formStyleConditionErrors[Number(Object.keys(errors).length)]
-        )}>
+        )} data-testid="login-form-container">
             <CardHeader>
-                <CardTitle>Войдите в ваш аккаунт</CardTitle>
+                <CardTitle data-testid="login-form-title">Войдите в ваш аккаунт</CardTitle>
                 <CardAction>
                     <Button 
                         className="cursor-pointer" 
                         variant="link"
                         onClick={() => handleChangeMode('signup')}
+                        data-testid="login-switch-to-signup-button"
                     >
                         Зарегистрироваться
                     </Button>
@@ -85,6 +86,7 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
                                             aria-invalid={fieldState.invalid}
                                             autoComplete="off"
                                             value={field.value}
+                                            data-testid="login-email-input"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -112,6 +114,7 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
                                             value={field.value}
                                             aria-invalid={fieldState.invalid}
                                             autoComplete="off"
+                                            data-testid="login-password-input"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -122,7 +125,7 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
                 </form>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-                <Button type="submit" form="login-form" className="w-full cursor-pointer">
+                <Button type="submit" form="login-form" className="w-full cursor-pointer" data-testid="login-submit-button">
                     Войти
                 </Button>
             </CardFooter>

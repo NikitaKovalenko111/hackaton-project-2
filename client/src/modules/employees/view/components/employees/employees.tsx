@@ -55,17 +55,28 @@ export const Employees = () => {
     }, [data])
 
     return (
-        <div className="mx-auto animate-appear w-full max-w-6xl space-y-6 px-4 py-10">
+        <div className="mx-auto animate-appear w-full max-w-6xl space-y-6 px-4 py-10" data-testid="employees-page">
             <ProtectedRoute allowedRoles={['admin']}>
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                        <Input value={surnameSearch} onChange={onChangeSurname} placeholder="Фамилия сотрудника"></Input>
-                        <Input value={nameSearch} onChange={onChangeName} placeholder="Имя сотрудника"></Input>
+                        <Input 
+                            value={surnameSearch} 
+                            onChange={onChangeSurname} 
+                            placeholder="Фамилия сотрудника"
+                            data-testid="employees-surname-search-input"
+                        />
+                        <Input 
+                            value={nameSearch} 
+                            onChange={onChangeName} 
+                            placeholder="Имя сотрудника"
+                            data-testid="employees-name-search-input"
+                        />
                     </div>
                     <Button 
                         onClick={handleOpenAddDialog} 
                         variant="default"
                         className="w-full sm:w-auto"
+                        data-testid="employees-add-button"
                     >
                         Добавить сотрудника
                     </Button>

@@ -38,17 +38,28 @@ export const Teams = () => {
     }
 
     return (
-        <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10 animate-appear">
+        <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-10 animate-appear" data-testid="teams-page">
             <ProtectedRoute allowedRoles={['admin']}>
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                        <Input value={searchValue} onChange={onChangeTeam} placeholder="Название команды"></Input>
-                        <Input value={teamleadSurname} onChange={onChangeSurname} placeholder="Фамилия тимлида"></Input>
+                        <Input 
+                            value={searchValue} 
+                            onChange={onChangeTeam} 
+                            placeholder="Название команды"
+                            data-testid="teams-name-search-input"
+                        />
+                        <Input 
+                            value={teamleadSurname} 
+                            onChange={onChangeSurname} 
+                            placeholder="Фамилия тимлида"
+                            data-testid="teams-teamlead-search-input"
+                        />
                     </div>
                     <Button 
                         onClick={handleOpenAddDialog} 
                         variant="default"
                         className="w-full sm:w-auto"
+                        data-testid="teams-add-button"
                     >
                         Добавить команду
                     </Button>

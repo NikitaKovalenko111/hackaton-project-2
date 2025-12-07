@@ -42,7 +42,7 @@ export const Skills = () => {
     }, [data])
 
     return (
-        <div className="w-full max-w-6xl space-y-6 px-4 py-10 animate-appear">
+        <div className="w-full max-w-6xl space-y-6 px-4 py-10 animate-appear" data-testid="skills-page">
             <ProtectedRoute allowedRoles={['admin', 'teamlead']}>
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                     <Input 
@@ -50,11 +50,13 @@ export const Skills = () => {
                         onChange={onChange} 
                         placeholder="Название компетенции" 
                         className="flex-1 max-w-[300px]"
+                        data-testid="skills-search-input"
                     />
                     <Button 
                         onClick={handleOpenCreateDialog} 
                         variant="default"
                         className="w-full sm:w-auto"
+                        data-testid="skills-add-button"
                     >
                         Добавить компетенцию
                     </Button>
