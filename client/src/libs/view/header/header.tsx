@@ -1,33 +1,13 @@
 'use client'
 
-import Image from "next/image"
-import { Bell, BellIcon, CircleUser } from "lucide-react"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import React, { useEffect } from "react"
-import { useGetNotifications } from "./infrastructure/query/queries"
-import { useApplyNotification } from "./infrastructure/query/mutations"
-import { SidebarTrigger } from "@/components/ui/sidebar"
-import Link from "next/link"
-import { DropdownMenuComponent } from "../dropdown-menu/dropdown-menu"
-import Image from 'next/image'
-import { Bell, BellIcon, CircleUser } from 'lucide-react'
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import React, { useEffect } from 'react'
-import { useGetNotifications } from './infrastructure/query/queries'
-import { useApplyNotification } from './infrastructure/query/mutations'
-import { SidebarTrigger } from '@/components/ui/sidebar'
-import Link from 'next/link'
+import { useEffect } from 'react'
 import { DropdownMenuComponent } from '../dropdown-menu/dropdown-menu'
+import { useApplyNotification } from './infrastructure/query/mutations'
+import { useGetNotifications } from './infrastructure/query/queries'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { BellIcon, CircleUser } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 export const Header = ({ children }: { children?: React.ReactNode }) => {
     const {
@@ -170,12 +150,9 @@ export const Header = ({ children }: { children?: React.ReactNode }) => {
                         className="flex-row items-center gap-2.5">
                         <CircleUser className="h-5 w-5 stroke-2 text-black shrink-0" />
                     </Link>
-                </div>
-                <Link href={'/profile'} className="flex-row items-center gap-2.5" data-testid="profile-link">
-                    <CircleUser className="h-5 w-5 stroke-2 text-black shrink-0" />
-                </Link>
-                <div className="md:hidden">
-                    <DropdownMenuComponent />
+                    <div className="md:hidden">
+                        <DropdownMenuComponent />
+                    </div>
                 </div>
             </div>
         </>

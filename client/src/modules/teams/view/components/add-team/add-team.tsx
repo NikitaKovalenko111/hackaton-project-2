@@ -89,31 +89,6 @@ export const AddTeam = ({
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-<<<<<<< HEAD
-                <form
-                    id="create-skill"
-                    className="grid gap-4"
-                    onSubmit={handleSubmit(onSubmit)}>
-                    <Controller
-                        name="team_name"
-                        control={control}
-                        render={({ field, fieldState }) => (
-                            <Field className="grid gap-2">
-                                <FieldLabel htmlFor="name">Название</FieldLabel>
-                                <Input
-                                    {...field}
-                                    id="name"
-                                    type="name"
-                                    placeholder="Введите название"
-                                    aria-invalid={fieldState.invalid}
-                                    autoComplete="off"
-                                    value={field.value}
-                                />
-                                {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                )}
-                            </Field>
-=======
                 <form id="add-team-form" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
                     <Controller 
                         name="team_name"
@@ -133,29 +108,11 @@ export const AddTeam = ({
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                         )}
                     />
                     <Controller
                         name="team_desc"
                         control={control}
-<<<<<<< HEAD
-                        render={({ field, fieldState }) => (
-                            <Field className="grid gap-2">
-                                <FieldLabel htmlFor="desc">Описание</FieldLabel>
-                                <Textarea
-                                    {...field}
-                                    id="desc"
-                                    placeholder="Введите описание"
-                                    aria-invalid={fieldState.invalid}
-                                    autoComplete="off"
-                                    value={field.value}
-                                />
-                                {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                )}
-                            </Field>
-=======
                         render={({field, fieldState}) => (
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="desc">Описание</FieldLabel>
@@ -170,7 +127,6 @@ export const AddTeam = ({
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                         )}
                     />
                     <Controller
@@ -178,38 +134,6 @@ export const AddTeam = ({
                         control={control}
                         render={({ field, fieldState }) => (
                             <Field data-invalid={fieldState.invalid}>
-<<<<<<< HEAD
-                                <FieldLabel htmlFor="select_employee">
-                                    Тимлид
-                                </FieldLabel>
-                                <Select
-                                    name={field.name}
-                                    value={String(field.value)}
-                                    onValueChange={field.onChange}>
-                                    <SelectTrigger
-                                        id="form-rhf-complex-billingPeriod"
-                                        aria-invalid={fieldState.invalid}>
-                                        <SelectValue placeholder="Тимлид" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {data?.map((employee, id) => (
-                                            <SelectItem
-                                                key={id}
-                                                value={String(
-                                                    employee.employee_id
-                                                )}>
-                                                {`${employee.employee_surname} ${employee.employee_name} (${ROLE_TRANSLATION[employee.role.role_name]})`}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FieldDescription>
-                                    Выберите тимлида команды
-                                </FieldDescription>
-                                {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                )}
-=======
                             <FieldLabel htmlFor="select_employee">
                                 Тимлид
                             </FieldLabel>
@@ -240,7 +164,6 @@ export const AddTeam = ({
                             {fieldState.invalid && (
                                 <FieldError errors={[fieldState.error]} />
                             )}
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                             </Field>
                         )}
                     />
@@ -250,13 +173,7 @@ export const AddTeam = ({
                 <DialogClose asChild>
                     <Button variant="outline" data-testid="add-team-cancel-button">Отмена</Button>
                 </DialogClose>
-<<<<<<< HEAD
-                <Button type="submit" form="create-skill">
-                    Добавить
-                </Button>
-=======
                 <Button type="submit" form="add-team-form" data-testid="add-team-submit-button">Добавить</Button>
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
             </DialogFooter>
         </DialogContent>
     )

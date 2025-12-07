@@ -78,24 +78,6 @@ export const CreateSkill = ({
                     <Controller
                         name="skill_name"
                         control={control}
-<<<<<<< HEAD
-                        render={({ field, fieldState }) => (
-                            <Field className="grid gap-2">
-                                <FieldLabel htmlFor="name">Название</FieldLabel>
-                                <Input
-                                    {...field}
-                                    id="name"
-                                    type="name"
-                                    placeholder="Введите название"
-                                    aria-invalid={fieldState.invalid}
-                                    autoComplete="off"
-                                    value={field.value}
-                                />
-                                {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                )}
-                            </Field>
-=======
                         render={({field, fieldState}) => (
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="name">Название</FieldLabel>
@@ -111,29 +93,11 @@ export const CreateSkill = ({
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                         )}
                     />
                     <Controller
                         name="skill_desc"
                         control={control}
-<<<<<<< HEAD
-                        render={({ field, fieldState }) => (
-                            <Field className="grid gap-2">
-                                <FieldLabel htmlFor="desc">Описание</FieldLabel>
-                                <Textarea
-                                    {...field}
-                                    id="desc"
-                                    placeholder="Введите описание"
-                                    aria-invalid={fieldState.invalid}
-                                    autoComplete="off"
-                                    value={field.value}
-                                />
-                                {fieldState.invalid && (
-                                    <FieldError errors={[fieldState.error]} />
-                                )}
-                            </Field>
-=======
                         render={({field, fieldState}) => (
                         <Field className="grid gap-2">
                             <FieldLabel htmlFor="desc">Описание</FieldLabel>
@@ -148,7 +112,6 @@ export const CreateSkill = ({
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                         )}
                     />
                 </form>
@@ -157,13 +120,7 @@ export const CreateSkill = ({
                 <DialogClose asChild>
                     <Button variant="outline" data-testid="create-skill-cancel-button">Отмена</Button>
                 </DialogClose>
-<<<<<<< HEAD
-                <Button type="submit" form="create-skill">
-                    Добавить
-                </Button>
-=======
                 <Button type="submit" form="create-skill" data-testid="create-skill-submit-button">Добавить</Button>
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
             </DialogFooter>
         </DialogContent>
     )

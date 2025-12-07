@@ -58,13 +58,9 @@ export const Skills = () => {
                     <Button
                         onClick={handleOpenCreateDialog}
                         variant="default"
-<<<<<<< HEAD
-                        className="w-full sm:w-auto">
-=======
                         className="w-full sm:w-auto"
                         data-testid="skills-add-button"
                     >
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                         Добавить компетенцию
                     </Button>
                 </div>

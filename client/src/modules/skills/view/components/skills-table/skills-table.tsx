@@ -117,23 +117,6 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
             header: () => <div className="text-center">Действия</div>,
             cell: ({ row }) => (
                 <div className="flex gap-2 justify-center">
-<<<<<<< HEAD
-                    <UserPen
-                        className="w-4 h-4 cursor-pointer"
-                        onClick={() =>
-                            push(
-                                `skills-settings/${row.original.skill_shape_id}`
-                            )
-                        }
-                    />
-                    <Trash
-                        className="w-4 h-4 cursor-pointer"
-                        onClick={() =>
-                            handleOpenConfirmDeleteDialog(
-                                row.original.skill_shape_id
-                            )
-                        }
-=======
                     <UserPen 
                         className="w-4 h-4 cursor-pointer" 
                         onClick={() => push(`skills-settings/${row.original.skill_shape_id}`)} 
@@ -143,7 +126,6 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
                         className="w-4 h-4 cursor-pointer"
                         onClick={() => handleOpenConfirmDeleteDialog(row.original.skill_shape_id)}
                         data-testid={`skill-delete-button-${row.original.skill_shape_id}`}
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                     />
                 </div>
             ),
@@ -268,26 +250,18 @@ export const SkillsTable: React.FC<SkillsTableProps> = ({
                             variant="outline"
                             size="sm"
                             onClick={() => table.previousPage()}
-<<<<<<< HEAD
-                            disabled={!table.getCanPreviousPage()}>
-=======
                             disabled={!table.getCanPreviousPage()}
                             data-testid="skills-table-previous-button"
                         >
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                             Назад
                         </Button>
                         <Button
                             variant="outline"
                             size="sm"
                             onClick={() => table.nextPage()}
-<<<<<<< HEAD
-                            disabled={!table.getCanNextPage()}>
-=======
                             disabled={!table.getCanNextPage()}
                             data-testid="skills-table-next-button"
                         >
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                             Дальше
                         </Button>
                     </div>
