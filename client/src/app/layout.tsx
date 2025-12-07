@@ -10,6 +10,10 @@ import { Toaster } from "@/components/ui/sonner";
 import StoreProvider from "@/libs/providers/store-provider";
 import { RequestNotifications } from "@/libs/view/notifications/request-notifications";
 import { SocketProvider } from "@/libs/hooks/useSocket";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/libs/view/siderbar/sidebar";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,9 +47,11 @@ export default function RootLayout({
           <QueryProvider>
             <RoleProvider>
               <SocketProvider>
-                {children}
-                <Notifications />
-                <RequestNotifications />
+                <SidebarProvider>
+                    {children}
+                    <Notifications />
+                    <RequestNotifications />
+                </SidebarProvider>
               </SocketProvider>
             </RoleProvider>
           </QueryProvider>

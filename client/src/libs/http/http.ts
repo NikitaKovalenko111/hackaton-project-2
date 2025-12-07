@@ -69,22 +69,22 @@ export const refreshTokens = async (): Promise<{accessToken: string, refreshToke
     isRefetching = true;
 
     try {
-        const res = await refreshAxios.post('/employee/refresh', {}, {
-            withCredentials: true,
-        });
+        // const res = await refreshAxios.post('/employee/refresh', {}, {
+        //     withCredentials: true,
+        // });
 
-        const { accessToken, refreshToken } = res.data;
-        Cookies.set("accessToken", accessToken);
-        if (refreshToken) Cookies.set("refreshToken", refreshToken);
+        // const { accessToken, refreshToken } = res.data;
+        // Cookies.set("accessToken", accessToken);
+        // if (refreshToken) Cookies.set("refreshToken", refreshToken);
 
-        failedQueue.forEach(p => p.resolve({ accessToken, refreshToken }));
-        failedQueue = [];
+        // failedQueue.forEach(p => p.resolve({ accessToken, refreshToken }));
+        // failedQueue = [];
 
-        return { accessToken, refreshToken };
+        // return { accessToken, refreshToken };
     } catch (err) {
-        failedQueue.forEach(p => p.reject(err));
-        failedQueue = [];
-        await logout()
+        // failedQueue.forEach(p => p.reject(err));
+        // failedQueue = [];
+        // await logout()
     } finally {
         isRefetching = false;
         return {

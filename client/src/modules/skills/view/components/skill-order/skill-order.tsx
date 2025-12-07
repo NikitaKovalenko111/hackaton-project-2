@@ -19,7 +19,7 @@ export const SkillOrder = () => {
     }, [selectedSkillNames])
 
     return (
-        <div className="mx-auto animate-appear max-w-6xl space-y-6 px-4 py-10">
+        <div className="mx-auto animate-appear w-full max-w-6xl space-y-6 px-4 py-10">
             <SkillOrdersTable data={data || []} isFetching={isFetching} handleChangeSelectedSkills={handleChangeSkillNames} />
         </div>
     )
