@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import { io, Socket } from "socket.io-client";
-const Cookies = require("js-cookie")
+import { io, Socket } from 'socket.io-client'
+const Cookies = require('js-cookie')
 
 // const URL = "http://176.119.147.135:3001/"
 
-const token = Cookies.get("accessToken")
+const token = Cookies.get('accessToken')
 debugger
 
 let socket: Socket | null = null
@@ -25,7 +25,8 @@ if (token) {
             authorization: `Bearer ${token}`,
             client_type: 'web',
         },
-    reconnection: false})
+        reconnection: false,
+    })
 } else {
     socket = null
 }

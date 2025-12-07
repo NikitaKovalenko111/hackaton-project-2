@@ -1,24 +1,28 @@
-import { Button } from "@/components/ui/button"
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useGetSkill } from "@/modules/skills/infrastructure/query/queries"
+import { Button } from '@/components/ui/button'
+import {
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import { useGetSkill } from '@/modules/skills/infrastructure/query/queries'
 
 interface InfoDialogProps {
     skill_name: string
     skill_shape_id: number
 }
 
-export const InfoDialog = ({
-    id
-}: {
-    id: number
-}) => {
+export const InfoDialog = ({ id }: { id: number }) => {
+    const { data, isLoading } = useGetSkill(id)
 
-    const {data, isLoading} = useGetSkill(id)
-
-    return(
+    return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle className="capitalize">Компетенция {data?.skill_name}</DialogTitle>
+                <DialogTitle className="capitalize">
+                    Компетенция {data?.skill_name}
+                </DialogTitle>
                 <DialogDescription>
                     Полная информация о компетенции.
                 </DialogDescription>

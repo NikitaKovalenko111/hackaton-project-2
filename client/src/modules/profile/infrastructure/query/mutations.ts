@@ -1,24 +1,28 @@
 'use client'
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { getAiReview, logout, requestAiPlan, setProfilePhoto } from "../profile-api"
-import toast from "react-hot-toast"
-import { useRouter } from "next/navigation"
-import { useActions } from "@/libs/hooks/useActions"
-import { useReduxSocket } from "@/libs/hooks/useReduxSocket"
-import { AiPlanData, AiPlanDTO, AiReviewData } from "../../domain/profile.types"
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+    getAiReview,
+    logout,
+    requestAiPlan,
+    setProfilePhoto,
+} from '../profile-api'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
+import { useActions } from '@/libs/hooks/useActions'
+import { useReduxSocket } from '@/libs/hooks/useReduxSocket'
+import { AiPlanData, AiPlanDTO, AiReviewData } from '../../domain/profile.types'
 
-export const useLogout = ({resetSocket}: {resetSocket: () => void}) => {
+export const useLogout = ({ resetSocket }: { resetSocket: () => void }) => {
     const queryClient = useQueryClient()
 
-    const {push} = useRouter()
+    const { push } = useRouter()
 
     // const {setSocket} = useActions()
     // const {socket} = useReduxSocket()
 
-
     return useMutation({
-        mutationKey: ["logout"],
+        mutationKey: ['logout'],
         mutationFn: () => logout(),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['profile'] })
@@ -31,7 +35,7 @@ export const useLogout = ({resetSocket}: {resetSocket: () => void}) => {
         onError: (e: any) => {
             debugger
             toast.error('Возникла ошибка!')
-        }
+        },
     })
 }
 
@@ -39,12 +43,12 @@ export const useSetProfilePhoto = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationKey: ["set-profile-photo"],
+        mutationKey: ['set-profile-photo'],
         mutationFn: (file: File) => setProfilePhoto(file),
         onSuccess: (photoUrl: string) => {
             queryClient.invalidateQueries({ queryKey: ['profile'] })
             toast.success('Фото успешно обновлено!')
-        }
+        },
     })
 }
 
@@ -59,15 +63,19 @@ export const useGetAiReview = (setIsOpenDialog: (isOpen: boolean) => void) => {
         },
         onError: (e: any) => {
             toast.error('Возникла ошибка!')
-        }
+        },
     })
 }
 
-export const useRequestAiPlan = ({saveToState}: {saveToState: (data: AiPlanData) => void}) => {
+export const useRequestAiPlan = ({
+    saveToState,
+}: {
+    saveToState: (data: AiPlanData) => void
+}) => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationKey: ["ai-plan-req"],
+        mutationKey: ['ai-plan-req'],
         mutationFn: (data: AiPlanDTO) => requestAiPlan(data),
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: [] })
@@ -76,6 +84,6 @@ export const useRequestAiPlan = ({saveToState}: {saveToState: (data: AiPlanData)
         },
         onError: (e: any) => {
             toast.error('Возникла ошибка!')
-        }
+        },
     })
 }

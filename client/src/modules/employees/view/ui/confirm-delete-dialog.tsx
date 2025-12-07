@@ -1,19 +1,24 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useDeleteEmployee } from "../../infrastructure/query/mutations"
+import { Button } from '@/components/ui/button'
+import {
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import { useDeleteEmployee } from '../../infrastructure/query/mutations'
 
 export const ConfirmDeleteDialog = ({
     employeeId,
-    handleClose
+    handleClose,
 }: {
-    employeeId: number,
+    employeeId: number
     handleClose: () => void
 }) => {
+    const { mutate } = useDeleteEmployee()
 
-    const {mutate} = useDeleteEmployee()
-    
     return (
         <DialogContent className="animate-appear" data-testid="confirm-delete-employee-dialog">
             <DialogHeader>
@@ -25,7 +30,7 @@ export const ConfirmDeleteDialog = ({
                 <DialogClose asChild>
                     <Button variant="outline" data-testid="confirm-delete-employee-cancel">Нет</Button>
                 </DialogClose>
-                <Button 
+                <Button
                     onClick={() => {
                         mutate(employeeId)
                         handleClose()

@@ -1,25 +1,27 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { ROLE } from "../constants";
-import { useGetProfile } from "@/modules/profile/infrastructure/query/queries";
-import { getProfile } from "@/modules/profile/infrastructure/profile-api";
-import { saveRoleStorage } from "@/modules/auth/infrastructure/auth-token";
-import { saveCompanyStorage } from "@/modules/company/infrastructure/company-storage";
+import { createContext, useContext, useEffect, useState } from 'react'
+import { ROLE } from '../constants'
+import { useGetProfile } from '@/modules/profile/infrastructure/query/queries'
+import { getProfile } from '@/modules/profile/infrastructure/profile-api'
+import { saveRoleStorage } from '@/modules/auth/infrastructure/auth-token'
+import { saveCompanyStorage } from '@/modules/company/infrastructure/company-storage'
 const Cookies = require('js-cookie')
 
 interface RoleContextValue {
-    role: ROLE,
+    role: ROLE
     companyId: number | null
 }
 
-export const RoleContext = createContext<RoleContextValue | undefined>(undefined)
+export const RoleContext = createContext<RoleContextValue | undefined>(
+    undefined
+)
 
-export const RoleProvider = ({children}: {children: React.ReactNode}) => {
+export const RoleProvider = ({ children }: { children: React.ReactNode }) => {
     const [role, setRole] = useState<ROLE>('developer')
     const [companyId, setCompanyId] = useState<number | null>(null)
 
-    const {data, refetch} = useGetProfile()
+    const { data, refetch } = useGetProfile()
     // const [data, setData] = useState<RoleContextValue | null>(null)
 
     // const fetchData = async () => {
@@ -36,7 +38,7 @@ export const RoleProvider = ({children}: {children: React.ReactNode}) => {
     // }, [])
 
     useEffect(() => {
-        const token = Cookies.get("accessToken")
+        const token = Cookies.get('accessToken')
         if (token) refetch()
     }, [refetch])
 
@@ -51,7 +53,6 @@ export const RoleProvider = ({children}: {children: React.ReactNode}) => {
     // }, [])
 
     useEffect(() => {
-        
         if (data?.role) {
             setRole(data.role.role_name)
             saveRoleStorage(data.role.role_name)
@@ -71,7 +72,7 @@ export const RoleProvider = ({children}: {children: React.ReactNode}) => {
     }, [data])
 
     return (
-        <RoleContext.Provider value={{companyId, role}}>
+        <RoleContext.Provider value={{ companyId, role }}>
             {children}
         </RoleContext.Provider>
     )

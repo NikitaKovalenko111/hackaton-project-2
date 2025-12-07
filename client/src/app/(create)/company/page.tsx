@@ -1,4 +1,4 @@
-import { GreetCard } from "@/modules/company/view/components/greet-card/greet-card";
+import { GreetCard } from '@/modules/company/view/components/greet-card/greet-card'
 
 export default function Company() {
     return (

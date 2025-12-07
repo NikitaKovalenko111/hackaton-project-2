@@ -1,49 +1,64 @@
 'use client'
 
-import { Button } from "@/components/ui/button";
-import { CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { validateEmail } from "@/libs/validators";
-import { AuthLoginDTO, LoginFormProps } from "@/modules/auth/domain/auth.type";
-import { useLogin } from "@/modules/auth/infrastructure/query/mutations";
-import clsx from "clsx";
-import { Controller, SubmitHandler, useForm, useWatch } from "react-hook-form"
-import { useContext, useEffect, useState } from "react";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
-import { SocketContext } from "@/libs/hooks/useSocket";
+import { Button } from '@/components/ui/button'
+import {
+    CardAction,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card'
+import {
+    Field,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+    FieldSet,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { validateEmail } from '@/libs/validators'
+import { AuthLoginDTO, LoginFormProps } from '@/modules/auth/domain/auth.type'
+import { useLogin } from '@/modules/auth/infrastructure/query/mutations'
+import clsx from 'clsx'
+import { Controller, SubmitHandler, useForm, useWatch } from 'react-hook-form'
+import { useContext, useEffect, useState } from 'react'
+import z from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import toast from 'react-hot-toast'
+import { SocketContext } from '@/libs/hooks/useSocket'
 
 const zodSchema = z.object({
-    employee_email: z.email({message: "Некорректный Email"}).min(2, {message: 'Email обязателен'}),
-    employee_password: z.string().trim().min(6, {message: "Минимальная длина - 6 символов"})
+    employee_email: z
+        .email({ message: 'Некорректный Email' })
+        .min(2, { message: 'Email обязателен' }),
+    employee_password: z
+        .string()
+        .trim()
+        .min(6, { message: 'Минимальная длина - 6 символов' }),
 })
 
 const formStyleConditionErrors = ['mt-[20px]', 'mt-[6px]', 'mt-0']
 
-export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
-
+export const LoginForm = ({ handleChangeMode }: LoginFormProps) => {
     const {
-
         handleSubmit,
         control,
-        formState: {errors},
-        reset
-
+        formState: { errors },
+        reset,
     } = useForm<AuthLoginDTO>({
         resolver: zodResolver(zodSchema),
         mode: 'onChange',
         defaultValues: {
             employee_email: '',
-            employee_password: ''
-        }
+            employee_password: '',
+        },
     })
 
-    const {regSocket} = useContext(SocketContext)
+    const { regSocket } = useContext(SocketContext)
 
-    const {mutate} = useLogin({regSocket})
+    const { mutate } = useLogin({ regSocket })
 
     const onSubmit: SubmitHandler<AuthLoginDTO> = (data) => {
         mutate(data)
@@ -51,19 +66,18 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
     }
 
     return (
-        <div className={clsx(
-            "flex flex-col gap-8 w-full transition-[margin-top]",
-            formStyleConditionErrors[Number(Object.keys(errors).length)]
-        )} data-testid="login-form-container">
+        <div
+            className={clsx(
+                'flex flex-col gap-8 w-full transition-[margin-top]',
+                formStyleConditionErrors[Number(Object.keys(errors).length)]
+            )}>
             <CardHeader>
                 <CardTitle data-testid="login-form-title">Войдите в ваш аккаунт</CardTitle>
                 <CardAction>
-                    <Button 
-                        className="cursor-pointer" 
+                    <Button
+                        className="cursor-pointer"
                         variant="link"
-                        onClick={() => handleChangeMode('signup')}
-                        data-testid="login-switch-to-signup-button"
-                    >
+                        onClick={() => handleChangeMode('signup')}>
                         Зарегистрироваться
                     </Button>
                 </CardAction>
@@ -75,9 +89,11 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
                             <Controller
                                 name="employee_email"
                                 control={control}
-                                render={({field, fieldState}) => (
+                                render={({ field, fieldState }) => (
                                     <Field className="grid gap-2">
-                                        <FieldLabel htmlFor="email">Email</FieldLabel>
+                                        <FieldLabel htmlFor="email">
+                                            Email
+                                        </FieldLabel>
                                         <Input
                                             {...field}
                                             id="email"
@@ -88,47 +104,59 @@ export const LoginForm = ({handleChangeMode}: LoginFormProps) => {
                                             value={field.value}
                                             data-testid="login-email-input"
                                         />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && (
+                                            <FieldError
+                                                errors={[fieldState.error]}
+                                            />
+                                        )}
                                     </Field>
                                 )}
                             />
                             <Controller
                                 name="employee_password"
                                 control={control}
-                                render={({field, fieldState}) => (
+                                render={({ field, fieldState }) => (
                                     <Field className="grid gap-2">
                                         <div className="flex items-center">
-                                            <FieldLabel htmlFor="password">Пароль</FieldLabel>
+                                            <FieldLabel htmlFor="password">
+                                                Пароль
+                                            </FieldLabel>
                                             <a
                                                 href="#"
-                                                className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                                            >
+                                                className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
                                                 Забыли пароль?
                                             </a>
                                         </div>
-                                        
+
                                         <Input
                                             {...field}
-                                            id="password" 
-                                            type="password" 
+                                            id="password"
+                                            type="password"
                                             value={field.value}
                                             aria-invalid={fieldState.invalid}
                                             autoComplete="off"
                                             data-testid="login-password-input"
                                         />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && (
+                                            <FieldError
+                                                errors={[fieldState.error]}
+                                            />
+                                        )}
                                     </Field>
                                 )}
                             />
-                        </FieldGroup> 
+                        </FieldGroup>
                     </FieldSet>
                 </form>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-                <Button type="submit" form="login-form" className="w-full cursor-pointer" data-testid="login-submit-button">
+                <Button
+                    type="submit"
+                    form="login-form"
+                    className="w-full cursor-pointer">
                     Войти
                 </Button>
             </CardFooter>
         </div>
-    );
+    )
 }
