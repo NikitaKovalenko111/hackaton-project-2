@@ -95,7 +95,7 @@ export class SkillController {
       const { skill_shape_id, skill_level, orders } = addSkillOrderBody
       const employee = (req as any).employee
 
-      const skillOrders = await this.skillService.addSkillOrders(skill_shape_id, skill_level, orders, employee.company.company_id)
+      const skillOrders = await this.skillService.addSkillOrders(skill_shape_id, skill_level, orders, employee.company_id)
 
       return skillOrders
     } catch (error) {
@@ -128,7 +128,7 @@ export class SkillController {
   async getSkillOrderByShape(@Param('skillShapeName') skillShapeName: string, @Req() req: Request, @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
     try {
       const employee = (req as any).employee
-      const skillOrders = await this.skillService.getSkillOrdersByShape(skillShapeName, employee.company.company_id, skillLevel)
+      const skillOrders = await this.skillService.getSkillOrdersByShape(skillShapeName, employee.company_id, skillLevel)
 
       return skillOrders
     } catch (error) {
@@ -161,13 +161,14 @@ export class SkillController {
   async getSkillOrderByShapeNames(@Query('skillShapeName') skillShapeName: string[] | string, @Req() req: Request, @Query('skillLevel') skillLevel?: skillLevel): Promise<SkillOrder[]> {
     try {
       const employee = (req as any).employee
+      
       let names = skillShapeName as string[]
 
       if (typeof skillShapeName == typeof "") {
         names = [skillShapeName as string]
       }
 
-      const skillOrders = await this.skillService.getSkillOrdersByShapeNames(names, employee.company.company_id, skillLevel)
+      const skillOrders = await this.skillService.getSkillOrdersByShapeNames(names, employee.company_id, skillLevel)
 
       return skillOrders
     } catch (error) {
