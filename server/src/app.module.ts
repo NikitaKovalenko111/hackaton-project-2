@@ -88,8 +88,8 @@ export class AppModule implements NestModule {
         '/profilePhotos/*',
         '/employee/registration',
         '/employee/authorization',
-        '/employee/refresh'
+        '/employee/refresh',
       )
-      .forRoutes("*")
+      .forRoutes('*')
   }
 }

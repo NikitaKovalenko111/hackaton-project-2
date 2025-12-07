@@ -1,7 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 export class addTeamBodyDto {
-  @ApiProperty({ example: 1, description: 'ID компании, к которой принадлежит команда' })
+  @ApiProperty({
+    example: 1,
+    description: 'ID компании, к которой принадлежит команда',
+  })
   company_id: number
 
   @ApiProperty({ example: 'Frontend team', description: 'Название команды' })
@@ -18,6 +21,9 @@ export class addEmployeeBodyDto {
   @ApiProperty({ example: 2, description: 'ID команды' })
   team_id: number
 
-  @ApiProperty({ example: 8, description: 'ID сотрудника для добавления в команду' })
+  @ApiProperty({
+    example: 8,
+    description: 'ID сотрудника для добавления в команду',
+  })
   employee_to_add_id: number
 }

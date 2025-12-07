@@ -20,7 +20,7 @@ import type {
   requestDto,
 } from './request-socket.dto'
 
-import dotenv from "dotenv"
+import dotenv from 'dotenv'
 import { NotificationService } from 'src/NotificationModule/notification.service'
 
 dotenv.config()
@@ -39,19 +39,22 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly socketService: SocketService,
     private readonly tokenService: TokenService,
     private readonly employeeService: EmployeeService,
-    private readonly notificationService: NotificationService
+    private readonly notificationService: NotificationService,
   ) {}
 
   async handleConnection(client: Socket) {
-    try {  
+    try {
       const accessToken = client.request.headers.authorization?.split(' ')[1]
       const client_type = client.request.headers.client_type as clientType
       const telegramId = client.request.headers.telegram_id as string
 
-      console.log(client_type);
+      console.log(client_type)
 
       if (!client_type) {
-        throw new HttpException('Не указан тип клиента!', HttpStatus.BAD_REQUEST)
+        throw new HttpException(
+          'Не указан тип клиента!',
+          HttpStatus.BAD_REQUEST,
+        )
       }
 
       if (!accessToken && client_type == clientType.WEB) {
@@ -64,7 +67,11 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         employee = (await this.tokenService.validateAccessToken(
           accessToken,
         )) as any
-      } else if (!accessToken && telegramId && client_type == clientType.TELEGRAM) {
+      } else if (
+        !accessToken &&
+        telegramId &&
+        client_type == clientType.TELEGRAM
+      ) {
         employee = await this.employeeService.getEmployeeByTgId(
           parseInt(telegramId),
         )
@@ -76,7 +83,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         client_type,
       )
 
-      const employeeData = await this.employeeService.getEmployee(employee.employee_id)
+      const employeeData = await this.employeeService.getEmployee(
+        employee.employee_id,
+      )
 
       if (employeeData.company) {
         client.join(`company/${employeeData.company.company_id}`)
@@ -120,7 +129,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
       )
 
       if (requestData.request_receiver != null) {
-        const notification = await this.notificationService.sendNotification(requestData.request_receiver.employee_id, notificationType.NEW_REQUEST, requestData, requestData.request_id)
+        const notification = await this.notificationService.sendNotification(
+          requestData.request_receiver.employee_id,
+          notificationType.NEW_REQUEST,
+          requestData,
+          requestData.request_id,
+        )
 
         return requestData
       }
@@ -134,26 +148,39 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       const { request_id, employee_id, justification } = request
 
-      console.log(request);
+      console.log(request)
 
-      const requestData =
-        await this.requestGatewayService.cancelRequest(request_id, employee_id, justification)
-      
+      const requestData = await this.requestGatewayService.cancelRequest(
+        request_id,
+        employee_id,
+        justification,
+      )
+
       if (
         requestData.request_receiver &&
         employee_id == requestData.request_owner.employee_id
       ) {
-        const notification = await this.notificationService.sendNotification(requestData.request_receiver.employee_id, notificationType.CANCELED_REQUEST, requestData, requestData.request_id)
+        const notification = await this.notificationService.sendNotification(
+          requestData.request_receiver.employee_id,
+          notificationType.CANCELED_REQUEST,
+          requestData,
+          requestData.request_id,
+        )
 
         return {
           notification: notification,
-          data: requestData
+          data: requestData,
         }
       } else if (
         requestData.request_owner &&
         employee_id == requestData.request_receiver.employee_id
       ) {
-        const notification = await this.notificationService.sendNotification(requestData.request_owner.employee_id, notificationType.CANCELED_REQUEST, requestData, requestData.request_id)
+        const notification = await this.notificationService.sendNotification(
+          requestData.request_owner.employee_id,
+          notificationType.CANCELED_REQUEST,
+          requestData,
+          requestData.request_id,
+        )
 
         return requestData
       }
@@ -171,7 +198,12 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
         await this.requestGatewayService.completeRequest(request_id)
 
       if (requestData.request_owner) {
-        const notification = await this.notificationService.sendNotification(requestData.request_owner.employee_id, notificationType.COMPLETED_REQUEST, requestData, requestData.request_id)
+        const notification = await this.notificationService.sendNotification(
+          requestData.request_owner.employee_id,
+          notificationType.COMPLETED_REQUEST,
+          requestData,
+          requestData.request_id,
+        )
 
         return requestData
       }

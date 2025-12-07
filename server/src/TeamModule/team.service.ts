@@ -28,8 +28,8 @@ export class TeamService {
   async removeTeam(teamId: number): Promise<Team> {
     const team = await this.teamRepository.findOne({
       where: {
-        team_id: teamId
-      }
+        team_id: teamId,
+      },
     })
 
     if (!team) {
@@ -38,11 +38,11 @@ export class TeamService {
 
     const employees = await this.employeeRepository.find({
       where: {
-        team: team
-      }
+        team: team,
+      },
     })
 
-    employees.forEach(el => {
+    employees.forEach((el) => {
       el.team = null
     })
 
@@ -56,14 +56,14 @@ export class TeamService {
     const teams = await this.teamRepository.find({
       where: {
         company: {
-          company_id: companyId
-        }
+          company_id: companyId,
+        },
       },
       relations: {
         employees: {
-          role: true
-        }
-      }
+          role: true,
+        },
+      },
     })
 
     return teams
@@ -141,12 +141,17 @@ export class TeamService {
   async getTeamEmployees(employeeId: number): Promise<Employee[]> {
     try {
       const employee = await this.employeeService.getEmployee(employeeId)
-      
+
       if (employee.team == null) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+        throw new ApiError(
+          HttpStatus.BAD_REQUEST,
+          'Пользователь не состоит в команде!',
+        )
       }
 
-      const employees = await this.employeeService.getEmployeesByTeam(employee.team.team_id)
+      const employees = await this.employeeService.getEmployeesByTeam(
+        employee.team.team_id,
+      )
 
       return employees
     } catch (error) {
@@ -162,7 +167,10 @@ export class TeamService {
       const employee = await this.employeeService.getEmployee(employeeId)
 
       if (employee.team == null) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+        throw new ApiError(
+          HttpStatus.BAD_REQUEST,
+          'Пользователь не состоит в команде!',
+        )
       }
 
       const team = await this.teamRepository.findOne({

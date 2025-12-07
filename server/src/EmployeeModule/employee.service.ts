@@ -32,76 +32,88 @@ export class EmployeeService {
     const employees = await this.employeeRepository.find({
       where: {
         team: {
-          team_id: teamId
-        }
+          team_id: teamId,
+        },
       },
       relations: {
         team: true,
         role: true,
-      }
+      },
     })
 
     return employees
   }
 
-  async updateProfile(newProfileData: changeProfileDataBodyDto, employeeId: number): Promise<Employee> {
-    try {    
+  async updateProfile(
+    newProfileData: changeProfileDataBodyDto,
+    employeeId: number,
+  ): Promise<Employee> {
+    try {
       const { employee_email, employee_name, employee_surname } = newProfileData
-  
+
       const employee = await this.employeeRepository.findOne({
         where: {
-          employee_id: employeeId
-        }
+          employee_id: employeeId,
+        },
       })
-  
+
       if (!employee) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
       }
-  
-      employee.employee_name = employee_name ? employee_name : employee.employee_name
-      employee.employee_surname = employee_surname ? employee_surname : employee.employee_surname
-      employee.employee_email = employee_email ? employee_email : employee.employee_email
-  
+
+      employee.employee_name = employee_name
+        ? employee_name
+        : employee.employee_name
+      employee.employee_surname = employee_surname
+        ? employee_surname
+        : employee.employee_surname
+      employee.employee_email = employee_email
+        ? employee_email
+        : employee.employee_email
+
       const employeeData = await this.employeeRepository.save(employee)
-  
+
       return employeeData
     } catch (error) {
       throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, error)
     }
   }
 
-  async changePassword(newPassword: string, oldPassword: string, employeeId: number): Promise<Employee> {
+  async changePassword(
+    newPassword: string,
+    oldPassword: string,
+    employeeId: number,
+  ): Promise<Employee> {
     try {
-      
       const employee = await this.employeeRepository.findOne({
         where: {
-          employee_id: employeeId
+          employee_id: employeeId,
         },
         select: {
           employee_password: true,
-          employee_id: true
-        }
+          employee_id: true,
+        },
       })
-  
+
       if (!employee) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь не найден!')
       }
-  
+
       const isPassCorrect = await bcrypt.compare(
         oldPassword,
-        employee.employee_password
+        employee.employee_password,
       )
-  
+
       if (!isPassCorrect) {
         throw new ApiError(HttpStatus.BAD_REQUEST, 'Неверный пароль!')
       }
-  
+
       const hashedPassword = await bcrypt.hash(newPassword, 3)
-  
+
       employee.employee_password = hashedPassword
-  
+
       const employeeData = await this.employeeRepository.save(employee)
-  
+
       return employeeData
     } catch (error) {
       throw new ApiError(
@@ -115,12 +127,15 @@ export class EmployeeService {
     try {
       const employee = await this.employeeRepository.findOne({
         where: {
-          employee_email: email
-        }
+          employee_email: email,
+        },
       })
 
       if (!employee) {
-        throw new ApiError(HttpStatus.NOT_FOUND, 'Пользователь с таким Email не найден!')
+        throw new ApiError(
+          HttpStatus.NOT_FOUND,
+          'Пользователь с таким Email не найден!',
+        )
       }
 
       return employee
@@ -138,9 +153,7 @@ export class EmployeeService {
         where: {
           employee_id: employeeId,
         },
-        select: {
-
-        },
+        select: {},
         relations: {
           skills: {
             skill_shape: true,
@@ -160,7 +173,7 @@ export class EmployeeService {
         },
       })
 
-      console.log(employee);
+      console.log(employee)
 
       if (!employee) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Сотрудник не найден!')
@@ -225,7 +238,7 @@ export class EmployeeService {
     try {
       const filename =
         String(employee_id) + '.' + String(file.mimetype.split('/')[1])
-      
+
       const employee = await this.employeeRepository.findOne({
         where: {
           employee_id: employee_id,
@@ -265,7 +278,10 @@ export class EmployeeService {
       })
 
       if (candidate) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь с таким email уже существует!')
+        throw new ApiError(
+          HttpStatus.BAD_REQUEST,
+          'Пользователь с таким email уже существует!',
+        )
       }
 
       const hashPassword = await bcrypt.hash(password, 3)
@@ -281,14 +297,13 @@ export class EmployeeService {
 
       const employeeData = new employeePayloadDto(employeeCurrent)
 
-
       const tokens = this.tokenService.generateTokens({
         employee_id: employeeData.employee_id,
         employee_email: employeeData.employee_email,
         employee_name: employeeData.employee_name,
         employee_photo: employeeData.employee_photo,
         employee_status: employeeData.employee_status,
-        employee_surname: employeeData.employee_surname
+        employee_surname: employeeData.employee_surname,
       })
 
       await this.tokenService.saveToken(
@@ -498,12 +513,12 @@ export class EmployeeService {
     const role = await this.roleRepository.findOne({
       where: {
         employee: {
-          employee_id: employeeId
-        }
+          employee_id: employeeId,
+        },
       },
       relations: {
-        employee: true
-      }
+        employee: true,
+      },
     })
 
     if (!role) {

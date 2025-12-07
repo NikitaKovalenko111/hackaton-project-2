@@ -15,7 +15,7 @@ export class createSkillBodyDto {
     example: 'TypeScript',
   })
   skill_name: string
-  
+
   @ApiProperty({
     description: 'Описание навыка',
     example: 'Знание языка TypeScript и экосистемы',
@@ -41,7 +41,7 @@ export class addCompanyEmployeeBodyDto {
     example: 123,
   })
   employee_to_add_id: number
-  
+
   @ApiProperty({
     description: 'Роль в компании',
     enum: RoleType,
@@ -148,20 +148,24 @@ export class addEmployeeByEmailBodyDto {
 
 export class CompanyEmployeeDto {
   @ApiProperty({ example: 1, description: 'ID сотрудника' })
-  id: number;
+  id: number
 
   @ApiProperty({ example: 'Иван', description: 'Имя сотрудника' })
-  name: string;
+  name: string
 
   @ApiProperty({ example: 'Иванов', description: 'Фамилия сотрудника' })
-  surname: string;
+  surname: string
 
   @ApiProperty({ example: 'ivan@example.com', description: 'Email сотрудника' })
-  email: string;
+  email: string
 
   @ApiProperty({ example: 'active', description: 'Статус сотрудника' })
-  status: string;
+  status: string
 
-  @ApiProperty({ example: 'photo.jpg', description: 'URL фото сотрудника', required: false })
-  photo?: string;
+  @ApiProperty({
+    example: 'photo.jpg',
+    description: 'URL фото сотрудника',
+    required: false,
+  })
+  photo?: string
 }

@@ -8,8 +8,8 @@ import {
   OneToMany,
 } from 'typeorm'
 import { Skill } from './skill.entity'
-import { ApiProperty } from '@nestjs/swagger';
-import { SkillOrder } from './skillOrder.entity';
+import { ApiProperty } from '@nestjs/swagger'
+import { SkillOrder } from './skillOrder.entity'
 
 @Entity()
 export class SkillShape {
@@ -17,21 +17,30 @@ export class SkillShape {
   @PrimaryGeneratedColumn()
   skill_shape_id: number
 
-  @ApiProperty({ type: () => Company, description: 'Компания, которой принадлежит шаблон навыка' })
+  @ApiProperty({
+    type: () => Company,
+    description: 'Компания, которой принадлежит шаблон навыка',
+  })
   @ManyToOne(() => Company, (company) => company.skills)
-  @JoinColumn({ 
-    name: 'company_id' 
+  @JoinColumn({
+    name: 'company_id',
   })
   company: Company
-  @ApiProperty({ type: () => [Skill], description: 'Список навыков, связанных с этим шаблоном' })
+  @ApiProperty({
+    type: () => [Skill],
+    description: 'Список навыков, связанных с этим шаблоном',
+  })
   @OneToMany(() => Skill, (skill) => skill.skill_shape, {
     cascade: true,
   })
   skills: Skill[]
 
-  @ApiProperty({ type: () => [SkillOrder], description: 'Порядок развития навыка по уровням' })
-  @OneToMany(() => SkillOrder, skillOrder => skillOrder.skill_shape, {
-    cascade: true
+  @ApiProperty({
+    type: () => [SkillOrder],
+    description: 'Порядок развития навыка по уровням',
+  })
+  @OneToMany(() => SkillOrder, (skillOrder) => skillOrder.skill_shape, {
+    cascade: true,
   })
   skillOrders: SkillOrder[]
 
@@ -48,7 +57,7 @@ export class SkillShape {
   })
   @Column({
     type: 'varchar',
-    length: '256'
+    length: '256',
   })
   skill_desc: string
 

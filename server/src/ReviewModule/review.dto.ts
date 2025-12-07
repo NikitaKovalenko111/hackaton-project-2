@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { intervalI } from 'src/types';
+import { ApiProperty } from '@nestjs/swagger'
+import { intervalI } from 'src/types'
 
 export class addQuestionBodyDto {
   @ApiProperty({ example: 'Как оцениваете коммуникацию коллеги?' })

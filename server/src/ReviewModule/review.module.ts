@@ -17,7 +17,7 @@ import { ScheduleModule } from '@nestjs/schedule'
     CompanyModule,
     EmployeeModule,
     TypeOrmModule.forFeature([Review, Question, Employee, Answer]),
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
   ],
   controllers: [ReviewController],
   providers: [ReviewService],

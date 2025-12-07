@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity()
 export class Statistics {
@@ -17,7 +17,7 @@ export class Statistics {
   @ApiProperty({ example: 'skillsByCount' })
   @Column({
     type: 'varchar',
-    length: 96
+    length: 96,
   })
   statistics_name: string
 
@@ -26,7 +26,7 @@ export class Statistics {
     description: 'HTML-код графика (сгенерированный Python)',
   })
   @Column({
-    type: 'text'
+    type: 'text',
   })
   statistics_data: string
 

@@ -9,7 +9,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity()
 export class Team {
@@ -20,7 +20,7 @@ export class Team {
   @ApiProperty({ example: 'Frontend team' })
   @Column({
     type: 'varchar',
-    length: 64
+    length: 64,
   })
   team_name: string
 
@@ -28,7 +28,7 @@ export class Team {
   @Column({
     nullable: true,
     type: 'varchar',
-    length: 256
+    length: 256,
   })
   team_desc: string
 

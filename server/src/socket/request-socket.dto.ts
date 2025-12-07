@@ -1,11 +1,14 @@
 import { requestType } from 'src/types'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 export class requestDto {
   @ApiProperty({ enum: requestType, description: 'Тип запроса' })
   requestType: requestType
 
-  @ApiProperty({ example: 5, description: 'ID навыка, по которому отправлен запрос' })
+  @ApiProperty({
+    example: 5,
+    description: 'ID навыка, по которому отправлен запрос',
+  })
   skill_id: number
 
   @ApiProperty({ example: 12, description: 'ID сотрудника-отправителя' })
@@ -20,14 +23,17 @@ export class cancelRequestDto {
   employee_id: number
 
   @ApiProperty({
-    example: "Недостаточно компетенций",
-    description: "Обоснование действия",
+    example: 'Недостаточно компетенций',
+    description: 'Обоснование действия',
     required: false,
-})
+  })
   justification?: string
 }
 
 export class completeRequestDto {
-  @ApiProperty({ example: 7, description: 'ID запроса, который нужно завершить' })
+  @ApiProperty({
+    example: 7,
+    description: 'ID запроса, который нужно завершить',
+  })
   request_id: number
 }

@@ -5,7 +5,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
 import { Team } from './../TeamModule/team.entity'
 import { Interview } from 'src/InterviewModule/interview.entity'
 import { Statistics } from 'src/StatisticsModule/statistics.entity'
-import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiHideProperty } from '@nestjs/swagger'
 
 @Entity()
 export class Company {
@@ -16,7 +16,7 @@ export class Company {
   @ApiProperty({ example: 'Acme Corp' })
   @Column({
     type: 'varchar',
-    length: 128
+    length: 128,
   })
   company_name: string
 
@@ -25,10 +25,10 @@ export class Company {
     nullable: true,
     description: 'Логотип компании (имя файла)',
   })
-  @Column({ 
+  @Column({
     type: 'varchar',
     length: 128,
-    nullable: true 
+    nullable: true,
   })
   company_logo: string
 

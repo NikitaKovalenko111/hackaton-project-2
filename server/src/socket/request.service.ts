@@ -31,13 +31,13 @@ export class RequestService {
       const requests = await this.requestRepository.find({
         where: {
           request_owner: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
-          request_status: requestStatus.CANCELED
+          request_status: requestStatus.CANCELED,
         },
         relations: {
-          request_owner: true
-        }
+          request_owner: true,
+        },
       })
 
       return requests
@@ -53,17 +53,17 @@ export class RequestService {
     try {
       const request = await this.requestRepository.findOne({
         where: {
-          request_id: id
+          request_id: id,
         },
         relations: {
           request_owner: true,
-        }
+        },
       })
-  
+
       if (!request) {
-        throw new ApiError(HttpStatus.NOT_FOUND, "Заявка не найдена!")
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Заявка не найдена!')
       }
-  
+
       return request
     } catch (error) {
       throw new ApiError(
@@ -95,9 +95,9 @@ export class RequestService {
       const requests = await this.requestRepository.find({
         where: {
           request_receiver: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
-          request_status: requestStatus.PENDING
+          request_status: requestStatus.PENDING,
         },
         relations: {
           request_owner: true,
@@ -121,7 +121,7 @@ export class RequestService {
       const requests = await this.requestRepository.find({
         where: {
           request_owner: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
         },
         relations: {
@@ -150,7 +150,10 @@ export class RequestService {
     const skill = await this.skillService.getSkillById(skill_id)
 
     if (employee.team == null) {
-      throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+      throw new ApiError(
+        HttpStatus.BAD_REQUEST,
+        'Пользователь не состоит в команде!',
+      )
     }
 
     const request = new Request({
@@ -172,15 +175,15 @@ export class RequestService {
       where: {
         request_skill: {
           skill_shape: {
-            skill_shape_id: skillShapeId
-          }
-        }
+            skill_shape_id: skillShapeId,
+          },
+        },
       },
       relations: {
         request_skill: {
-          skill_shape: true
-        }
-      }
+          skill_shape: true,
+        },
+      },
     })
 
     const requestsData = await this.requestRepository.remove(requests)
@@ -188,7 +191,11 @@ export class RequestService {
     return requestsData
   }
 
-  async cancelRequest(requestId: number, employeeId: number, justification?: string): Promise<Request> {
+  async cancelRequest(
+    requestId: number,
+    employeeId: number,
+    justification?: string,
+  ): Promise<Request> {
     const request = await this.requestRepository.findOne({
       where: {
         request_id: requestId,
@@ -223,7 +230,7 @@ export class RequestService {
       },
       relations: {
         request_owner: true,
-        request_skill: true
+        request_skill: true,
       },
     })
 
@@ -231,13 +238,15 @@ export class RequestService {
       throw new ApiError(HttpStatus.NOT_FOUND, 'Запрос не найден!')
     }
 
-    const skill = await this.skillService.getSkillById(request.request_skill.skill_connection_id)
+    const skill = await this.skillService.getSkillById(
+      request.request_skill.skill_connection_id,
+    )
 
     const skillLevels = ['junior', 'junior+', 'middle', 'middle+', 'senior']
     const levelId = skillLevels.indexOf(request.request_skill.skill_level)
 
     if (levelId != 4) {
-      skill.skill_level = skillLevels[levelId+1] as skillLevel
+      skill.skill_level = skillLevels[levelId + 1] as skillLevel
     }
 
     await this.skillRepository.save(skill)
