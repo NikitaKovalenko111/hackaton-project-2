@@ -31,12 +31,7 @@ import { Role } from './role.entity'
         },
       }),
     }),
-    TypeOrmModule.forFeature([
-      Employee, 
-      Employee_token, 
-      Skill,
-      Role
-    ]),
+    TypeOrmModule.forFeature([Employee, Employee_token, Skill, Role]),
   ],
   controllers: [EmployeeController],
   providers: [EmployeeService, TokenService],

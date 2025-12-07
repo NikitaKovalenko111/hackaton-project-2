@@ -19,7 +19,7 @@ import {
   ApiOkResponse,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
-} from '@nestjs/swagger';
+} from '@nestjs/swagger'
 import { NotificationService } from 'src/NotificationModule/notification.service'
 
 @ApiTags('Interview')
@@ -34,9 +34,9 @@ export class InterviewController {
   @ApiOperation({ summary: 'Создать интервью по email сотрудника' })
   @ApiBody({ type: addInterviewByEmailBodyDto })
   @ApiOkResponse({
-  description: 'Интервью успешно создано',
-  type: Interview,
-})
+    description: 'Интервью успешно создано',
+    type: Interview,
+  })
   @ApiBadRequestResponse({ description: 'Некорректные данные запроса' })
   @ApiNotFoundResponse({ description: 'Сотрудник с указанным email не найден' })
   @Post('/add/byEmail')
@@ -63,7 +63,12 @@ export class InterviewController {
         employeeId,
       )
 
-      await this.notificationService.sendNotification(interviewData.interview_subject.employee_id, notificationType.NEW_INTERVIEW, interviewData, interviewData.interview_id)
+      await this.notificationService.sendNotification(
+        interviewData.interview_subject.employee_id,
+        notificationType.NEW_INTERVIEW,
+        interviewData,
+        interviewData.interview_id,
+      )
 
       return interviewData
     } catch (error) {
@@ -74,7 +79,11 @@ export class InterviewController {
   @Post('/add')
   @ApiOperation({ summary: 'Создать новое интервью для сотрудника' })
   @ApiBody({ type: addInterviewBodyDto })
-  @ApiResponse({ status: 201, type: Interview, description: 'Созданное интервью' })
+  @ApiResponse({
+    status: 201,
+    type: Interview,
+    description: 'Созданное интервью',
+  })
   async addInterview(
     @Body() addInterviewBody: addInterviewBodyDto,
     @Req() req: Request,
@@ -98,7 +107,12 @@ export class InterviewController {
         employeeId,
       )
 
-      await this.notificationService.sendNotification(interviewData.interview_subject.employee_id, notificationType.NEW_INTERVIEW, interviewData, interviewData.interview_id)
+      await this.notificationService.sendNotification(
+        interviewData.interview_subject.employee_id,
+        notificationType.NEW_INTERVIEW,
+        interviewData,
+        interviewData.interview_id,
+      )
 
       return interviewData
     } catch (error) {
@@ -107,13 +121,20 @@ export class InterviewController {
   }
 
   @Get('/get')
-  @ApiOperation({ summary: 'Получить список запланированных интервью текущего сотрудника' })
-  @ApiResponse({ status: 200, type: [Interview], description: 'Список интервью' })
+  @ApiOperation({
+    summary: 'Получить список запланированных интервью текущего сотрудника',
+  })
+  @ApiResponse({
+    status: 200,
+    type: [Interview],
+    description: 'Список интервью',
+  })
   async getPlannedInterviews(@Req() req: Request): Promise<Interview[]> {
     try {
       const employeeId = (req as any).employee.employee_id
 
-      const interviews = await this.interviewService.getPlannedInterviews(employeeId)
+      const interviews =
+        await this.interviewService.getPlannedInterviews(employeeId)
 
       return interviews
     } catch (error) {
@@ -124,7 +145,11 @@ export class InterviewController {
   @Post('/cancel')
   @ApiOperation({ summary: 'Отменить интервью по ID' })
   @ApiBody({ type: cancelInterviewBodyDto })
-  @ApiResponse({ status: 200, type: Interview, description: 'Отменённое интервью' })
+  @ApiResponse({
+    status: 200,
+    type: Interview,
+    description: 'Отменённое интервью',
+  })
   async cancelInterview(
     @Body() cancelInterviewBody: cancelInterviewBodyDto,
   ): Promise<Interview> {
@@ -143,7 +168,11 @@ export class InterviewController {
   @Post('/finish')
   @ApiOperation({ summary: 'Завершить интервью' })
   @ApiBody({ type: finishInterviewBodyDto })
-  @ApiResponse({ status: 200, type: Interview, description: 'Завершённое интервью' })
+  @ApiResponse({
+    status: 200,
+    type: Interview,
+    description: 'Завершённое интервью',
+  })
   async finishInterview(
     @Body() finishInterviewBody: finishInterviewBodyDto,
   ): Promise<Interview> {

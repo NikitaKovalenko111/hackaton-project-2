@@ -1,15 +1,15 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Notification } from "./notification.entity";
-import { Repository } from "typeorm";
-import ApiError from "src/apiError";
-import { clientType, notificationStatusType, notificationType } from "src/types";
-import { EmployeeService } from "src/EmployeeModule/employee.service";
-import { SocketService } from "src/socket/socket.service";
-import { SocketGateway } from "src/socket/socket.gateway";
-import { InterviewService } from "src/InterviewModule/interview.service";
-import { RequestService } from "src/socket/request.service";
-import { notificationDataDto } from "./notification.dto";
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Notification } from './notification.entity'
+import { Repository } from 'typeorm'
+import ApiError from 'src/apiError'
+import { clientType, notificationStatusType, notificationType } from 'src/types'
+import { EmployeeService } from 'src/EmployeeModule/employee.service'
+import { SocketService } from 'src/socket/socket.service'
+import { SocketGateway } from 'src/socket/socket.gateway'
+import { InterviewService } from 'src/InterviewModule/interview.service'
+import { RequestService } from 'src/socket/request.service'
+import { notificationDataDto } from './notification.dto'
 
 @Injectable()
 export class NotificationService {
@@ -25,42 +25,50 @@ export class NotificationService {
     private readonly socketService: SocketService,
 
     @Inject(forwardRef(() => SocketGateway))
-    private readonly socketGateway: SocketGateway
+    private readonly socketGateway: SocketGateway,
   ) {}
 
-  async getNotAppliedNotifications(employeeId: number): Promise<notificationDataDto[]> {
+  async getNotAppliedNotifications(
+    employeeId: number,
+  ): Promise<notificationDataDto[]> {
     try {
       const notificationsData = await this.notificationRepository.find({
         where: {
           receiver: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
-          notification_status: notificationStatusType.NOT_APPLIED
+          notification_status: notificationStatusType.NOT_APPLIED,
         },
         relations: {
-          receiver: true
-        }
+          receiver: true,
+        },
       })
 
       const notifications: Array<notificationDataDto> = []
 
       for (const el of notificationsData) {
-        if (el.notification_type == notificationType.INTERVIEW_CANCELLED 
-          || el.notification_type == notificationType.NEW_INTERVIEW) {
-          const object = await this.interviewService.getInterviewById(el.object_id)
+        if (
+          el.notification_type == notificationType.INTERVIEW_CANCELLED ||
+          el.notification_type == notificationType.NEW_INTERVIEW
+        ) {
+          const object = await this.interviewService.getInterviewById(
+            el.object_id,
+          )
 
           notifications.push({
             notification: el,
-            object: object
+            object: object,
           })
-        } else if (el.notification_type == notificationType.CANCELED_REQUEST 
-          || el.notification_type == notificationType.COMPLETED_REQUEST 
-          || el.notification_type == notificationType.NEW_REQUEST) {
+        } else if (
+          el.notification_type == notificationType.CANCELED_REQUEST ||
+          el.notification_type == notificationType.COMPLETED_REQUEST ||
+          el.notification_type == notificationType.NEW_REQUEST
+        ) {
           const object = await this.requestService.getRequestById(el.object_id)
 
           notifications.push({
             notification: el,
-            object: object
+            object: object,
           })
         }
       }
@@ -79,13 +87,13 @@ export class NotificationService {
       const notifications = await this.notificationRepository.find({
         where: {
           receiver: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
-          notification_status: notificationStatusType.APPLIED
+          notification_status: notificationStatusType.APPLIED,
         },
         relations: {
-          receiver: true
-        }
+          receiver: true,
+        },
       })
 
       return notifications
@@ -101,17 +109,18 @@ export class NotificationService {
     try {
       const notification = await this.notificationRepository.findOne({
         where: {
-          notification_id: notificationId
-        }
+          notification_id: notificationId,
+        },
       })
-  
+
       if (!notification) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Уведомление не найдено!')
       }
 
       notification.notification_status = notificationStatusType.APPLIED
 
-      const notificationData = await this.notificationRepository.save(notification)
+      const notificationData =
+        await this.notificationRepository.save(notification)
 
       return notificationData
     } catch (error) {
@@ -127,20 +136,21 @@ export class NotificationService {
       const notifications = await this.notificationRepository.find({
         where: {
           receiver: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
-          notification_status: notificationStatusType.NOT_APPLIED
+          notification_status: notificationStatusType.NOT_APPLIED,
         },
         relations: {
-          receiver: true
-        }
+          receiver: true,
+        },
       })
 
-      for(const notification of notifications) {
+      for (const notification of notifications) {
         notification.notification_status = notificationStatusType.APPLIED
       }
 
-      const notificationData = await this.notificationRepository.save(notifications)
+      const notificationData =
+        await this.notificationRepository.save(notifications)
 
       return notificationData
     } catch (error) {
@@ -156,12 +166,12 @@ export class NotificationService {
       const notifications = await this.notificationRepository.find({
         where: {
           receiver: {
-            employee_id: employeeId
-          }
+            employee_id: employeeId,
+          },
         },
         relations: {
-          receiver: true
-        }
+          receiver: true,
+        },
       })
 
       return notifications
@@ -173,40 +183,43 @@ export class NotificationService {
     }
   }
 
-  async sendNotification(employeeId: number, notificationType: notificationType, data: any, objectId: number): Promise<Notification> {
+  async sendNotification(
+    employeeId: number,
+    notificationType: notificationType,
+    data: any,
+    objectId: number,
+  ): Promise<Notification> {
     try {
       const employee = await this.employeeService.getEmployeeById(employeeId)
 
       const newNotification = new Notification({
         receiver: employee,
         notification_type: notificationType,
-        object_id: objectId
+        object_id: objectId,
       })
 
-      const notificationData = await this.notificationRepository.save(newNotification)
+      const notificationData =
+        await this.notificationRepository.save(newNotification)
 
-      const socketWeb = await this.socketService.getSocketByEmployeeId(
-        employeeId,
-      )
+      const socketWeb =
+        await this.socketService.getSocketByEmployeeId(employeeId)
       const socketTg = await this.socketService.getSocketByEmployeeId(
         employeeId,
         clientType.TELEGRAM,
       )
-      
+
       if (!socketWeb && !socketTg) {
         return notificationData
       }
-      
+
       if (socketWeb) {
         this.socketGateway.server
-          .to(socketWeb.client_id as string)
-          .emit(notificationType,
-            data
-          )
+          .to(socketWeb.client_id)
+          .emit(notificationType, data)
       }
       if (socketTg) {
         this.socketGateway.server
-          .to(socketTg.client_id as string)
+          .to(socketTg.client_id)
           .emit(notificationType, data)
       }
 

@@ -9,7 +9,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity()
 export class Request {
@@ -20,37 +20,47 @@ export class Request {
   @ApiProperty({ enum: requestType, description: 'Тип запроса' })
   @Column({
     type: 'enum',
-    enum: requestType
+    enum: requestType,
   })
   request_type: requestType
 
   @ApiProperty({
-    example: "Недостаточно оснований для одобрения запроса",
-    description: "Обоснование или причина, указанная при обработке запроса",
+    example: 'Недостаточно оснований для одобрения запроса',
+    description: 'Обоснование или причина, указанная при обработке запроса',
     required: false,
   })
   @Column({
     type: 'text',
-    nullable: true
+    nullable: true,
   })
   justification: string
 
-  @ApiProperty({ enum: requestStatus, default: 'pending', description: 'Статус запроса' })
-  @Column({ 
+  @ApiProperty({
+    enum: requestStatus,
+    default: 'pending',
+    description: 'Статус запроса',
+  })
+  @Column({
     default: 'pending',
     type: 'enum',
-    enum: requestStatus
+    enum: requestStatus,
   })
   request_status: requestStatus
 
-  @ApiProperty({ type: () => Skill, description: 'Навык, связанный с запросом' })
+  @ApiProperty({
+    type: () => Skill,
+    description: 'Навык, связанный с запросом',
+  })
   @ManyToOne(() => Skill, (skill) => skill.requests)
-  @JoinColumn({ 
-    name: 'request_skill_id' 
+  @JoinColumn({
+    name: 'request_skill_id',
   })
   request_skill: Skill
 
-  @ApiProperty({ example: '2025-11-06T12:00:00Z', description: 'Дата создания запроса' })
+  @ApiProperty({
+    example: '2025-11-06T12:00:00Z',
+    description: 'Дата создания запроса',
+  })
   @CreateDateColumn()
   request_date: Date
 
@@ -59,11 +69,15 @@ export class Request {
   @JoinColumn({ name: 'request_receiver_id' })
   request_receiver: Employee
 
-  @ApiProperty({ enum: RoleType, description: 'Роль получателя запроса', required: false })
+  @ApiProperty({
+    enum: RoleType,
+    description: 'Роль получателя запроса',
+    required: false,
+  })
   @Column({
     nullable: true,
     type: 'enum',
-    enum: RoleType
+    enum: RoleType,
   })
   request_role_receiver: RoleType
 

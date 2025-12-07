@@ -25,13 +25,13 @@ export class InterviewService {
       const interviews = await this.interviewRepository.find({
         where: {
           interview_subject: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
-          interview_status: interviewStatusType.COMPLETED
+          interview_status: interviewStatusType.COMPLETED,
         },
         relations: {
-          interview_subject: true
-        }
+          interview_subject: true,
+        },
       })
 
       return interviews
@@ -44,18 +44,18 @@ export class InterviewService {
   }
 
   async getInterviewById(id: number): Promise<Interview> {
-    try { 
+    try {
       const interview = await this.interviewRepository.findOne({
         where: {
-          interview_id: id
+          interview_id: id,
         },
         relations: {
           interview_owner: true,
-        }
+        },
       })
-  
+
       if (!interview) {
-        throw new ApiError(HttpStatus.NOT_FOUND, "Собеседование не найдено!")
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Собеседование не найдено!')
       }
 
       return interview
@@ -78,7 +78,10 @@ export class InterviewService {
       const employee = await this.employeeService.getEmployee(employeeId)
 
       if (employee.company == null) {
-        throw new HttpException('Сотрудник не в компании!', HttpStatus.NOT_ACCEPTABLE)
+        throw new HttpException(
+          'Сотрудник не в компании!',
+          HttpStatus.NOT_ACCEPTABLE,
+        )
       }
 
       const interview = new Interview({
@@ -136,37 +139,37 @@ export class InterviewService {
     const role = await this.roleRepository.find({
       where: {
         employee: {
-          employee_id: employeeId
+          employee_id: employeeId,
         },
-        role_name: In([RoleType.HR, RoleType.TEAMLEAD, RoleType.ADMIN])
-      }
+        role_name: In([RoleType.HR, RoleType.TEAMLEAD, RoleType.ADMIN]),
+      },
     })
 
     if (role.length != 0) {
       const interviews = await this.interviewRepository.find({
         where: {
           interview_owner: {
-            employee_id: employeeId
-          }
+            employee_id: employeeId,
+          },
         },
         relations: {
           interview_subject: true,
-          interview_owner: true
-        }
+          interview_owner: true,
+        },
       })
 
       return interviews
-    } else { 
+    } else {
       const interviews = await this.interviewRepository.find({
         where: {
           interview_subject: {
-            employee_id: employeeId
-          }
+            employee_id: employeeId,
+          },
         },
         relations: {
           interview_owner: true,
-          interview_subject: true
-        }
+          interview_subject: true,
+        },
       })
 
       return interviews
@@ -203,7 +206,7 @@ export class InterviewService {
       const interviews = await this.interviewRepository.find({
         where: {
           company: {
-            company_id: companyId
+            company_id: companyId,
           },
         },
       })

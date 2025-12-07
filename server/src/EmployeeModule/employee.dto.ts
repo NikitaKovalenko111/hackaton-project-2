@@ -1,9 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 import { Skill } from 'src/SkillModule/skill.entity'
 import { Role } from './role.entity'
 import { Company } from 'src/CompanyModule/company.entity'
 import { Team } from 'src/TeamModule/team.entity'
-import { Employee } from './employee.entity';
+import { Employee } from './employee.entity'
 
 export class registerEmployeeBodyDto {
   @ApiProperty({ example: 'Иван', description: 'Имя сотрудника' })
@@ -15,18 +15,33 @@ export class registerEmployeeBodyDto {
   @ApiProperty({ example: 'ivan@example.com', description: 'Email сотрудника' })
   employee_email: string
 
-  @ApiProperty({ example: 'StrongPassword123', description: 'Пароль сотрудника' })
+  @ApiProperty({
+    example: 'StrongPassword123',
+    description: 'Пароль сотрудника',
+  })
   employee_password: string
 }
 
 export class changeProfileDataBodyDto {
-  @ApiProperty({ example: 'Иван', required: false, description: 'Новое имя сотрудника' })
+  @ApiProperty({
+    example: 'Иван',
+    required: false,
+    description: 'Новое имя сотрудника',
+  })
   employee_name?: string
 
-  @ApiProperty({ example: 'Иванов', required: false, description: 'Новая фамилия сотрудника' })
+  @ApiProperty({
+    example: 'Иванов',
+    required: false,
+    description: 'Новая фамилия сотрудника',
+  })
   employee_surname?: string
 
-  @ApiProperty({ example: 'ivan@example.com', required: false, description: 'Новый email сотрудника' })
+  @ApiProperty({
+    example: 'ivan@example.com',
+    required: false,
+    description: 'Новый email сотрудника',
+  })
   employee_email?: string
 }
 
@@ -57,16 +72,28 @@ export class employeePayloadDto {
   @ApiProperty({ example: 'photo.jpg', description: 'Фотография сотрудника' })
   employee_photo: string
 
-  @ApiProperty({ type: [Skill], required: false, description: 'Навыки сотрудника' })
+  @ApiProperty({
+    type: [Skill],
+    required: false,
+    description: 'Навыки сотрудника',
+  })
   employeeSkills?: Skill[]
 
   @ApiProperty({ type: Role, required: false, description: 'Роль сотрудника' })
   employeeRole?: Role | null
 
-  @ApiProperty({ type: Company, required: false, description: 'Компания сотрудника' })
+  @ApiProperty({
+    type: Company,
+    required: false,
+    description: 'Компания сотрудника',
+  })
   company?: Company | null
 
-  @ApiProperty({ type: Team, required: false, description: 'Команда сотрудника' })
+  @ApiProperty({
+    type: Team,
+    required: false,
+    description: 'Команда сотрудника',
+  })
   team?: Team | null
 
   constructor(item: Partial<Employee>) {
@@ -75,56 +102,85 @@ export class employeePayloadDto {
 }
 
 export class authEmployeeBodyDto {
-  @ApiProperty({ example: 'ivan@example.com', description: 'Почта пользователя' })
+  @ApiProperty({
+    example: 'ivan@example.com',
+    description: 'Почта пользователя',
+  })
   employee_email: string
 
-  @ApiProperty({ example: 'StrongPassword123', description: 'Пароль пользователя' })
+  @ApiProperty({
+    example: 'StrongPassword123',
+    description: 'Пароль пользователя',
+  })
   employee_password: string
 }
 
 export class authEmployeeTgBodyDto {
-  @ApiProperty({ example: 'ivan@example.com', description: 'Почта пользователя' })
+  @ApiProperty({
+    example: 'ivan@example.com',
+    description: 'Почта пользователя',
+  })
   employee_email: string
 
-  @ApiProperty({ example: 'StrongPassword123', description: 'Пароль пользователя' })
+  @ApiProperty({
+    example: 'StrongPassword123',
+    description: 'Пароль пользователя',
+  })
   employee_password: string
 
-  @ApiProperty({ example: 987654321, description: 'ID пользователя в Telegram' })
+  @ApiProperty({
+    example: 987654321,
+    description: 'ID пользователя в Telegram',
+  })
   tg_id: number
 }
 
 export class registerEmployeeReturnDto {
-  @ApiProperty({ example: 'access.jwt.token', description: 'JWT токен доступа' })
+  @ApiProperty({
+    example: 'access.jwt.token',
+    description: 'JWT токен доступа',
+  })
   accessToken: string
 
-  @ApiProperty({ example: 'refresh.jwt.token', description: 'JWT токен обновления' })
+  @ApiProperty({
+    example: 'refresh.jwt.token',
+    description: 'JWT токен обновления',
+  })
   refreshToken: string
 
   @ApiProperty({ type: () => employeePayloadDto })
   payload: employeePayloadDto
 }
 
-
 export class EmployeeRegistrationDto {
   @ApiProperty({ example: 'Иван', description: 'Имя сотрудника' })
-  employee_name: string;
+  employee_name: string
 
   @ApiProperty({ example: 'Иванов', description: 'Фамилия сотрудника' })
-  employee_surname: string;
+  employee_surname: string
 
   @ApiProperty({ example: 'ivan@example.com', description: 'Email сотрудника' })
-  employee_email: string;
+  employee_email: string
 
-  @ApiProperty({ example: 'StrongPassword123', description: 'Пароль сотрудника' })
-  employee_password: string;
+  @ApiProperty({
+    example: 'StrongPassword123',
+    description: 'Пароль сотрудника',
+  })
+  employee_password: string
 }
 
 export class EmployeeAuthResponseDto {
-  @ApiProperty({ example: 'access.jwt.token', description: 'JWT токен доступа' })
-  accessToken: string;
+  @ApiProperty({
+    example: 'access.jwt.token',
+    description: 'JWT токен доступа',
+  })
+  accessToken: string
 
-  @ApiProperty({ example: 'refresh.jwt.token', description: 'JWT токен обновления' })
-  refreshToken: string;
+  @ApiProperty({
+    example: 'refresh.jwt.token',
+    description: 'JWT токен обновления',
+  })
+  refreshToken: string
 
   @ApiProperty({
     example: {
@@ -137,23 +193,32 @@ export class EmployeeAuthResponseDto {
     },
     description: 'Информация о зарегистрированном сотруднике',
   })
-  payload: Record<string, any>;
+  payload: Record<string, any>
 }
 
 export class EmployeeLoginDto {
   @ApiProperty({ example: 'ivan@example.com', description: 'Email сотрудника' })
-  employee_email: string;
+  employee_email: string
 
-  @ApiProperty({ example: 'StrongPassword123', description: 'Пароль сотрудника' })
-  employee_password: string;
+  @ApiProperty({
+    example: 'StrongPassword123',
+    description: 'Пароль сотрудника',
+  })
+  employee_password: string
 }
 
 export class EmployeeLoginResponseDto {
-  @ApiProperty({ example: 'access.jwt.token', description: 'JWT токен доступа' })
-  accessToken: string;
+  @ApiProperty({
+    example: 'access.jwt.token',
+    description: 'JWT токен доступа',
+  })
+  accessToken: string
 
-  @ApiProperty({ example: 'refresh.jwt.token', description: 'JWT токен обновления' })
-  refreshToken: string;
+  @ApiProperty({
+    example: 'refresh.jwt.token',
+    description: 'JWT токен обновления',
+  })
+  refreshToken: string
 
   @ApiProperty({
     description: 'Информация о сотруднике',
@@ -166,5 +231,5 @@ export class EmployeeLoginResponseDto {
       employee_photo: 'photo.jpg',
     },
   })
-  payload: Record<string, any>;
+  payload: Record<string, any>
 }

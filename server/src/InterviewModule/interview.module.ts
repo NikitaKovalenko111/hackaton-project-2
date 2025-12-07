@@ -25,7 +25,7 @@ import { NotificationModule } from 'src/NotificationModule/notification.module'
       Employee_token,
       Socket,
       Request,
-      Role
+      Role,
     ]),
   ],
   controllers: [InterviewController],

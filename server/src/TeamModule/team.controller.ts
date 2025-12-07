@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, HttpException, Param, Post, Req } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common'
 import { TeamService } from './team.service'
 import { Team } from './team.entity'
 import { employeeDto } from 'src/types'
@@ -11,7 +20,7 @@ import {
   ApiBody,
   ApiParam,
   ApiExtraModels,
-} from '@nestjs/swagger';
+} from '@nestjs/swagger'
 
 @ApiTags('Team')
 @ApiExtraModels(Team, Employee)
@@ -30,7 +39,9 @@ export class TeamController {
   }
 
   @Get('/info')
-  @ApiOperation({ summary: 'Получить информацию о команде текущего сотрудника' })
+  @ApiOperation({
+    summary: 'Получить информацию о команде текущего сотрудника',
+  })
   @ApiResponse({ status: 200, type: Team })
   async getTeamInfo(@Req() req: Request): Promise<Team> {
     try {

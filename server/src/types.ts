@@ -7,58 +7,59 @@ export enum RoleType {
   TEAMLEAD = 'teamlead',
   TECHLEAD = 'techlead',
   ADMIN = 'admin',
-  MODERATOR = 'moderator'
+  MODERATOR = 'moderator',
 }
 export enum requestType {
-  UPGRADE = 'upgrade'
+  UPGRADE = 'upgrade',
 }
 export enum requestStatus {
   PENDING = 'pending',
   COMPLETED = 'completed',
-  CANCELED = 'canceled'
+  CANCELED = 'canceled',
 }
 export enum interviewType {
   TECH = 'tech',
   SOFT = 'soft',
   HR = 'hr',
-  CASE = 'case'
+  CASE = 'case',
 }
 export enum interviewStatusType {
   PLANNED = 'planned',
   COMPLETED = 'completed',
-  CANCELED = 'canceled'
+  CANCELED = 'canceled',
 }
 export enum skillLevel {
   JUNIOR = 'junior',
   JUNIOR_UP = 'junior+',
   MIDDLE = 'middle',
   MIDDLE_UP = 'middle+',
-  SENIOR = 'senior'
+  SENIOR = 'senior',
 }
 export enum reviewStatus {
   ACTIVE = 'active',
-  PENDING = 'pending'
+  PENDING = 'pending',
 }
 export enum clientType {
   WEB = 'web',
-  TELEGRAM = 'telegram'
+  TELEGRAM = 'telegram',
 }
 export enum notificationType {
   NEW_REQUEST = 'newRequest',
   COMPLETED_REQUEST = 'completedRequest',
   NEW_INTERVIEW = 'newInterview',
   CANCELED_REQUEST = 'canceledRequest',
-  INTERVIEW_CANCELLED = 'canceledInterview'
+  INTERVIEW_CANCELLED = 'canceledInterview',
 }
 export enum notificationStatusType {
-  APPLIED = "applied",
-  NOT_APPLIED = "not_applied"
+  APPLIED = 'applied',
+  NOT_APPLIED = 'not_applied',
 }
 
 export class intervalI {
   @ApiProperty({
     example: [1, 3, 6, 9, 12],
-    description: 'Месяцы, в которые проводится ревью (номера месяцев: 1 = январь, 12 = декабрь)',
+    description:
+      'Месяцы, в которые проводится ревью (номера месяцев: 1 = январь, 12 = декабрь)',
     type: [Number],
   })
   months: number[]

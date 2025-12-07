@@ -21,7 +21,7 @@ import {
   ApiBearerAuth,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
-} from '@nestjs/swagger';
+} from '@nestjs/swagger'
 import { CompanyService } from './company.service'
 import { Company } from './company.entity'
 import { employeePayloadDto } from 'src/EmployeeModule/employee.dto'
@@ -40,7 +40,7 @@ import {
   giveSkillToManyBodyDto,
 } from './company.dto'
 import { Employee } from 'src/EmployeeModule/employee.entity'
-import { CompanyEmployeeDto } from './company.dto';
+import { CompanyEmployeeDto } from './company.dto'
 
 @ApiBearerAuth()
 @ApiTags('Company')
@@ -53,8 +53,14 @@ export class CompanyController {
   ) {}
 
   @Get('/info')
-  @ApiOperation({ summary: 'Получить информацию о компании текущего пользователя' })
-  @ApiResponse({ status: 200, type: Company, description: 'Информация о компании' })
+  @ApiOperation({
+    summary: 'Получить информацию о компании текущего пользователя',
+  })
+  @ApiResponse({
+    status: 200,
+    type: Company,
+    description: 'Информация о компании',
+  })
   @ApiResponse({ status: 400, description: 'Сотрудник не привязан к компании' })
   async getCompanyInfo(@Req() req: Request): Promise<Company> {
     try {
@@ -73,13 +79,19 @@ export class CompanyController {
   @Delete('/skillShape/remove/:id')
   @ApiOperation({ summary: 'Удалить форму навыка по ID' })
   @ApiParam({ name: 'id', type: Number, description: 'ID формы навыка' })
-  @ApiResponse({ status: 200, type: SkillShape, description: 'Удалённая форма навыка' })
+  @ApiResponse({
+    status: 200,
+    type: SkillShape,
+    description: 'Удалённая форма навыка',
+  })
   @ApiResponse({ status: 404, description: 'Форма навыка не найдена' })
   @ApiResponse({ status: 403, description: 'Недостаточно прав' })
-  async removeSkillShape(@Param('id') skillShapeId: number): Promise<SkillShape> {
+  async removeSkillShape(
+    @Param('id') skillShapeId: number,
+  ): Promise<SkillShape> {
     try {
       const skillShape = await this.skillService.deleteSkillShape(skillShapeId)
-  
+
       return skillShape
     } catch (error) {
       throw new HttpException(error.message, error.status)
@@ -87,8 +99,16 @@ export class CompanyController {
   }
 
   @Get('/employees')
-  @ApiQuery({ name: 'name', required: false, description: 'Фильтр по имени/фамилии' })
-  @ApiQuery({ name: 'surname', required: false, description: 'Фильтр по фамилии' })
+  @ApiQuery({
+    name: 'name',
+    required: false,
+    description: 'Фильтр по имени/фамилии',
+  })
+  @ApiQuery({
+    name: 'surname',
+    required: false,
+    description: 'Фильтр по фамилии',
+  })
   @ApiQuery({ name: 'email', required: false, description: 'Фильтр по email' })
   @ApiOkResponse({
     description: 'Список сотрудников компании',
@@ -107,14 +127,17 @@ export class CompanyController {
       )
 
       if (employeeData.company == null) {
-        throw new HttpException('Сотрудник не в компании!', HttpStatus.NOT_ACCEPTABLE)
+        throw new HttpException(
+          'Сотрудник не в компании!',
+          HttpStatus.NOT_ACCEPTABLE,
+        )
       }
 
       const employees = await this.companyService.getEmployees(
         employeeData.company.company_id,
         name,
         surname,
-        email
+        email,
       )
 
       return employees
@@ -129,14 +152,17 @@ export class CompanyController {
     name: 'name',
     required: false,
     type: String,
-    description: 'Фильтр по названию навыка'
+    description: 'Фильтр по названию навыка',
   })
   @ApiResponse({
     status: 200,
     type: [SkillShape],
-    description: 'Список навыков компании'
+    description: 'Список навыков компании',
   })
-  async getCompanySkills(@Req() req: Request, @Query('name') skillName: string): Promise<SkillShape[]> {
+  async getCompanySkills(
+    @Req() req: Request,
+    @Query('name') skillName: string,
+  ): Promise<SkillShape[]> {
     try {
       const employee = (req as any).employee
 
@@ -145,12 +171,15 @@ export class CompanyController {
       )
 
       if (employeeData.company == null) {
-        throw new HttpException('Сотрудник не в компании!', HttpStatus.NOT_ACCEPTABLE)
+        throw new HttpException(
+          'Сотрудник не в компании!',
+          HttpStatus.NOT_ACCEPTABLE,
+        )
       }
 
       const skills = await this.companyService.getSkillShapesByCompany(
         employeeData.company.company_id,
-        skillName
+        skillName,
       )
 
       return skills
@@ -184,7 +213,11 @@ export class CompanyController {
   @Post('/employee/add')
   @ApiOperation({ summary: 'Добавить сотрудника в компанию' })
   @ApiBody({ type: addCompanyEmployeeBodyDto })
-  @ApiResponse({ status: 200, type: employeeDto, description: 'Добавленный сотрудник' })
+  @ApiResponse({
+    status: 200,
+    type: employeeDto,
+    description: 'Добавленный сотрудник',
+  })
   async addEmployee(
     @Body() addEmployeeBody: addCompanyEmployeeBodyDto,
     @Req() req: Request,
@@ -211,8 +244,15 @@ export class CompanyController {
   @Delete('/employee/remove/:id')
   @ApiOperation({ summary: 'Удалить сотрудника из компании' })
   @ApiParam({ name: 'id', type: Number, description: 'ID сотрудника' })
-  @ApiResponse({ status: 200, type: Employee, description: 'Удалённый сотрудник' })
-  async removeEmployee(@Param('id') employeeId: number, @Req() req: Request): Promise<Employee> {
+  @ApiResponse({
+    status: 200,
+    type: Employee,
+    description: 'Удалённый сотрудник',
+  })
+  async removeEmployee(
+    @Param('id') employeeId: number,
+    @Req() req: Request,
+  ): Promise<Employee> {
     const employee = await this.companyService.removeEmployee(employeeId)
 
     return employee
@@ -221,7 +261,11 @@ export class CompanyController {
   @Post('/employee/addByEmail')
   @ApiOperation({ summary: 'Добавить сотрудника по email' })
   @ApiBody({ type: addEmployeeByEmailBodyDto })
-  @ApiResponse({ status: 200, type: employeeDto, description: 'Добавленный сотрудник' })
+  @ApiResponse({
+    status: 200,
+    type: employeeDto,
+    description: 'Добавленный сотрудник',
+  })
   async addEmployeeByEmail(
     @Body() addEmployeeByEmailBody: addEmployeeByEmailBodyDto,
     @Req() req: Request,
@@ -247,7 +291,11 @@ export class CompanyController {
   @Post('/skill/create')
   @ApiOperation({ summary: 'Создать новую форму навыка для компании' })
   @ApiBody({ type: createSkillBodyDto })
-  @ApiResponse({ status: 201, type: SkillShape, description: 'Созданная форма навыка' })
+  @ApiResponse({
+    status: 201,
+    type: SkillShape,
+    description: 'Созданная форма навыка',
+  })
   async createSkill(
     @Body() createSkillBody: createSkillBodyDto,
     @Req() req: Request,
@@ -270,14 +318,17 @@ export class CompanyController {
   @Post('/skill/give')
   @ApiOperation({ summary: 'Выдать навык сотруднику' })
   @ApiBody({ type: giveSkillBodyDto })
-  @ApiResponse({ status: 200, type: Skill, description: 'Навык, выданный сотруднику' })
+  @ApiResponse({
+    status: 200,
+    type: Skill,
+    description: 'Навык, выданный сотруднику',
+  })
   async giveSkillToEmployee(
     @Body() giveSkillBody: giveSkillBodyDto,
     @Req() req: Request,
   ): Promise<Skill> {
     try {
-      const { skill_shape_id, employee_to_give_id, skill_level } =
-        giveSkillBody
+      const { skill_shape_id, employee_to_give_id, skill_level } = giveSkillBody
       const employeeToGive =
         await this.employeeService.getEmployee(employee_to_give_id)
 
@@ -296,7 +347,11 @@ export class CompanyController {
   @Post('/skill/giveToMany')
   @ApiOperation({ summary: 'Выдать навык нескольким сотрудникам' })
   @ApiBody({ type: giveSkillToManyBodyDto })
-  @ApiResponse({ status: 200, type: [Skill], description: 'Список выданных навыков' })
+  @ApiResponse({
+    status: 200,
+    type: [Skill],
+    description: 'Список выданных навыков',
+  })
   async giveSkillToEmployees(
     @Body() giveSkillBody: giveSkillToManyBodyDto,
     @Req() req: Request,
@@ -324,14 +379,19 @@ export class CompanyController {
 
   @Get('/:companyId/teams')
   @ApiOperation({ summary: 'Получить все команды компании' })
-
   @ApiQuery({ name: 'name', required: false, description: 'Название команды' })
-
-  @ApiQuery({ name: 'teamleadName', required: false, description: 'Имя тимлида' })
-  @ApiQuery({ name: 'teamleadSurname', required: false, description: 'Фамилия тимлида' })
+  @ApiQuery({
+    name: 'teamleadName',
+    required: false,
+    description: 'Имя тимлида',
+  })
+  @ApiQuery({
+    name: 'teamleadSurname',
+    required: false,
+    description: 'Фамилия тимлида',
+  })
   @ApiParam({ name: 'companyId', type: Number, description: 'ID компании' })
   @ApiResponse({ status: 200, type: [Team], description: 'Список команд' })
-
   @ApiBadRequestResponse({ description: 'Некорректные параметры запроса' })
   @ApiNotFoundResponse({ description: 'Компания не найдена' })
   async getAllCompanyTeams(
@@ -342,7 +402,12 @@ export class CompanyController {
     @Req() req: Request,
   ): Promise<Team[]> {
     try {
-      const teams = await this.companyService.getAllTeams(companyId, teamName, teamleadName, teamleadSurname)
+      const teams = await this.companyService.getAllTeams(
+        companyId,
+        teamName,
+        teamleadName,
+        teamleadSurname,
+      )
 
       return teams
     } catch (error) {

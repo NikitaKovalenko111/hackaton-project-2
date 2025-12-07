@@ -8,7 +8,7 @@ import {
 } from 'typeorm'
 import { Question } from './question.entity'
 import { Employee } from 'src/EmployeeModule/employee.entity'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity()
 export class Answer {
@@ -18,7 +18,7 @@ export class Answer {
 
   @ApiProperty({ example: 'Очень внимателен к деталям' })
   @Column({
-    type: 'text'
+    type: 'text',
   })
   answer_text: string
 

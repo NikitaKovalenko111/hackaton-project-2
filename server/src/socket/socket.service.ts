@@ -23,7 +23,7 @@ export class SocketService {
       const socketCurrent = await this.socketRepository.findOne({
         where: {
           employee: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
           client_type: clientType,
         },
@@ -83,7 +83,7 @@ export class SocketService {
       const socket = await this.socketRepository.findOne({
         where: {
           employee: {
-            employee_id: employeeId
+            employee_id: employeeId,
           },
           client_type: client,
         },

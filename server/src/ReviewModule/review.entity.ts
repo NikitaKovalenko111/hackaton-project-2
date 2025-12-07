@@ -9,7 +9,7 @@ import {
 } from 'typeorm'
 import { Question } from './question.entity'
 import { reviewStatus } from 'src/types'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity()
 export class Review {
@@ -28,14 +28,14 @@ export class Review {
   @Column({
     default: reviewStatus.PENDING,
     type: 'enum',
-    enum: reviewStatus
+    enum: reviewStatus,
   })
   review_status: reviewStatus
 
   @ApiProperty({ example: 1 })
   @Column({
     default: 1,
-    type: 'int'
+    type: 'int',
   })
   review_cycle: number
 
