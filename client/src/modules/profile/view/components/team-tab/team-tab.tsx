@@ -13,6 +13,7 @@ import { Dialog } from "@radix-ui/react-dialog"
 import { on } from "events"
 import { useState } from "react"
 import { AiReviewDialog } from "../ai-review-dialog/ai-review-dialog"
+import Link from "next/link"
 
 export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: Team, isCurrentEmployee: boolean, role: ROLE}) => {
 
@@ -31,20 +32,20 @@ export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: 
                 employeeSurname={employeeSurname}
             />
         </Dialog>
-        <TabsContent value="team" className="space-y-6">
+        <TabsContent value="team" className="space-y-4 md:space-y-6">
             {team ? (
                 <Card className="overflow-visible">
                     <CardHeader className="pb-0">
-                        <div className="flex items-start justify-between gap-4">
-                            <div>
-                                <CardTitle className="text-2xl">
+                        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+                            <div className="w-full">
+                                <CardTitle className="text-lg sm:text-2xl">
                                     Информация о команде
-                                    <span className="ml-3 inline-block rounded-full bg-accent/10 px-3 py-1 text-sm font-medium text-accent-foreground">
+                                    <span className="ml-2 inline-block rounded-full bg-accent/10 px-2 py-1 text-xs sm:text-sm font-medium text-accent-foreground">
                                         {team.team_name}
                                     </span>
                                 </CardTitle>
                                 {isCurrentEmployee && (
-                                    <CardDescription className="mt-1 text-muted-foreground">
+                                    <CardDescription className="mt-1 text-xs sm:text-sm text-muted-foreground">
                                         Здесь вы можете увидеть информацию о своей команде
                                     </CardDescription>
                                 )}
@@ -52,18 +53,18 @@ export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: 
                         </div>
                     </CardHeader>
 
-                    <CardContent className="space-y-6">
-                        <div className="rounded-lg bg-muted/50 p-4">
-                            <div className="flex items-center gap-4">
-                                <Avatar className="h-20 w-20 ring-2 ring-muted/30">
+                    <CardContent className="space-y-4 md:space-y-6">
+                        <div className="rounded-lg bg-muted/50 p-3 sm:p-4">
+                            <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-4">
+                                <Avatar className="h-16 w-16 ring-2 ring-muted/30 sm:h-20 sm:w-20">
                                     <AvatarImage src={`${process.env.NEXT_PUBLIC_BACKEND_API}/profilePhotos/${team.teamlead.employee_photo}`} alt="Team Lead" />
-                                    <AvatarFallback className="text-xl">
+                                    <AvatarFallback className="text-lg">
                                         {`${team.teamlead.employee_name[0]}${team.teamlead.employee_surname[0]}`}
                                     </AvatarFallback>
                                 </Avatar>
-                                <div>
-                                    <p className="text-lg font-semibold">{`${team.teamlead.employee_name} ${team.teamlead.employee_surname}`}</p>
-                                    <p className="text-sm text-muted-foreground">
+                                <div className="text-center sm:text-left">
+                                    <p className="text-base sm:text-lg font-semibold">{`${team.teamlead.employee_name} ${team.teamlead.employee_surname}`}</p>
+                                    <p className="text-xs sm:text-sm text-muted-foreground">
                                         Руководитель команды
                                     </p>
                                 </div>
@@ -71,8 +72,8 @@ export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: 
                         </div>
 
                         <div className="space-y-4">
-                            <p className="text-xl font-medium">Сотрудники команды</p>
-                            <div className="grid gap-4">
+                            <p className="text-lg sm:text-xl font-medium">Сотрудники команды</p>
+                            <div className="grid gap-3 sm:gap-4">
                                 {team.employees.map((empl) => {
                                     console.log(empl);
                                     
@@ -80,28 +81,27 @@ export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: 
                                     return (
                                         <div
                                             key={empl.employee_id}
-                                            className="flex items-center justify-between gap-4 rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md"
+                                            className="flex flex-col items-start justify-between gap-3 rounded-lg border p-3 shadow-sm transition-shadow hover:shadow-md sm:flex-row sm:items-center sm:gap-4"
                                         >
-                                            <div className="flex items-center gap-3">
-                                                <Avatar className="h-14 w-14">
+                                            <div className="flex items-center gap-3 w-full sm:w-auto">
+                                                <Avatar className="h-12 w-12 sm:h-14 sm:w-14">
                                                     <AvatarImage src={`${process.env.NEXT_PUBLIC_BACKEND_API}/profilePhotos/${empl.employee_photo}`} alt="Profile" />
-                                                    <AvatarFallback className="text-lg">
+                                                    <AvatarFallback className="text-base">
                                                         {`${empl.employee_name[0]}${empl.employee_surname[0]}`}
                                                     </AvatarFallback>
                                                 </Avatar>
-                                                <div>
-                                                    <p className="font-medium">{`${empl.employee_name} ${empl.employee_surname}`}</p>
-                                                    <p className="text-sm text-muted-foreground">{ROLE_TRANSLATION[empl.role.role_name] ? empl.role.role_name : ""}</p>
-                                                </div>
+                                                <Link href={`profile/${empl.employee_id}`}>
+                                                    <p className="text-sm sm:text-base font-medium">{`${empl.employee_name} ${empl.employee_surname}`}</p>
+                                                </Link>
                                             </div>
-                                            <div className="flex gap-4">
+                                            <div className="flex flex-col gap-2 w-full sm:flex-row sm:gap-4 sm:w-auto">
                                                 {
                                                     isCurrentEmployee && role === "teamlead" ? (
                                                         <Button onClick={ () => {
                                                             setEmployeeName(empl.employee_name)
                                                             setEmployeeSurname(empl.employee_surname)
                                                             getAiReview(empl.employee_id)
-                                                        } }>Ревью</Button>
+                                                        } } className="w-full sm:w-auto">Ревью</Button>
                                                     ) : null
                                                 }
                                                 {roleBadge(empl.role.role_name)}
@@ -116,7 +116,7 @@ export const TeamTab = ({id, team, isCurrentEmployee, role}: {id: number, team: 
             ) : (
                 <Card>
                     <CardHeader>
-                        <CardTitle>
+                        <CardTitle className="text-lg sm:text-2xl">
                             {isCurrentEmployee ? "Вы не состоите в команде" : "Сотрудник не состоит в компании"}
                         </CardTitle>
                     </CardHeader>

@@ -56,14 +56,15 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
             "flex flex-col w-full transition-all",
             formStyleConditionErrors[Number(Object.keys(errors).length)][0],
             formStyleConditionErrors[Number(Object.keys(errors).length)][1]
-        )}>
+        )} data-testid="signup-form-container">
             <CardHeader>
-                <CardTitle>Зарегистрируйтесь</CardTitle>
+                <CardTitle data-testid="signup-form-title">Зарегистрируйтесь</CardTitle>
                 <CardAction>
                     <Button 
                         className="cursor-pointer" 
                         variant="link"
                         onClick={() => handleChangeMode('login')}
+                        data-testid="signup-switch-to-login-button"
                     >
                         Уже есть аккаунт? Войти
                     </Button>
@@ -87,6 +88,7 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
                                             aria-invalid={fieldState.invalid}
                                             autoComplete="off"
                                             value={field.value}
+                                            data-testid="signup-name-input"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -106,6 +108,7 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
                                             aria-invalid={fieldState.invalid}
                                             autoComplete="off"
                                             value={field.value}
+                                            data-testid="signup-surname-input"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -125,6 +128,7 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
                                             aria-invalid={fieldState.invalid}
                                             autoComplete="off"
                                             value={field.value}
+                                            data-testid="signup-email-input"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -146,6 +150,7 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
                                             value={field.value}
                                             aria-invalid={fieldState.invalid}
                                             autoComplete="off"
+                                            data-testid="signup-password-input"
                                         />
                                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                     </Field>
@@ -157,7 +162,7 @@ export const SignupForm = ({handleChangeMode}: LoginFormProps) => {
                 </form>
             </CardContent>
             <CardFooter className="flex-col overflow-hidden">
-                <Button type="submit" form="signup-form" className="w-full cursor-pointer">
+                <Button type="submit" form="signup-form" className="w-full cursor-pointer" data-testid="signup-submit-button">
                     Зарегистрироваться
                 </Button>
             </CardFooter>

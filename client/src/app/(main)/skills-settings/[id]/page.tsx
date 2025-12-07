@@ -5,7 +5,7 @@ export default async function SkillPage({ params }: { params: Promise<{ id: stri
   const { id } = await params;
 
   return (
-    <div className="animate-appear">
+    <div className="animate-appear w-full">
       <SkillUsers id={Number(id)} />
     </div>
   );

@@ -14,10 +14,10 @@ export const saveTokenStorage = (accessToken: string) => {
 
 export const saveRefreshStorage = (refreshToken: string) => {
     // localStorage.setItem(authConfig.onTokenExpiration, refreshToken, )
-    Cookies.set(`${authConfig.onTokenExpiration}`, refreshToken, {
-        expires: 30,
-        domain: process.env.DOMAIN
-    })
+    //Cookies.set(`${authConfig.onTokenExpiration}`, refreshToken, {
+    //    expires: 30,
+    //    domain: process.env.DOMAIN,
+    //})
 }
 
 export const saveRoleStorage = (role: ROLE) => {

@@ -65,15 +65,15 @@ export const AddTeam = ({
     }
 
     return (
-        <DialogContent className="animate-appear">
+        <DialogContent className="animate-appear" data-testid="add-team-dialog">
             <DialogHeader>
-                <DialogTitle>Добавить команду</DialogTitle>
+                <DialogTitle data-testid="add-team-title">Добавить команду</DialogTitle>
                 <DialogDescription>
                     Добавьте новую команду. Нажмите "Добавить", когда закончите.
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-                <form id="create-skill" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+                <form id="add-team-form" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
                     <Controller 
                         name="team_name"
                         control={control}
@@ -88,6 +88,7 @@ export const AddTeam = ({
                                 aria-invalid={fieldState.invalid}
                                 autoComplete="off"
                                 value={field.value}
+                                data-testid="add-team-name-input"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -106,6 +107,7 @@ export const AddTeam = ({
                                 aria-invalid={fieldState.invalid}
                                 autoComplete="off"
                                 value={field.value}
+                                data-testid="add-team-desc-input"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -123,10 +125,12 @@ export const AddTeam = ({
                                 name={field.name}
                                 value={String(field.value)}
                                 onValueChange={field.onChange}
+                                data-testid="add-team-teamlead-select"
                             >
                                 <SelectTrigger
                                     id="form-rhf-complex-billingPeriod"
                                     aria-invalid={fieldState.invalid}
+                                    data-testid="add-team-teamlead-trigger"
                                 >
                                 <SelectValue placeholder="Тимлид" />
                                 </SelectTrigger>
@@ -151,9 +155,9 @@ export const AddTeam = ({
             </FieldSet>
             <DialogFooter>
                 <DialogClose asChild>
-                    <Button variant="outline">Отмена</Button>
+                    <Button variant="outline" data-testid="add-team-cancel-button">Отмена</Button>
                 </DialogClose>
-                <Button type="submit" form="create-skill">Добавить</Button>
+                <Button type="submit" form="add-team-form" data-testid="add-team-submit-button">Добавить</Button>
             </DialogFooter>
         </DialogContent>
     )

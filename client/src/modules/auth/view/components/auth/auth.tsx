@@ -37,7 +37,7 @@ export const AuthForm = () => {
         <Card className={clsx(
             "w-full max-w-sm relative overflow-hidden transition-all ease-in-out duration-300 animate-appear",
             variantStyleCard[mode]
-        )}>
+        )} data-testid="auth-card">
             <div className={clsx(
                 `flex top-6 flex-col gap-8 absolute w-full transition-[left]`,
                 variantStyleLogin[mode]
