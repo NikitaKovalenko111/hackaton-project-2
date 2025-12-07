@@ -35,13 +35,9 @@ export const ConfirmDeletionOfTeam = ({
                     onClick={() => {
                         mutate(skillId)
                         handleClose()
-<<<<<<< HEAD
-                    }}>
-=======
                     }}
                     data-testid="confirm-delete-skill-confirm"
                 >
->>>>>>> 406464a6635a45e452fdc7cc6ed7b58cbcdb014b
                     Да
                 </Button>
             </DialogFooter>
