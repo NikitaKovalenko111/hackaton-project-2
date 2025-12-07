@@ -13,6 +13,12 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/auth', request.url))
     }
 
+<<<<<<< HEAD
+    // if (!request.cookies.get('accessToken') && request.cookies.get("refreshToken")) {
+    //     await refreshTokens()
+    // }
+    
+=======
     debugger
     if (
         !request.cookies.get('accessToken') &&
@@ -21,6 +27,10 @@ export async function middleware(request: NextRequest) {
         await refreshTokens()
     }
 
+<<<<<<< Updated upstream
+=======
+>>>>>>> c02560457b173da0cc7a2f320ec13913187d4776
+>>>>>>> Stashed changes
     // if (request.cookies.get("accessToken") && !request.cookies.get("companyId") && path != '/company') return NextResponse.redirect(new URL('/company', request.url))
 
     if (
@@ -39,5 +49,13 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+<<<<<<< HEAD
+    matcher: ['/', '/main', '/company', '/profile', '/auth', '/skill-orders', '/interviews', '/employees', '/skills-settings'],
+}
+=======
     matcher: ['/', '/main', '/company', '/profile', '/auth'],
 }
+<<<<<<< Updated upstream
+=======
+>>>>>>> c02560457b173da0cc7a2f320ec13913187d4776
+>>>>>>> Stashed changes

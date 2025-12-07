@@ -24,11 +24,11 @@ const routeStyle: Record<string, string> = {
 }
 
 export function AppSidebar() {
-    const pathname = usePathname()
-    const [curPath, setCurPath] = useState<string>('/')
-    const [isHovered, setIsHovered] = useState<boolean>(false)
+        const pathname = usePathname()
+        const [curPath, setCurPath] = useState<string>('/')
+        const [isHovered, setIsHovered] = useState<boolean>(false)
 
-    const { push } = useRouter()
+        const {push} = useRouter()
 
     useEffect(() => {
         setCurPath(pathname)
