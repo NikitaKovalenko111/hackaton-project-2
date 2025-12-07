@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image"
-import { Bell, BellIcon } from "lucide-react"
+import { Bell, BellIcon, CircleUser } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -9,11 +9,13 @@ import { Input } from "@/components/ui/input"
 import React, { useEffect } from "react"
 import { useGetNotifications } from "./infrastructure/query/queries"
 import { useApplyNotification } from "./infrastructure/query/mutations"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import Link from "next/link"
 
 export const Header = ({
     children
 }: {
-    children: React.ReactNode
+    children?: React.ReactNode
 }) => {
 
     const { data: notifications, isFetching, refetch: refetchNotifications } = useGetNotifications()
@@ -30,8 +32,9 @@ export const Header = ({
 
     return (
         <>
-        <div className="fixed flex justify-between top-0 w-full border py-6 shadow-sm z-50 bg-white p-4">
+        <div className="fixed flex justify-between top-0 w-full border py-6 shadow-sm z-2 bg-white p-4">
             <p className="uppercase font-bold text-xl" >APC</p>
+            {/* <SidebarTrigger /> */}
             <div className="flex gap-8 items-center">
                 <div>
                     <Popover>
@@ -72,7 +75,9 @@ export const Header = ({
                         </PopoverContent>
                     </Popover>
                 </div>
-                {children}
+                <Link href={'/profile'} className="flex-row items-center gap-2.5">
+                    <CircleUser className="h-5 w-5 stroke-2 text-black shrink-0" />
+                </Link>
             </div>
         </div>
         </>

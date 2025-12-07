@@ -2,7 +2,7 @@ import { SkillOrder } from "@/modules/skills/view/components/skill-order/skill-o
 
 export default function SkillOrdersPage() {
     return (
-        <div>
+        <div className="w-full">
             <SkillOrder />
         </div>
     )

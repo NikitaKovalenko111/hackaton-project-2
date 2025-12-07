@@ -4,7 +4,7 @@ import { Employees } from "@/modules/employees/view/components/employees/employe
 export default function EmployeesPage() {
 
     return (
-        <div>
+        <div className="w-full">
             <Employees />
         </div>
     )
