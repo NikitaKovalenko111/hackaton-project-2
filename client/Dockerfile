@@ -1,6 +1,6 @@
 FROM node:lts as dependencies
 WORKDIR /client
-COPY package*.json ./
+COPY client/package*.json ./
 RUN npm install
 
 FROM node:lts as builder
