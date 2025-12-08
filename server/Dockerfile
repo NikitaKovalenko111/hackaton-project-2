@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash netcat-openbsd
 
 WORKDIR /server
 

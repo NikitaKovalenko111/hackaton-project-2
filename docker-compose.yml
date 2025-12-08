@@ -8,11 +8,8 @@ services:
     ports:
       - "3001:3001"
     container_name: apc-server
-    volumes:
-      - .:/server
     depends_on:
-      db:
-        condition: service_healthy
+      - server
     restart: on-failure
   db:
     image: postgres:15
@@ -39,16 +36,14 @@ services:
     volumes:
       - .:/client
     depends_on:
-      server:
-        condition: service_healthy
+      - server
     restart: on-failure
   telegram_bot:
     build:
       context: ./telegram_bot
       dockerfile: Dockerfile
     depends_on:
-      server:
-        condition: service_healthy
+      - server
     volumes:
       - ./telegram_bot:/telegram_bot
     restart: unless-stopped
