@@ -17,7 +17,7 @@ import { Role } from './role.entity'
     MulterModule.register({
       storage: diskStorage({
         destination(req: Request, file: Express.Multer.File, cb) {
-          cb(null, path.join(__dirname, '../../../profilePhotos'))
+          cb(null, path.join(__dirname, '../../profilePhotos'))
         },
         filename(req: Request, file: Express.Multer.File, cb) {
           cb(

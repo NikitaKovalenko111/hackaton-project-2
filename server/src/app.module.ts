@@ -35,7 +35,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
   imports: [
     ConfigModule.forRoot(),
     ServeStaticModule.forRoot({
-      rootPath: __dirname + '/..' + '/../profilePhotos',
+      rootPath: __dirname + '/..' + '/profilePhotos',
       serveRoot: '/profilePhotos/',
     }),
     CompanyModule,
