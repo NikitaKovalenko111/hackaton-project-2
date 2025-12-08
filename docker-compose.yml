@@ -33,8 +33,6 @@ services:
     ports:
       - "3000:3000"
     container_name: apc-client
-    volumes:
-      - .:/client
     depends_on:
       - server
     restart: on-failure
@@ -44,8 +42,6 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - server
-    volumes:
-      - ./telegram_bot:/telegram_bot
     restart: unless-stopped
 
 volumes:
