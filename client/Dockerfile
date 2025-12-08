@@ -20,3 +20,5 @@ COPY --from=builder ./client/.next ./.next
 COPY --from=builder ./client/node_modules ./node_modules
 
 EXPOSE 3000
+
+CMD ["npm", "run", "start"]
