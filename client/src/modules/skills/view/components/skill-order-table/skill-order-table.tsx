@@ -212,7 +212,7 @@ export function SkillOrdersTable({
                 key={'create-dialog'}
                 open={openCreateDialog}
                 onOpenChange={handleCloseCreateDialog}>
-                <div className="flex justify-between items-center py-4 sm:flex-wrap gap-2.5">
+                <div className="flex justify-between items-center py-4 flex-wrap md:flex-nowrap gap-2.5">
                     {/* <Input
                     placeholder="Фильтр по названию"
                     value={(table.getColumn("skill_desc")?.getFilterValue() as string) ?? ""}

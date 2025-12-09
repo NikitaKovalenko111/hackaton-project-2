@@ -61,6 +61,19 @@ export class CompanyService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
       }
 
+      const roles = await this.roleRepository.find({
+        where: {
+          employee: {
+            employee_id: employeeId,
+          },
+        },
+        relations: {
+          employee: true,
+        }
+      })
+
+      await this.roleRepository.remove(roles)
+
       employee.company = company
 
       const employeeData = await this.employeeRepository.save(employee)
