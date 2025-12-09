@@ -28,7 +28,7 @@ export class SkillService {
     private skillOrderRepository: Repository<SkillOrder>,
 
     @Inject(forwardRef(() => RequestService))
-    private readonly requestService: RequestService
+    private readonly requestService: RequestService,
   ) {}
 
   async createSkill(
@@ -48,12 +48,21 @@ export class SkillService {
 
       const skillDb = await this.skillShapeRepository.findOne({
         where: {
-          skill_name: skillName
-        }
+          skill_name: skillName,
+          company: {
+            company_id: companyId,
+          },
+        },
+        relations: {
+          company: true,
+        },
       })
 
       if (skillDb) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, "Компетенция с таким названием уже существует!")
+        throw new ApiError(
+          HttpStatus.BAD_REQUEST,
+          'Компетенция с таким названием уже существует!',
+        )
       }
 
       const skill = new SkillShape({
@@ -109,49 +118,70 @@ export class SkillService {
     }
   }
 
-  async getSkillOrdersByShape(skillShapeName: string, skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrdersByShape(
+    skillShapeName: string,
+    companyId: number,
+    skillLevel?: skillLevel,
+  ): Promise<SkillOrder[]> {
     const skillOrders = await this.skillOrderRepository.find({
       where: {
         skill_shape: {
-          skill_name: skillShapeName
+          skill_name: skillShapeName,
+          company: {
+            company_id: companyId,
+          },
         },
-        skill_level: skillLevel
+        skill_level: skillLevel,
       },
       relations: {
-        skill_shape: true
-      }
+        skill_shape: {
+          company: true,
+        },
+      },
     })
 
     return skillOrders
   }
 
-  async getSkillOrdersByShapeNames(skillShapeName: string[], skillLevel?: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrdersByShapeNames(
+    skillShapeName: string[],
+    companyId: number,
+    skillLevel?: skillLevel,
+  ): Promise<SkillOrder[]> {
     const skillOrders = await this.skillOrderRepository.find({
       where: {
         skill_shape: {
-          skill_name: In(skillShapeName)
+          skill_name: In(skillShapeName),
+          company: {
+            company_id: companyId,
+          },
         },
-        skill_level: skillLevel
+        skill_level: skillLevel,
       },
       relations: {
-        skill_shape: true
-      }
+        skill_shape: {
+          company: true,
+        },
+      },
     })
 
     return skillOrders
   }
 
-  async getSkillOrdersByLevel(skillShapeId: number, skillLevel: skillLevel): Promise<SkillOrder[]> {
+  async getSkillOrdersByLevel(
+    skillShapeId: number,
+    skillLevel: skillLevel,
+  ): Promise<SkillOrder[]> {
     const skillOrders = await this.skillOrderRepository.find({
       where: {
         skill_shape: {
-          skill_shape_id: skillShapeId
+          skill_shape_id: skillShapeId,
         },
-        skill_level: skillLevel
+        skill_level: skillLevel,
       },
       relations: {
-        skill_shape: true
-      }
+        skill_shape: true,
+      },
     })
 
     return skillOrders
@@ -269,12 +299,12 @@ export class SkillService {
     try {
       const skillShape = await this.skillShapeRepository.findOne({
         where: {
-          skill_shape_id: skillShapeId
-        }
+          skill_shape_id: skillShapeId,
+        },
       })
 
       if (!skillShape) {
-        throw new ApiError(HttpStatus.NOT_FOUND, "Компетенция не найдена!")
+        throw new ApiError(HttpStatus.NOT_FOUND, 'Компетенция не найдена!')
       }
 
       await this.requestService.removeRequestsBySkillShape(skillShapeId)
@@ -282,12 +312,12 @@ export class SkillService {
       const skills = await this.skillRepository.find({
         where: {
           skill_shape: {
-            skill_shape_id: skillShapeId
-          }
-        }, 
+            skill_shape_id: skillShapeId,
+          },
+        },
         relations: {
-          skill_shape: true
-        }
+          skill_shape: true,
+        },
       })
 
       await this.skillRepository.remove(skills)
@@ -303,39 +333,51 @@ export class SkillService {
     }
   }
 
-  async addSkillOrders(skillShapeId: number, skillLevel: skillLevel, orders: skillOrder[]): Promise<SkillOrder[]> {
+  async addSkillOrders(
+    skillShapeId: number,
+    skillLevel: skillLevel,
+    orders: skillOrder[],
+    companyId: number,
+  ): Promise<SkillOrder[]> {
     try {
       const skillShape = await this.skillShapeRepository.findOne({
         where: {
-          skill_shape_id: skillShapeId
-        }
+          skill_shape_id: skillShapeId,
+        },
       })
-  
+
       if (!skillShape) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Компетенция не найдена!')
       }
-  
-      const skillOrderDb = await this.getSkillOrdersByShape(skillShape.skill_name, skillLevel)
-      const texts = skillOrderDb.map(el => el.order_text)
-  
+
+      const skillOrderDb = await this.getSkillOrdersByShape(
+        skillShape.skill_name,
+        companyId,
+        skillLevel,
+      )
+      const texts = skillOrderDb.map((el) => el.order_text)
+
       for (let i = 0; i < orders.length; i++) {
-        const element = orders[i];
-        
+        const element = orders[i]
+
         if (texts.includes(element.order_text)) {
-          throw new ApiError(HttpStatus.BAD_REQUEST, "Такой навык уже существует!")
+          throw new ApiError(
+            HttpStatus.BAD_REQUEST,
+            'Такой навык уже существует!',
+          )
         }
       }
-  
-      const ordersArray = orders.map(order => {
+
+      const ordersArray = orders.map((order) => {
         return new SkillOrder({
           skill_level: skillLevel,
           skill_shape: skillShape,
-          order_text: order.order_text
+          order_text: order.order_text,
         })
       })
-  
+
       const ordersData = await this.skillOrderRepository.save(ordersArray)
-  
+
       return ordersData
     } catch (error) {
       throw new ApiError(

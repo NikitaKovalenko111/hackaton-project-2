@@ -61,6 +61,19 @@ export class CompanyService {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Компания не найдена!')
       }
 
+      const roles = await this.roleRepository.find({
+        where: {
+          employee: {
+            employee_id: employeeId,
+          },
+        },
+        relations: {
+          employee: true,
+        }
+      })
+
+      await this.roleRepository.remove(roles)
+
       employee.company = company
 
       const employeeData = await this.employeeRepository.save(employee)
@@ -156,12 +169,17 @@ export class CompanyService {
     }
   }
 
-  async getEmployees(company_id: number, name?: string, surname?: string, email?: string): Promise<Employee[]> {
+  async getEmployees(
+    company_id: number,
+    name?: string,
+    surname?: string,
+    email?: string,
+  ): Promise<Employee[]> {
     try {
       const employees = await this.employeeRepository.find({
         where: {
           company: {
-            company_id: company_id
+            company_id: company_id,
           },
           employee_name: Like(`%${name ? name : ''}%`),
           employee_email: Like(`%${email ? email : ''}%`),
@@ -188,7 +206,12 @@ export class CompanyService {
     }
   }
 
-  async getAllTeams(companyId: number, teamName: string = "", teamleadName: string = "", teamleadSurname: string = ""): Promise<Team[]> {
+  async getAllTeams(
+    companyId: number,
+    teamName: string = '',
+    teamleadName: string = '',
+    teamleadSurname: string = '',
+  ): Promise<Team[]> {
     const teams = await this.teamRepository.find({
       where: {
         company: {
@@ -197,12 +220,12 @@ export class CompanyService {
         team_name: Like(`%${teamName}%`),
         teamlead: {
           employee_name: Like(`%${teamleadName}%`),
-          employee_surname: Like(`%${teamleadSurname}%`)
-        }
+          employee_surname: Like(`%${teamleadSurname}%`),
+        },
       },
       relations: {
         company: true,
-        teamlead: true
+        teamlead: true,
       },
     })
 
@@ -215,29 +238,36 @@ export class CompanyService {
     employee.company = null
     employee.team = null
     employee.skills = []
-    employee.sendedRequests = employee.sendedRequests.filter(el => el.request_status != requestStatus.PENDING)
-    employee.plannedInterviews = employee.plannedInterviews.filter(el => el.interview_status != interviewStatusType.PLANNED)
+    employee.sendedRequests = employee.sendedRequests.filter(
+      (el) => el.request_status != requestStatus.PENDING,
+    )
+    employee.plannedInterviews = employee.plannedInterviews.filter(
+      (el) => el.interview_status != interviewStatusType.PLANNED,
+    )
 
     const employeeData = await this.employeeRepository.save(employee)
     const role = await this.roleRepository.delete({
-      employee: employee
+      employee: employee,
     })
 
     return employeeData
   }
 
-  async getSkillShapesByCompany(companyId: number, skillName: string = ""): Promise<SkillShape[]> {
+  async getSkillShapesByCompany(
+    companyId: number,
+    skillName: string = '',
+  ): Promise<SkillShape[]> {
     try {
       const skillShapes = await this.skillShapeRepository.find({
         where: {
           company: {
-            company_id: companyId
+            company_id: companyId,
           },
-          skill_name: Like(`%${skillName}%`)
+          skill_name: Like(`%${skillName}%`),
         },
         relations: {
-          company: true
-        }
+          company: true,
+        },
       })
 
       return skillShapes

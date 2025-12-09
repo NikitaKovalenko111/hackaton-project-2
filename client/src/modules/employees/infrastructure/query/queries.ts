@@ -1,16 +1,17 @@
-import { useQuery } from "@tanstack/react-query"
-import { getCompanyEmployee, getCompanyEmployees } from "../employees-api"
+import { useQuery } from '@tanstack/react-query'
+import { getCompanyEmployee, getCompanyEmployees } from '../employees-api'
 
-export const useGetCompanyEmployees = () => {
-
+export const useGetCompanyEmployees = (
+    surname: string = '',
+    name: string = ''
+) => {
     return useQuery({
-        queryKey: ['company-employees'],
-        queryFn: () => getCompanyEmployees()
+        queryKey: ['company-employees', surname, name],
+        queryFn: () => getCompanyEmployees(surname, name),
     })
 }
 
 export const useGetEmployee = (id: number) => {
-
     return useQuery({
         queryKey: ['company-employee'],
         queryFn: () => getCompanyEmployee(id),

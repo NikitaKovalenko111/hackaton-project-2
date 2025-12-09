@@ -1,46 +1,62 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Field, FieldDescription, FieldError, FieldLabel, FieldSet } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { ROLE_TRANSLATION } from "@/libs/constants"
-import { useGetCompanyEmployees } from "@/modules/employees/infrastructure/query/queries"
-import { AddTeamDTO } from "@/modules/teams/domain/teams.type"
-import { useCreateTeam } from "@/modules/teams/infrastructure/query/mutations"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useEffect } from "react"
-import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import z from "zod"
+import { Button } from '@/components/ui/button'
+import {
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import {
+    Field,
+    FieldDescription,
+    FieldError,
+    FieldLabel,
+    FieldSet,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { ROLE_TRANSLATION } from '@/libs/constants'
+import { useGetCompanyEmployees } from '@/modules/employees/infrastructure/query/queries'
+import { AddTeamDTO } from '@/modules/teams/domain/teams.type'
+import { useCreateTeam } from '@/modules/teams/infrastructure/query/mutations'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
+import z from 'zod'
 
 const zodSchema = z.object({
-    team_name: z.string().min(1, {message: "Название обязательно"}),
-    team_desc: z.string().min(1, {message: 'Описание обязательно'}),
+    team_name: z.string().min(1, { message: 'Название обязательно' }),
+    team_desc: z.string().min(1, { message: 'Описание обязательно' }),
     company_id: z.number(),
-    teamlead_id: z.string()
+    teamlead_id: z.string(),
 })
 
 export const AddTeam = ({
     companyId,
-    handleCloseDialog
+    handleCloseDialog,
 }: {
-    companyId: number,
+    companyId: number
     handleCloseDialog: () => void
 }) => {
-
-    const {data} = useGetCompanyEmployees()
+    const { data } = useGetCompanyEmployees()
 
     const {
-
         handleSubmit,
         control,
-        formState: {errors},
+        formState: { errors },
         reset,
-        setValue
-
+        setValue,
     } = useForm<AddTeamDTO>({
         resolver: zodResolver(zodSchema),
         mode: 'onChange',
@@ -48,15 +64,15 @@ export const AddTeam = ({
             company_id: companyId,
             team_name: '',
             team_desc: '',
-            teamlead_id: ''
-        }
+            teamlead_id: '',
+        },
     })
 
     useEffect(() => {
-        setValue("company_id", companyId)
+        setValue('company_id', companyId)
     }, [companyId])
 
-    const {mutate} = useCreateTeam()
+    const { mutate } = useCreateTeam()
 
     const onSubmit: SubmitHandler<AddTeamDTO> = (data) => {
         mutate(data)
@@ -65,15 +81,15 @@ export const AddTeam = ({
     }
 
     return (
-        <DialogContent className="animate-appear">
+        <DialogContent className="animate-appear" data-testid="add-team-dialog">
             <DialogHeader>
-                <DialogTitle>Добавить команду</DialogTitle>
+                <DialogTitle data-testid="add-team-title">Добавить команду</DialogTitle>
                 <DialogDescription>
                     Добавьте новую команду. Нажмите "Добавить", когда закончите.
                 </DialogDescription>
             </DialogHeader>
             <FieldSet className="grid gap-4">
-                <form id="create-skill" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
+                <form id="add-team-form" className="grid gap-4" onSubmit={handleSubmit(onSubmit)}>
                     <Controller 
                         name="team_name"
                         control={control}
@@ -88,12 +104,13 @@ export const AddTeam = ({
                                 aria-invalid={fieldState.invalid}
                                 autoComplete="off"
                                 value={field.value}
+                                data-testid="add-team-name-input"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
                         )}
                     />
-                    <Controller 
+                    <Controller
                         name="team_desc"
                         control={control}
                         render={({field, fieldState}) => (
@@ -106,6 +123,7 @@ export const AddTeam = ({
                                 aria-invalid={fieldState.invalid}
                                 autoComplete="off"
                                 value={field.value}
+                                data-testid="add-team-desc-input"
                             />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
@@ -123,10 +141,12 @@ export const AddTeam = ({
                                 name={field.name}
                                 value={String(field.value)}
                                 onValueChange={field.onChange}
+                                data-testid="add-team-teamlead-select"
                             >
                                 <SelectTrigger
                                     id="form-rhf-complex-billingPeriod"
                                     aria-invalid={fieldState.invalid}
+                                    data-testid="add-team-teamlead-trigger"
                                 >
                                 <SelectValue placeholder="Тимлид" />
                                 </SelectTrigger>
@@ -151,9 +171,9 @@ export const AddTeam = ({
             </FieldSet>
             <DialogFooter>
                 <DialogClose asChild>
-                    <Button variant="outline">Отмена</Button>
+                    <Button variant="outline" data-testid="add-team-cancel-button">Отмена</Button>
                 </DialogClose>
-                <Button type="submit" form="create-skill">Добавить</Button>
+                <Button type="submit" form="add-team-form" data-testid="add-team-submit-button">Добавить</Button>
             </DialogFooter>
         </DialogContent>
     )

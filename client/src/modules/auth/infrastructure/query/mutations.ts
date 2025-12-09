@@ -1,45 +1,44 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { AuthLoginDTO, AuthSignupDTO } from "../../domain/auth.type"
-import { login, register } from "../auth-api"
-import { useRouter } from "next/navigation"
-import toast from "react-hot-toast"
-import { useAuth } from "@/libs/providers/ability-provider"
-import { saveCompanyStorage } from "@/modules/company/infrastructure/company-storage"
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { AuthLoginDTO, AuthSignupDTO } from '../../domain/auth.type'
+import { login, register } from '../auth-api'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import { useAuth } from '@/libs/providers/ability-provider'
+import { saveCompanyStorage } from '@/modules/company/infrastructure/company-storage'
 
-export const useLogin = ({regSocket}: {regSocket: () => void}) => {
+export const useLogin = ({ regSocket }: { regSocket: () => void }) => {
     const queryClient = useQueryClient()
 
-    const {push} = useRouter()
+    const { push } = useRouter()
 
     return useMutation({
-        mutationKey: ["auth"],
+        mutationKey: ['auth'],
         mutationFn: (data: AuthLoginDTO) => login(data),
         onSuccess: (data) => {
-            queryClient.invalidateQueries({ queryKey: ["profile"] })
+            queryClient.invalidateQueries({ queryKey: ['profile'] })
             toast.success('Вы вошли!')
             regSocket()
             if (data.payload.company && data.payload.company.company_id) {
                 saveCompanyStorage(data.payload.company.company_id)
                 push('/profile')
-            }
-            else push('/company')
+            } else push('/company')
         },
         onError: (e: any) => {
             toast.error('Возникла ошибка!')
-        }
+        },
     })
 }
 
-export const useSignup = ({regSocket}: {regSocket: () => void}) => {
+export const useSignup = ({ regSocket }: { regSocket: () => void }) => {
     const queryClient = useQueryClient()
 
-    const {push} = useRouter()
+    const { push } = useRouter()
 
     return useMutation({
-        mutationKey: ["auth"],
+        mutationKey: ['auth'],
         mutationFn: (data: AuthSignupDTO) => register(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["profile"] })
+            queryClient.invalidateQueries({ queryKey: ['profile'] })
             toast.success('Вы зарегистрировались!')
             regSocket()
             push('/company')
@@ -47,6 +46,6 @@ export const useSignup = ({regSocket}: {regSocket: () => void}) => {
         onError: (error) => {
             toast.error('Возникла ошибка!')
             // toast.error(error.message)
-        }
+        },
     })
 }

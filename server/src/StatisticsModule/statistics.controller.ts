@@ -1,11 +1,17 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { StatisticsService } from './statistics.service'
 import { generateStatisticsBodyDto } from './statistics.dto'
-import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiExtraModels } from '@nestjs/swagger';
-import { Statistics } from './statistics.entity';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBody,
+  ApiResponse,
+  ApiExtraModels,
+} from '@nestjs/swagger'
+import { Statistics } from './statistics.entity'
 
 @ApiTags('Statistics')
-@ApiExtraModels(Statistics) 
+@ApiExtraModels(Statistics)
 @Controller('statistics')
 export class StatisticsController {
   constructor(private readonly statisticsService: StatisticsService) {}

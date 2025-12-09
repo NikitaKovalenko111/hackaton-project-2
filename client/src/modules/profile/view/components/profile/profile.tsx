@@ -1,42 +1,52 @@
 'use client'
 
-import { useEffect, useState } from "react"
-import { ProfileContent } from "../profile-content/profile-content"
-import { ProfileHeader } from "../profile-header/profile-header"
-import { useGetProfile } from "@/modules/profile/infrastructure/query/queries"
-import { SkeletonHeader } from "../../ui/skeleton-header"
-import { SkeletonContent } from "../../ui/skeleton-content"
-import { Employee } from "@/modules/profile/domain/profile.types"
-import { getProfile } from "@/modules/profile/infrastructure/profile-api"
+import { JSX, useEffect, useState } from 'react'
+import { ProfileContent } from '../profile-content/profile-content'
+import { ProfileHeader } from '../profile-header/profile-header'
+import { useGetProfile } from '@/modules/profile/infrastructure/query/queries'
+import { SkeletonHeader } from '../../ui/skeleton-header'
+import { SkeletonContent } from '../../ui/skeleton-content'
+import { Employee } from '@/modules/profile/domain/profile.types'
+import { getProfile } from '@/modules/profile/infrastructure/profile-api'
+import { useParams } from 'next/navigation'
 const Cookies = require('js-cookie')
 
-export const Profile = () => {
+type PropsType = {
+    id: number
+    isCurrentEmployee: boolean
+}
 
+export const Profile: React.FC<PropsType> = ({
+    id,
+    isCurrentEmployee,
+}): JSX.Element => {
     const [data, setData] = useState<Employee | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
+
     // const {data: profileData, isSuccess, isError, isPending, isRefetching, refetch} = useGetProfile()
 
-    const fetchData = async () => {
+    const fetchData = async (id: number) => {
         setLoading(true)
-        const res = await getProfile()
+        const res = await getProfile(id, isCurrentEmployee)
         setData(res)
         setLoading(false)
     }
 
     useEffect(() => {
-        fetchData()
+        fetchData(id)
     }, [])
 
     // useEffect(() => {
     //     debugger
     //     if (profileData) setData(profileData)
     // }, [isRefetching])
-    
+
     return (
-        <div className="mx-auto max-w-4xl space-y-6 px-4 py-10">
+        <div className="mx-auto w-full max-w-4xl space-y-6 px-4 py-10" data-testid="profile-page">
             {loading || !data ? 
                 <SkeletonHeader /> : 
-                <ProfileHeader  
+                <ProfileHeader
+                    isCurrentEmployee={isCurrentEmployee}
                     employee_email={data.employee_email}
                     employee_id={data.employee_id}
                     employee_name={data.employee_name}
@@ -51,9 +61,11 @@ export const Profile = () => {
                     skills={data.skills}
                 />
             }
-            {loading || !data ? 
-                <SkeletonContent /> : 
-                <ProfileContent 
+            {loading || !data ? (
+                <SkeletonContent />
+            ) : (
+                <ProfileContent
+                    isCurrentEmployee={isCurrentEmployee}
                     id={data.employee_id}
                     employee_email={data.employee_email}
                     employee_name={data.employee_name}
@@ -62,7 +74,7 @@ export const Profile = () => {
                     skills={data.skills}
                     team={data.team}
                 />
-            }
+            )}
         </div>
     )
 }

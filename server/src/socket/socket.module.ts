@@ -14,7 +14,7 @@ import { SkillModule } from 'src/SkillModule/skill.module'
 import { Skill } from 'src/SkillModule/skill.entity'
 import { NotificationModule } from 'src/NotificationModule/notification.module'
 import { Notification } from 'src/NotificationModule/notification.entity'
-import { SocketDocsController } from './socket-docs.controller';
+import { SocketDocsController } from './socket-docs.controller'
 
 @Module({
   imports: [

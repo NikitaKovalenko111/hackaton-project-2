@@ -17,7 +17,7 @@ import { Role } from './role.entity'
     MulterModule.register({
       storage: diskStorage({
         destination(req: Request, file: Express.Multer.File, cb) {
-          cb(null, path.join(__dirname, '../../../profilePhotos'))
+          cb(null, path.join(__dirname, '../../profilePhotos'))
         },
         filename(req: Request, file: Express.Multer.File, cb) {
           cb(
@@ -31,12 +31,7 @@ import { Role } from './role.entity'
         },
       }),
     }),
-    TypeOrmModule.forFeature([
-      Employee, 
-      Employee_token, 
-      Skill,
-      Role
-    ]),
+    TypeOrmModule.forFeature([Employee, Employee_token, Skill, Role]),
   ],
   controllers: [EmployeeController],
   providers: [EmployeeService, TokenService],

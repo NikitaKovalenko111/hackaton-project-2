@@ -1,7 +1,7 @@
 import { Controller, Get, HttpException, Req } from '@nestjs/common'
 import { RequestService } from './request.service'
-import { Request as RequestEntity } from './request.entity';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Request as RequestEntity } from './request.entity'
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger'
 
 @ApiTags('requests')
 @Controller('request')
@@ -9,7 +9,9 @@ export class RequestController {
   constructor(private readonly requestService: RequestService) {}
 
   @Get('/received/getAll')
-  @ApiOperation({ summary: 'Получить все входящие запросы текущего пользователя' })
+  @ApiOperation({
+    summary: 'Получить все входящие запросы текущего пользователя',
+  })
   @ApiResponse({ status: 200, type: [RequestEntity] })
   async getAllReceivedRequest(@Req() req: Request) {
     try {
@@ -24,7 +26,9 @@ export class RequestController {
   }
 
   @Get('/sended/getAll')
-  @ApiOperation({ summary: 'Получить все отправленные запросы текущего пользователя' })
+  @ApiOperation({
+    summary: 'Получить все отправленные запросы текущего пользователя',
+  })
   @ApiResponse({ status: 200, type: [RequestEntity] })
   async getAllSendedRequest(@Req() req: Request) {
     try {

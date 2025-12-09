@@ -20,25 +20,32 @@ export class Skill {
 
   @ApiProperty({ type: () => SkillShape, description: 'Шаблон навыка' })
   @ManyToOne(() => SkillShape, (skillShape) => skillShape.skills)
-  @JoinColumn({ 
-    name: 'skill_shape_id' 
+  @JoinColumn({
+    name: 'skill_shape_id',
   })
   skill_shape: SkillShape
 
-  @ApiProperty({ enum: skillLevel, example: skillLevel.MIDDLE, description: 'Текущий уровень навыка' })
+  @ApiProperty({
+    enum: skillLevel,
+    example: skillLevel.MIDDLE,
+    description: 'Текущий уровень навыка',
+  })
   @Column({
     type: 'enum',
-    enum: skillLevel
+    enum: skillLevel,
   })
   skill_level: skillLevel
 
   @OneToMany(() => Request, (request) => request.request_skill)
   requests: Request[]
-  
- @ApiProperty({ type: () => Employee, description: 'Сотрудник, которому принадлежит навык' })
+
+  @ApiProperty({
+    type: () => Employee,
+    description: 'Сотрудник, которому принадлежит навык',
+  })
   @ManyToOne(() => Employee, (employee) => employee.skills)
-  @JoinColumn({ 
-    name: 'employee_id' 
+  @JoinColumn({
+    name: 'employee_id',
   })
   employee: Employee
 

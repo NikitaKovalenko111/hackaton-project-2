@@ -1,18 +1,26 @@
-import { Button } from "@/components/ui/button";
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { SkillOrderGet } from "@/modules/skills/domain/skills.types";
+import { Button } from '@/components/ui/button'
+import {
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog'
+import { SkillOrderGet } from '@/modules/skills/domain/skills.types'
 
 interface OrderInfoProps {
-    data: SkillOrderGet | null,
+    data: SkillOrderGet | null
     handleClose: () => void
 }
 
-export const OrderInfo = ({data, handleClose}: OrderInfoProps) => {
-    
-    return(
+export const OrderInfo = ({ data, handleClose }: OrderInfoProps) => {
+    return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle className="capitalize">Регламент компетенции {data!.skill_shape.skill_name}</DialogTitle>
+                <DialogTitle className="capitalize">
+                    Регламент компетенции {data!.skill_shape.skill_name}
+                </DialogTitle>
                 <DialogDescription>
                     Полная информация о регламенте.
                 </DialogDescription>

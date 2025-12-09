@@ -28,7 +28,7 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
-} from '@nestjs/swagger';
+} from '@nestjs/swagger'
 
 @ApiTags('Review')
 @Controller('review')
@@ -103,15 +103,20 @@ export class ReviewController {
     try {
       const employeeId = (req as any).employee.employee_id
 
-      const company = (await this.employeeService.getEmployee(employeeId)).company
+      const company = (await this.employeeService.getEmployee(employeeId))
+        .company
 
       if (!company) {
         throw new HttpException('Компания не найдена!', HttpStatus.NOT_FOUND)
       }
 
-      const review = await this.reviewService.getReviewByCompany(company.company_id)
+      const review = await this.reviewService.getReviewByCompany(
+        company.company_id,
+      )
 
-      const questions = await this.reviewService.getReviewQuestions(review.review_id)
+      const questions = await this.reviewService.getReviewQuestions(
+        review.review_id,
+      )
 
       return questions
     } catch (error) {
@@ -151,10 +156,12 @@ export class ReviewController {
       ).values.length
       const employeesCount = (
         await this.companyService.getEmployees(company_id)
-      ).filter(employee => employee.role?.role_name != RoleType.HR).length
+      ).filter((employee) => employee.role?.role_name != RoleType.HR).length
 
       if (ids == employeesCount) {
-        this.socketGateway.server.to(`company/${company_id}`).emit('endedPerfomanceReview')
+        this.socketGateway.server
+          .to(`company/${company_id}`)
+          .emit('endedPerfomanceReview')
         const reviewData = await this.reviewService.endReview(review_id)
       }
 

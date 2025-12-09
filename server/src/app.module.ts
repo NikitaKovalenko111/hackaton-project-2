@@ -30,10 +30,14 @@ import { AIModule } from './AIModule/ai.module'
 import { SkillOrder } from './SkillModule/skillOrder.entity'
 import { NotificationModule } from './NotificationModule/notification.module'
 import { Notification } from './NotificationModule/notification.entity'
-
+import { ServeStaticModule } from '@nestjs/serve-static'
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ServeStaticModule.forRoot({
+      rootPath: __dirname + '/..' + '/profilePhotos',
+      serveRoot: '/profilePhotos/',
+    }),
     CompanyModule,
     EmployeeModule,
     InterviewModule,
@@ -81,10 +85,12 @@ export class AppModule implements NestModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
+        '/profilePhotos/*',
         '/employee/registration',
         '/employee/authorization',
-        '/employee/refresh'
+        '/employee/authorization/telegram',
+        '/employee/refresh',
       )
-      .forRoutes("*")
+      .forRoutes('*')
   }
 }

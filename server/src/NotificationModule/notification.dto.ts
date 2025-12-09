@@ -1,10 +1,10 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { Notification } from "./notification.entity"
+import { ApiProperty } from '@nestjs/swagger'
+import { Notification } from './notification.entity'
 
 export class applyNotificationBodyDto {
   @ApiProperty({
     example: 3,
-    description: "ID уведомления, которое нужно применить"
+    description: 'ID уведомления, которое нужно применить',
   })
   notification_id: number
 }
@@ -22,7 +22,7 @@ export class notificationDataDto {
     type: 'object',
     example: {
       interview_id: 12,
-      interview_subject: "test@example.com",
+      interview_subject: 'test@example.com',
     },
   })
   object: any

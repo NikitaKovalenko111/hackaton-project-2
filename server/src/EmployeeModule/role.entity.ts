@@ -9,7 +9,7 @@ import {
 import { Employee } from './employee.entity'
 import { Company } from 'src/CompanyModule/company.entity'
 import type { RoleType } from 'src/types'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 @Entity()
 export class Role {
@@ -23,7 +23,7 @@ export class Role {
 
   @ApiProperty({ type: () => Employee })
   @OneToOne(() => Employee, {
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'employee_id' })
   employee: Employee

@@ -1,7 +1,11 @@
-import { ROLE } from "@/libs/constants";
-import { CompanyData } from "@/modules/company/domain/company.type";
-import { Skill, SkillLevel, SkillShape } from "@/modules/skills/domain/skills.types";
-import { Team } from "@/modules/teams/domain/teams.type";
+import { ROLE } from '@/libs/constants'
+import { CompanyData } from '@/modules/company/domain/company.type'
+import {
+    Skill,
+    SkillLevel,
+    SkillShape,
+} from '@/modules/skills/domain/skills.types'
+import { Team } from '@/modules/teams/domain/teams.type'
 
 export interface Role {
     role_id: number
@@ -9,13 +13,13 @@ export interface Role {
 }
 
 export interface Employee {
-    employee_id: number;
-    employee_name: string;
-    employee_surname: string;
-    employee_email: string;
-    employee_status: string;
-    employee_photo: string;
-    employee_password: string;
+    employee_id: number
+    employee_name: string
+    employee_surname: string
+    employee_email: string
+    employee_status: string
+    employee_photo: string
+    employee_password: string
     telegram_id: number
     role: Role
     company: CompanyData
@@ -26,6 +30,9 @@ export interface Employee {
 export interface AiPlanDTO {
     skill_shape_id: number
     skill_level: SkillLevel
+}
+export interface AiReviewData {
+    message: string
 }
 
 export interface AiPlanData {

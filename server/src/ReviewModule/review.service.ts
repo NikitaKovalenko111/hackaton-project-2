@@ -26,7 +26,7 @@ export class ReviewService {
 
     private schedulerRegistry: SchedulerRegistry,
 
-    private readonly socketGateway: SocketGateway
+    private readonly socketGateway: SocketGateway,
   ) {}
 
   async addQuestion(questionText: string, reviewId: number): Promise<Question> {
@@ -72,7 +72,10 @@ export class ReviewService {
     }
   }
 
-  async setReview(reviewId: number, reviewInterval: intervalI): Promise<Review> {
+  async setReview(
+    reviewId: number,
+    reviewInterval: intervalI,
+  ): Promise<Review> {
     try {
       const review = await this.reviewRepository.findOne({
         where: {
@@ -87,16 +90,19 @@ export class ReviewService {
       let months = ''
 
       reviewInterval.months.forEach((m, i) => {
-        if (i != reviewInterval.months.length-1) {
+        if (i != reviewInterval.months.length - 1) {
           months += `${m},`
         } else {
           months += `${m}`
         }
       })
 
-      const job = new CronJob(`0 0 ${reviewInterval.day} ${months} *`, async () => {
-        await this.startReview(review.review_id)
-      })
+      const job = new CronJob(
+        `0 0 ${reviewInterval.day} ${months} *`,
+        async () => {
+          await this.startReview(review.review_id)
+        },
+      )
 
       this.schedulerRegistry.addCronJob('startReviewJob', job)
 
@@ -119,20 +125,22 @@ export class ReviewService {
     try {
       const review = await this.reviewRepository.findOne({
         where: {
-          review_id: reviewId
+          review_id: reviewId,
         },
         relations: {
-          company: true
-        }
+          company: true,
+        },
       })
 
       if (!review) {
         throw new ApiError(HttpStatus.NOT_FOUND, 'Ревью не найдено!')
       }
 
-      this.socketGateway.server.to(`company/${review.company.company_id}`).emit('startedReview', {
-        msg: 'review started!'
-      })
+      this.socketGateway.server
+        .to(`company/${review.company.company_id}`)
+        .emit('startedReview', {
+          msg: 'review started!',
+        })
 
       review.review_status = reviewStatus.ACTIVE
 
@@ -194,19 +202,19 @@ export class ReviewService {
   }
 
   async scheduleTesting() {
-    console.log("Scheduled");
+    console.log('Scheduled')
   }
 
   async getReviewByCompany(companyId: number): Promise<Review> {
     const review = await this.reviewRepository.findOne({
       where: {
         company: {
-          company_id: companyId
-        }
+          company_id: companyId,
+        },
       },
       relations: {
-        company: true
-      }
+        company: true,
+      },
     })
 
     if (!review) {
@@ -220,9 +228,9 @@ export class ReviewService {
     const questions = await this.questionRepository.find({
       where: {
         review: {
-          review_id: reviewId
-        }
-      }
+          review_id: reviewId,
+        },
+      },
     })
 
     return questions

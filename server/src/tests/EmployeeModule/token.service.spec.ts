@@ -15,14 +15,14 @@ describe('TokenService', () => {
     repo = {
       findOne: jest.fn(),
       save: jest.fn(),
-      remove: jest.fn()
+      remove: jest.fn(),
     }
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TokenService,
-        { provide: getRepositoryToken(Employee_token), useValue: repo }
-      ]
+        { provide: getRepositoryToken(Employee_token), useValue: repo },
+      ],
     }).compile()
 
     service = module.get<TokenService>(TokenService)
@@ -40,7 +40,7 @@ describe('TokenService', () => {
 
     expect(result).toEqual({
       accessToken: 'token',
-      refreshToken: 'token'
+      refreshToken: 'token',
     })
 
     expect(jwt.sign).toHaveBeenCalled()
@@ -62,7 +62,9 @@ describe('TokenService', () => {
       throw new Error('invalid')
     })
 
-    await expect(service.validateAccessToken('badtoken')).rejects.toThrow(ApiError)
+    await expect(service.validateAccessToken('badtoken')).rejects.toThrow(
+      ApiError,
+    )
   })
 
   // ------------ validateRefreshToken ------------
@@ -91,7 +93,7 @@ describe('TokenService', () => {
 
   it('should create new token if not exists', async () => {
     repo.findOne.mockResolvedValue(null)
-    repo.save.mockImplementation(async x => x) // returns saved object
+    repo.save.mockImplementation(async (x) => x) // returns saved object
 
     const result = await service.saveToken(5, 'abc')
 

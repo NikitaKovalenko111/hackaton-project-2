@@ -13,7 +13,7 @@ import { TokenService } from 'src/EmployeeModule/token.service'
 export class AuthMiddleware implements NestMiddleware {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly employeeService: EmployeeService
+    private readonly employeeService: EmployeeService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
@@ -43,14 +43,16 @@ export class AuthMiddleware implements NestMiddleware {
         )
       }
 
-      const employeeData = await this.employeeService.getEmployee((employeeDataToken as Employee).employee_id)
+      const employeeData = await this.employeeService.getEmployee(
+        (employeeDataToken as Employee).employee_id,
+      )
 
       ;(req as any).employee = {
         employee_id: employeeData.employee_id,
         employee_email: employeeData.employee_email,
         company_id: employeeData.company?.company_id,
         team_id: employeeData.team?.team_id,
-        role: employeeData.role?.role_id
+        role: employeeData.role?.role_id,
       }
 
       next()

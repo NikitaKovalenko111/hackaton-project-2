@@ -1,14 +1,13 @@
 'use client'
 
 // import socket from "@/app/socket"
-import { Request } from "@/libs/constants"
-import { SocketContext, useSocket } from "@/libs/hooks/useSocket"
-import { useContext, useEffect, useState } from "react"
-import { toast } from "sonner"
+import { Request } from '@/libs/constants'
+import { SocketContext, useSocket } from '@/libs/hooks/useSocket'
+import { useContext, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export const Notifications = () => {
-
-    const {socket} = useContext(SocketContext)
+    const { socket } = useContext(SocketContext)
     // const [requests, setRequests] = useState<Request[]>([])
     // const {socket} = useSocket()
 
@@ -17,22 +16,27 @@ export const Notifications = () => {
 
         const handleNewRequest = (request: Request) => {
             // setRequests(prev => [...prev.slice(0, 9), request])
-            toast("Запрос на повышение уровня!", {
-                description: <div>
-                    <p>Сотрудник: {request.request_owner.employee_name} {request.request_owner.employee_surname}</p>
-                    <p>Email: {request.request_owner.employee_email}</p>
-                    </div>,
+            toast('Запрос на повышение уровня!', {
+                description: (
+                    <div>
+                        <p>
+                            Сотрудник: {request.request_owner.employee_name}{' '}
+                            {request.request_owner.employee_surname}
+                        </p>
+                        <p>Email: {request.request_owner.employee_email}</p>
+                    </div>
+                ),
                 action: {
                     label: 'Понял',
-                    onClick: () => {}
+                    onClick: () => {},
                 },
                 classNames: {
-                    description: "!text-foreground/80"
-                }
+                    description: '!text-foreground/80',
+                },
             })
         }
 
-        socket.on('newRequest', (request: Request) =>  {
+        socket.on('newRequest', (request: Request) => {
             handleNewRequest(request)
         })
 
@@ -43,7 +47,5 @@ export const Notifications = () => {
         }
     }, [socket])
 
-    return (
-        <div></div>
-    )
+    return <div></div>
 }

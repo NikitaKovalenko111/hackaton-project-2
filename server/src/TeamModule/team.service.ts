@@ -6,6 +6,8 @@ import { CompanyService } from 'src/CompanyModule/company.service'
 import { EmployeeService } from 'src/EmployeeModule/employee.service'
 import { Employee } from 'src/EmployeeModule/employee.entity'
 import ApiError from 'src/apiError'
+import { RoleType } from 'src/types'
+import { Role } from 'src/EmployeeModule/role.entity'
 
 @Injectable()
 export class TeamService {
@@ -16,6 +18,9 @@ export class TeamService {
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
 
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
+
     private companyService: CompanyService,
     private employeeService: EmployeeService,
   ) {}
@@ -23,8 +28,8 @@ export class TeamService {
   async removeTeam(teamId: number): Promise<Team> {
     const team = await this.teamRepository.findOne({
       where: {
-        team_id: teamId
-      }
+        team_id: teamId,
+      },
     })
 
     if (!team) {
@@ -33,11 +38,11 @@ export class TeamService {
 
     const employees = await this.employeeRepository.find({
       where: {
-        team: team
-      }
+        team: team,
+      },
     })
 
-    employees.forEach(el => {
+    employees.forEach((el) => {
       el.team = null
     })
 
@@ -51,14 +56,14 @@ export class TeamService {
     const teams = await this.teamRepository.find({
       where: {
         company: {
-          company_id: companyId
-        }
+          company_id: companyId,
+        },
       },
       relations: {
         employees: {
-          role: true
-        }
-      }
+          role: true,
+        },
+      },
     })
 
     return teams
@@ -73,6 +78,7 @@ export class TeamService {
     try {
       const company = await this.companyService.getCompanyInfo(companyId)
       const teamlead = await this.employeeService.getEmployee(teamlead_id)
+      const role = await this.employeeService.getEmployeeRoleById(teamlead_id)
 
       const team = new Team({
         team_name: teamName,
@@ -87,6 +93,9 @@ export class TeamService {
         teamData.team_id,
         teamData.teamlead.employee_id,
       )
+
+      role.role_name = RoleType.TEAMLEAD
+      await this.roleRepository.save(role)
 
       return teamData
     } catch (error) {
@@ -132,12 +141,17 @@ export class TeamService {
   async getTeamEmployees(employeeId: number): Promise<Employee[]> {
     try {
       const employee = await this.employeeService.getEmployee(employeeId)
-      
+
       if (employee.team == null) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+        throw new ApiError(
+          HttpStatus.BAD_REQUEST,
+          'Пользователь не состоит в команде!',
+        )
       }
 
-      const employees = await this.employeeService.getEmployeesByTeam(employee.team.team_id)
+      const employees = await this.employeeService.getEmployeesByTeam(
+        employee.team.team_id,
+      )
 
       return employees
     } catch (error) {
@@ -153,7 +167,10 @@ export class TeamService {
       const employee = await this.employeeService.getEmployee(employeeId)
 
       if (employee.team == null) {
-        throw new ApiError(HttpStatus.BAD_REQUEST, 'Пользователь не состоит в команде!')
+        throw new ApiError(
+          HttpStatus.BAD_REQUEST,
+          'Пользователь не состоит в команде!',
+        )
       }
 
       const team = await this.teamRepository.findOne({
