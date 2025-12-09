@@ -8,7 +8,7 @@ load_dotenv()
 invalid_emails = ['invalid@', 'invalid@mail', '@mail', '@mail.ru',
                 ' ', '', 'invalid'*1000 + 'google.com', "' OR '1'='1"]
 
-invalid_passwords = ['123', '123'*1000, "' OR '1'='1'", '']
+invalid_passwords = ['123', '123'*1000, "' OR '1'='1", '']
 invalid_names = [' ', '', 'long' * 1000, "' OR '1'='1"]
 invalid_surnames = [' ', '', 'long' * 1000, "' OR '1'='1"]
 
@@ -104,7 +104,6 @@ def test_guest_cant_do_auth_with_invalid_name(page, name):
     page.go_to_auth_form()
     faker = Faker()
     full = faker.name().split()
-    name = full[0]
     surname = full[-1]
     page.fill_name_field(name)
     page.fill_surname_field(surname)
@@ -120,7 +119,6 @@ def test_guest_cant_do_auth_with_invalid_surname(page, surname):
     faker = Faker()
     full = faker.name().split()
     name = full[0]
-    surname = full[-1]
     page.fill_name_field(name)
     page.fill_surname_field(surname)
     page.fill_auth_email_field(faker.email(domain='google.com'))
