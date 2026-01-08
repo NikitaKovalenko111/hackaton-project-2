@@ -34,6 +34,11 @@ jobs:
     - name: Install python dependencies
       run: pip install -r requirements.txt
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
     - name: Setup npm
       run:
         npm install
