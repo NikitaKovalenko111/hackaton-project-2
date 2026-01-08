@@ -17,7 +17,7 @@ site_url = os.getenv('FRONTEND_ORIGIN')
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(item, call):
-    """Пук для получения статуса теста"""
+    """хук для получения статуса теста"""
     outcome = yield
     report = outcome.get_result()
 
