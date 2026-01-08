@@ -44,10 +44,10 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Setup npm
+    - name: Install npm dependencies
       run: |
-        npm install --include=dev
-        npm run install
+        npm install concurrently
+        npm install
 
     - name: building project
       run: npm run build
