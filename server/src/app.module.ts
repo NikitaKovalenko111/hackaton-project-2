@@ -38,6 +38,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
     ServeStaticModule.forRoot({
       rootPath: __dirname + '/..' + '/../profilePhotos',
       serveRoot: '/profilePhotos/',
+
     }),
     CompanyModule,
     EmployeeModule,
@@ -75,7 +76,7 @@ import { ServeStaticModule } from '@nestjs/serve-static'
         Review,
         Statistics,
       ],
-      synchronize: false,
+      synchronize: true,
     }),
   ],
   controllers: [AppController],

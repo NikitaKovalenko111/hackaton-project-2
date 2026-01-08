@@ -1,129 +1,101 @@
 from .pages.auth_page import AuthPage
+from .testing_data import invalid_auth_data_tuples, valid_auth_data_tuples, \
+    invalid_passwords
+
 import pytest
 from dotenv import load_dotenv
 import os
 from faker import Faker
-
+import allure
 load_dotenv()
-invalid_emails = ['invalid@', 'invalid@mail', '@mail', '@mail.ru',
-                ' ', '', 'invalid'*1000 + 'google.com', "' OR '1'='1"]
-
-invalid_passwords = ['123', '123'*1000, "' OR '1'='1'", '']
-invalid_names = [' ', '', 'long' * 1000, "' OR '1'='1"]
-invalid_surnames = [' ', '', 'long' * 1000, "' OR '1'='1"]
-
 
 
 @pytest.fixture
 def page(browser):
     base_url = os.getenv('FRONTEND_ORIGIN')
     link = base_url + '/auth'
-    page = AuthPage(browser, link)
-    page.open()
+    page = AuthPage(browser)
+    page.open(link)
     return page
 
 
-def test_change_form(page):
+@pytest.fixture
+def test_data():
+    faker = Faker()
+    name, surname = faker.name().split(maxsplit=1)
+    data = {
+        'name': name,
+        'surname': surname,
+        'email': faker.email(),
+        'password': faker.password()
+    }
+    return data
+
+
+@allure.feature("form changing")
+def test_form_should_be_changing(page):
     current_form = page.get_current_form()
     page.go_to_auth_form()
-    assert current_form != page.get_current_form(), "form didn't changed after button clicked"
+    with allure.step("checking current form don't match with previous form"):
+        assert current_form != page.get_current_form(), \
+            "form didn't changed after button clicked"
 
 
-def test_guest_can_log_in(page):
-    page.fill_log_in_email_field('testing1@gmail.com')
-    page.fill_log_in_password_field('difficultpassword')
-    page.log_in_button_click()
-    assert page.get_status() == 'Вы вошли!'
+@allure.feature("account login")
+class TestLogin:
+    def test_guest_can_log_in(self, page):
+        page.fill_log_in_email_field('testing@gmail.com')
+        page.fill_log_in_password_field('difficultpassword')
+        page.log_in_button_click()
+        with allure.step("checking current url is having 'company'"):
+            assert page.is_url_have('company'), \
+                "user was not redirected to company page after login"
+        with allure.step("checking user's browser have accessToken"):
+            assert page.is_user_authorised(), \
+                "user is not authorised after login"
 
-def test_guest_can_do_authorisation(page):
-    faker = Faker()
-    full = faker.name().split()
-    name = full[0]
-    surname = full[-1]
-
-    email = faker.email(domain='gmail.com')
-    password = faker.password()
-    page.go_to_auth_form()
-
-    page.fill_name_field(name)
-    page.fill_surname_field(surname)
-    page.fill_auth_email_field(email)
-    page.fill_auth_password_field(password)
-    page.auth_button_click()
-    assert page.get_status() == 'Вы зарегистрировались!'
-
-
-
-@pytest.mark.parametrize('email', invalid_emails)
-def test_guest_cant_login_with_invalid_email(page, email):
-    page.fill_log_in_email_field(email)
-    page.fill_log_in_password_field('123456')
-    page.log_in_button_click()
-    assert page.get_status() != 'Вы вошли!'
+    @pytest.mark.parametrize('password', invalid_passwords)
+    def test_guest_cant_login_with_invalid_password(self, page, password):
+        page.fill_log_in_email_field('testing@gmail.com')
+        page.fill_log_in_password_field(password)
+        page.log_in_button_click()
+        with allure.step("checking current page url haven't 'company'"):
+            assert page.is_url_have('company') is False, \
+                f"user was redirected to company page after login with invalid password = {password}"
+        with allure.step("checking user's browser haven't accessToken"):
+            assert page.is_user_authorised() is False, \
+                f"user is having session data after login with invalid password = {password}"
 
 
-@pytest.mark.parametrize('password', invalid_passwords)
-def test_guest_cant_login_with_invalid_password(page, password):
-    page.fill_log_in_email_field('testing1@gmail.com')
-    page.fill_log_in_password_field(password)
-    page.log_in_button_click()
-    assert page.get_status() != 'Вы вошли!'
+@allure.feature("authorisation")
+class TestAuthorisation:
+    @pytest.mark.parametrize('test_field', valid_auth_data_tuples)
+    def test_guest_can_do_authorisation_with_valid_data(self, page, test_data, test_field):
+        test_data[test_field[0]] = test_field[1]
+        page.go_to_auth_form()
+        page.fill_auth_form(test_data)
+        page.auth_button_click()
 
+        with allure.step("checking current url is having 'company'"):
+            assert page.is_url_have('company'), \
+                f"user was not redirected to company page after auth with {test_field[0]} = {test_field[1]}"
+        with allure.step("checking current url is having 'company'"):
+            assert page.is_user_authorised(), \
+                f"session data was not set with {test_field[0]} = {test_field[1]}"
 
-@pytest.mark.parametrize('email', invalid_emails)
-def test_guest_cant_do_auth_with_invalid_email(page, email):
-    page.go_to_auth_form()
-    full = Faker().name().split()
-    name = full[0]
-    surname = full[-1]
-    page.fill_name_field(name)
-    page.fill_surname_field(surname)
-    page.fill_auth_email_field(email)
-    page.fill_auth_password_field('123456')
-    page.auth_button_click()
-    assert page.get_status() != 'Вы зарегистрировались!'
+    @pytest.mark.parametrize('test_field', invalid_auth_data_tuples)
+    def test_guest_cant_do_authorization_with_invalid_data(self, page, test_data, test_field):
+        test_data[test_field[0]] = test_field[1]
+        page.go_to_auth_form()
+        page.fill_auth_form(test_data)
+        page.auth_button_click()
 
+        with allure.step("checking current url haven't 'company'"):
+            assert page.is_url_have('company') is False, \
+                (f"user was redirected to company page after auth"
+                 f" with invalid {test_field[0]} = {test_field[1]}")
 
-@pytest.mark.parametrize('password', invalid_passwords)
-def test_guest_cant_do_auth_with_invalid_password(page, password):
-    page.go_to_auth_form()
-    faker = Faker()
-    full = faker.name().split()
-    name = full[0]
-    surname = full[-1]
-    page.fill_name_field(name)
-    page.fill_surname_field(surname)
-    page.fill_auth_email_field(faker.email(domain='google.com'))
-    page.fill_auth_password_field(password)
-    page.auth_button_click()
-    assert page.get_status() != 'Вы зарегистрировались!'
-
-
-@pytest.mark.parametrize('name', invalid_names)
-def test_guest_cant_do_auth_with_invalid_name(page, name):
-    page.go_to_auth_form()
-    faker = Faker()
-    full = faker.name().split()
-    name = full[0]
-    surname = full[-1]
-    page.fill_name_field(name)
-    page.fill_surname_field(surname)
-    page.fill_auth_email_field(faker.email(domain='google.com'))
-    page.fill_auth_password_field('123456')
-    page.auth_button_click()
-    assert page.get_status() != 'Вы зарегистрировались!'
-
-
-@pytest.mark.parametrize('surname', invalid_surnames)
-def test_guest_cant_do_auth_with_invalid_surname(page, surname):
-    page.go_to_auth_form()
-    faker = Faker()
-    full = faker.name().split()
-    name = full[0]
-    surname = full[-1]
-    page.fill_name_field(name)
-    page.fill_surname_field(surname)
-    page.fill_auth_email_field(faker.email(domain='google.com'))
-    page.fill_auth_password_field('123456')
-    page.auth_button_click()
-    assert page.get_status() != 'Вы зарегистрировались!'
+        with allure.step("checking user's browser haven't accessToken"):
+            assert page.is_user_authorised() is False, \
+                (f"user is having session data after auth with"
+                 f" invalid {test_field[0]} = {test_field[1]}")
