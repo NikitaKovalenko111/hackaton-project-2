@@ -31,8 +31,16 @@ jobs:
       with:
             python-version: '3.9'
 
-    - name: Install dependencies
+    - name: Install python dependencies
       run: pip install -r requirements.txt
+
+    - name: Setup npm
+      run:
+        npm install
+        npm run install
+
+    - name: building project
+      run: npm run build
 
     - name: Run server
       run: npm run start:dev
