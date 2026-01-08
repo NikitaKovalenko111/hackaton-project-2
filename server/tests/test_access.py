@@ -44,7 +44,7 @@ class TestPageAccess:
     def test_user_with_company_can_go_to_main_pages(self, user_with_company_browser, page):
         page_url = base_url + '/' + page
         p = BasePage(user_with_company_browser)
-        p.is_url_have('profile')
+        p.is_url_have('/profile')
         p.open(page_url)
         with allure.step(f"checking current url have '/{page}'"):
             assert p.is_url_have(page), \
