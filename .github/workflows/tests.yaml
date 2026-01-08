@@ -5,14 +5,19 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    env:
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_USERNAME: postgres
+        DB_PASSWORD: 123456
+        DB_NAME: postgres
+        JWT_ACCESS_SECRET: F57cdRCyYNKLTXt3qCuJ
+        JWT_REFRESH_SECRET: KyJLbjwriPv7Df7qdzDT
+        GIGACHAT_AUTHORIZATION_KEY: MDE5YTM5NDctNGYyNC03MjZhLWFmNDktMTk1MjIzMTE3M2RiOmM2YTEwNzQ5LWQ3MzItNDBjZS04MjZkLTI4MDhkNjExOWNjMQ==
+        FRONTEND_ORIGIN: http://localhost:3000
     services:
       postgres:
         image: postgres:15
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 123456
-          POSTGRES_DB: postgres
         ports:
           - 5432:5432
 
@@ -40,7 +45,7 @@ jobs:
         node-version: '18'
 
     - name: Setup npm
-      run:
+      run: |
         npm install
         npm run install
 
@@ -52,13 +57,4 @@ jobs:
 
     - name: Run tests
       run: pytest
-      env:
-        DB_HOST: localhost
-        DB_PORT: 5432
-        DB_USERNAME: postgres
-        DB_PASSWORD: 123456
-        DB_NAME: postgres
-        JWT_ACCESS_SECRET: F57cdRCyYNKLTXt3qCuJ
-        JWT_REFRESH_SECRET: KyJLbjwriPv7Df7qdzDT
-        GIGACHAT_AUTHORIZATION_KEY: MDE5YTM5NDctNGYyNC03MjZhLWFmNDktMTk1MjIzMTE3M2RiOmM2YTEwNzQ5LWQ3MzItNDBjZS04MjZkLTI4MDhkNjExOWNjMQ==
-        FRONTEND_ORIGIN: http://localhost:3000
+
