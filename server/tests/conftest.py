@@ -178,4 +178,3 @@ def initial_state():
 def fresh_state():
     clean_all_db()
     create_users_and_initial_company()
-
