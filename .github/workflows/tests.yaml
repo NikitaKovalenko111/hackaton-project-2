@@ -64,7 +64,13 @@ jobs:
           curl -f http://localhost:3000 || exit 1
 
     - name: Run tests
-      run: pytest --alluredir=allure-results
+      run: |
+        pwd
+        ls -la
+        pytest --alluredir=./allure-results
+        echo "Checking allure-results directory:"
+        ls -la ./allure-results/
+        find ./allure-results -type f | head -10
 
     - name: Upload Allure results
       if: always()
