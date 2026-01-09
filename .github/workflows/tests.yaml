@@ -67,7 +67,7 @@ jobs:
       run: |
         pwd
         ls -la
-        pytest .server/tests/test_access.py --alluredir=./allure-results
+        pytest ./server/tests/test_access.py --alluredir=./allure-results
         echo "Checking allure-results directory:"
         ls -la ./allure-results/
         find ./allure-results -type f | head -10
