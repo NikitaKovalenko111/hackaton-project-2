@@ -8,12 +8,12 @@ jobs:
     env:
         DB_HOST: localhost
         DB_PORT: 5432
-        DB_USERNAME: postgres
-        DB_PASSWORD: 123456
-        DB_NAME: postgres
-        JWT_ACCESS_SECRET: F57cdRCyYNKLTXt3qCuJ
-        JWT_REFRESH_SECRET: KyJLbjwriPv7Df7qdzDT
-        GIGACHAT_AUTHORIZATION_KEY: MDE5YTM5NDctNGYyNC03MjZhLWFmNDktMTk1MjIzMTE3M2RiOmM2YTEwNzQ5LWQ3MzItNDBjZS04MjZkLTI4MDhkNjExOWNjMQ==
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        DB_NAME: ${{ secrets.DB_NAME }}
+        JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
+        JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET}}
+        GIGACHAT_AUTHORIZATION_KEY: ${{ secrets.GIGACHAT_AUTHORIZATION_KEY }}
         FRONTEND_ORIGIN: http://localhost:3000
         NEXT_PUBLIC_BACKEND_API: http://localhost:3001
         NEXT_PUBLIC_SOCKET_URL: http://localhost:3001
@@ -21,9 +21,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 123456
-          POSTGRES_DB: postgres
+          POSTGRES_USER: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
         ports:
           - 5432:5432
 
@@ -67,17 +67,17 @@ jobs:
       run: |
         pwd
         ls -la
-        pytest ./server/tests/test_access.py --alluredir=./allure-results
+        pytest  --alluredir=./${{ secrets.ALLURE_DIR }}
         echo "Checking allure-results directory:"
-        ls -la ./allure-results/
-        find ./allure-results -type f | head -10
+        ls -la ./${{ secrets.ALLURE_DIR }}/
+        find ./${{ secrets.ALLURE_DIR }} -type f | head -10
 
     - name: Upload Allure results
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: allure-results
-        path: allure-results/
+        path: ${{ secrets.ALLURE_DIR }}/
         retention-days: 1
 
   deploy:
@@ -93,7 +93,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: allure-results
-        path: ./allure-results
+        path: ./${{ secrets.ALLURE_DIR }}
 
     - name: Setup Java
       uses: actions/setup-java@v4  # ⬅️ обновил
@@ -110,12 +110,12 @@ jobs:
     - name: Generate Allure report
       run: |
         # Проверяем есть ли результаты
-        if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
+        if [ -d "${{ secrets.ALLURE_DIR }}" ] && [ "$(ls -A ${{ secrets.ALLURE_DIR }})" ]; then
           echo "Generating Allure report..."
-          allure generate allure-results -o allure-report --clean
+          allure generate ${{ secrets.ALLURE_DIR }} -o ${{ secrets.ALLURE_REPORT }} --clean
         else
           echo "No test results, creating empty report"
-          mkdir -p allure-report
+          mkdir -p ${{ secrets.ALLURE_REPORT }}
           echo '<html><body><h1>No test results available</h1></body></html>' > allure-report/index.html
         fi
 
@@ -127,7 +127,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v4
       with:
-        path: './allure-report'
+        path: './${{ secrets.ALLURE_REPORT }}'
 
     - name: Deploy to GitHub Pages
       id: deployment
