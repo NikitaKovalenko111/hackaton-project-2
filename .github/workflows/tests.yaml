@@ -32,13 +32,11 @@ jobs:
         ports:
           - 4444:4444
 
-
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4  # ⬅️ обновил
 
     - name: Setup Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5  # ⬅️ обновил
       with:
             python-version: '3.9'
 
@@ -46,7 +44,7 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4  # ⬅️ обновил
       with:
         node-version: '18'
 
@@ -76,8 +74,8 @@ jobs:
         retention-days: 1
 
   deploy:
-    needs: test  # ждет завершения тестов
-    if: always()
+    needs: test
+    if: always()  # ⬅️ ДОБАВЬ чтобы deploy запускался даже при падении тестов
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -89,8 +87,8 @@ jobs:
       with:
         name: allure-results
 
-    - name: Setup Java (для Allure CLI)
-      uses: actions/setup-java@v3
+    - name: Setup Java
+      uses: actions/setup-java@v4  # ⬅️ обновил
       with:
         distribution: 'temurin'
         java-version: '17'
@@ -103,7 +101,15 @@ jobs:
 
     - name: Generate Allure report
       run: |
-        allure generate allure-results -o allure-report --clean
+        # Проверяем есть ли результаты
+        if [ -d "allure-results" ] && [ "$(ls -A allure-results)" ]; then
+          echo "Generating Allure report..."
+          allure generate allure-results -o allure-report --clean
+        else
+          echo "No test results, creating empty report"
+          mkdir -p allure-report
+          echo '<html><body><h1>No test results available</h1></body></html>' > allure-report/index.html
+        fi
 
     - name: Setup Pages
       uses: actions/configure-pages@v3
@@ -116,4 +122,3 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v2
-
