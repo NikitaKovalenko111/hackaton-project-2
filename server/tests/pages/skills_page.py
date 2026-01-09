@@ -112,11 +112,13 @@ class SkillsPage(BaseMainPage):
 
     @allure.step("waiting skill quantity changed")
     def wait_skill_quantity_changed(self, initial_quantity):
+        print("initial", initial_quantity)
         def condition(driver):
-            return self.get_skill_items_quantity() != initial_quantity
+            return self.get_skill_items_quantity() != initial_quantity and self.get_last_skill_item_name() != ''
 
         try:
             WebDriverWait(self.browser, 3).until(condition)
+            print("then", self.get_skill_items_quantity())
             return True
         except TimeoutException:
             return False

@@ -1,4 +1,6 @@
 import os
+from time import sleep
+
 import allure
 
 import pytest
@@ -33,40 +35,40 @@ def page(user_with_company_browser):
 
 @allure.feature("Skill creation")
 class TestSkillCreationDialog:
-    def test_dialog_visible_after_add_skill_button_clicked(self, page):
+    def test_dialog_visible_after_add_skill_button_clicked(self, fresh_state, page):
         page.skill_add_button_click()
         with allure.step("checking skill creation dialog visible"):
             assert page.is_skill_dialog_visible(), \
                 "skill add dialog isn't visible after add skill button clicked"
 
-    def test_dialog_disappears_after_close_button_clicked(self, page):
+    def test_dialog_disappears_after_close_button_clicked(self, fresh_state, page):
         page.skill_add_button_click()
         page.dialog_close_button_click()
         with allure.step("checking skill creation dialog disappeared"):
             assert page.is_skill_dialog_disappeared(), \
                 "skill add dialog is visible after close button clicked"
 
-    def test_dialog_disappears_after_cancel_button_clicked(self, page):
+    def test_dialog_disappears_after_cancel_button_clicked(self, fresh_state, page):
         page.skill_add_button_click()
         page.dialog_cancel_button_click()
         with allure.step("checking skill creation dialog disappeared"):
             assert page.is_skill_dialog_disappeared(), \
                 "skill add dialog is visible after cancel button clicked"
 
-    def test_dialog_disappears_after_submit_button_clicked(self, page, fresh_state):
+    def test_dialog_disappears_after_submit_button_clicked(self, fresh_state, page):
         add_skill(page)
         with allure.step("checking skill creation dialog disappeared"):
             assert page.is_skill_dialog_disappeared(), \
                 "skill add dialog is visible after cancel button clicked"
 
-    def test_user_can_add_skill(self, page, fresh_state):
+    def test_user_can_add_skill(self, fresh_state, page):
         skill_items_quantity = page.get_skill_items_quantity()
         add_skill(page, valid_skill_name, valid_skill_desc)
         with allure.step("checking quantity of skills in tab had increased"):
             assert page.get_skill_items_quantity() == skill_items_quantity + 1, \
                 "no unit was added to the skill table"
 
-    def test_user_see_notification_after_adding_skill(self, page, fresh_state):
+    def test_user_see_notification_after_adding_skill(self, fresh_state, page):
         add_skill(page)
         with allure.step("checking notification visible"):
             assert page.is_notification_visible(), \
@@ -75,13 +77,13 @@ class TestSkillCreationDialog:
             assert page.get_notification_text() == "Компетенция добавлена!", \
                 "notification text isn't success"
 
-    def test_added_skill_name_matches_with_testing_data(self, page, fresh_state):
+    def test_added_skill_name_matches_with_testing_data(self, fresh_state, page):
         add_skill(page)
         with allure.step("checking name of added skill matching with testing value"):
             assert page.get_last_skill_item_name() == valid_skill_name, \
                 "added skill name don't match with test data"
 
-    def test_added_skill_desc_matches_with_testing_data(self, page, fresh_state):
+    def test_added_skill_desc_matches_with_testing_data(self, fresh_state, page):
         add_skill(page)
         with allure.step("checking description of added skill matching with testing value"):
             assert page.get_last_skill_item_desc() == valid_skill_desc, \
@@ -97,7 +99,7 @@ class TestSkillCreationDialog:
                 "user can create skills with equal name"
 
     @pytest.mark.parametrize('name', invalid_skill_names)
-    def test_user_cant_create_skill_with_invalid_name(self, page, name, fresh_state):
+    def test_user_cant_create_skill_with_invalid_name(self, fresh_state, page, name):
         initial = page.get_skill_items_quantity()
         add_skill(page=page, skill_name=name)
         with allure.step("checking quantity of skills in tab didn't changed"):
@@ -105,7 +107,7 @@ class TestSkillCreationDialog:
                 "user can create skills with invalid name"
 
     @pytest.mark.parametrize('desc', invalid_skill_descs)
-    def test_user_cant_create_skill_with_invalid_desc(self, page, desc, fresh_state):
+    def test_user_cant_create_skill_with_invalid_desc(self, fresh_state, page, desc):
         initial = page.get_skill_items_quantity()
         add_skill(page=page, skill_desc=desc)
         with allure.step("checking quantity of skills in tab didn't changed"):
@@ -115,27 +117,27 @@ class TestSkillCreationDialog:
 
 @allure.feature("skill deleting")
 class TestDeleteSkillDialog:
-    def test_delete_dialog_visible_after_delete_button_clicked(self, page):
+    def test_delete_dialog_visible_after_delete_button_clicked(self, fresh_state, page):
         page.last_skill_item_delete_button_click()
         with allure.step("checking delete dialog visible"):
             assert page.is_delete_dialog_visible(), \
                 "delete dialog isn't visible after add delete button clicked"
 
-    def test_delete_dialog_disappears_after_close_button_clicked(self, page):
+    def test_delete_dialog_disappears_after_close_button_clicked(self, fresh_state, page):
         page.last_skill_item_delete_button_click()
         page.delete_dialog_close_button_click()
         with allure.step("checking delete dialog disappeared"):
             assert page.is_delete_dialog_disappeared(), \
                 "delete dialog is visible after close button clicked"
 
-    def test_delete_dialog_disappears_after_reject_button_clicked(self, page):
+    def test_delete_dialog_disappears_after_reject_button_clicked(self, fresh_state, page):
         page.last_skill_item_delete_button_click()
         page.delete_dialog_no_button_click()
         with allure.step("checking delete dialog disappeared"):
             assert page.is_delete_dialog_disappeared(), \
                 "delete dialog is visible after no button clicked"
 
-    def test_user_can_delete_skill(self, page, fresh_state):
+    def test_user_can_delete_skill(self, fresh_state, page):
         add_skill(page)
         initial_quantity = page.get_skill_items_quantity()
         page.last_skill_item_delete_button_click()
@@ -145,7 +147,7 @@ class TestDeleteSkillDialog:
             assert page.get_skill_items_quantity() == initial_quantity - 1, \
                 "unit was not deleted from list after user deleted it"
 
-    def test_user_see_notification_after_deleting_skill(self, page, fresh_state):
+    def test_user_see_notification_after_deleting_skill(self, fresh_state, page):
         add_skill(page)
         page.wait_notification_disappeared()
         page.last_skill_item_delete_button_click()
@@ -161,15 +163,16 @@ class TestDeleteSkillDialog:
 
 @allure.feature("skill searching")
 class TestSkillSearching:
-    def test_one_skill_appears_after_searching(self, page, fresh_state):
+    def test_one_skill_appears_after_searching(self, fresh_state, page):
         add_skill(page)
         page.fill_search_skill_input(valid_skill_name)
         with allure.step("checking quantity of items in tab is 1"):
             assert page.get_skill_items_quantity() == 1, \
                 "items quantity after searching isn't 1"
 
-    def test_two_skills_appears_after_partial_search(self, page, fresh_state):
+    def test_two_skills_appears_after_partial_search(self, fresh_state, page):
         add_skill(page)
+        sleep(1)
         add_skill(page, skill_name=valid_skill_name+'-1')
         page.fill_search_skill_input(valid_skill_name[1:-1])
         with allure.step("checking quantity of items in tab is 2"):

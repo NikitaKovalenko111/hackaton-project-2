@@ -36,9 +36,9 @@ def pytest_runtest_makereport(item, call):
 @pytest.fixture
 def browser(request):
     options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
+    #options.add_argument('--headless')
+    #options.add_argument('--no-sandbox')
+    #options.add_argument('--disable-dev-shm-usage')
     browser = webdriver.Chrome(options=options)
     browser.set_window_size(width=1920, height=1080)
 
